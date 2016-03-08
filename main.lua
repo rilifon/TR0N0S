@@ -8,7 +8,7 @@ local gameover = {}
 
 function love.load()
     MAX_PLAYERS = 2
-    DEBUG = true
+    DEBUG = false
     game_started = false
     Gamestate.registerEvents()
     Gamestate.switch(game)
@@ -26,6 +26,7 @@ function game:enter()
         TIMESTEP = 0.04
         TILESIZE = 15
         BORDER = TILESIZE
+        MARGIN = 12 --Size of margin for players' inicial position
         map_x = 50
         map_y = 50
         success = love.window.setMode(TILESIZE*map_x + 2*BORDER, TILESIZE*map_y + 2*BORDER, {borderless = true})
@@ -49,8 +50,8 @@ function game:enter()
             --Get random positions for all players
             local is_rand = false
             while is_rand == false do
-                p_x = math.random(map_x)
-                p_y = math.random(map_y)
+                p_x = math.random(map_x-MARGIN)+MARGIN
+                p_y = math.random(map_y-MARGIN)+MARGIN
                 is_rand = true
                 --Iterate in all other players and checks for a valid position
                 for j=1,i-1 do
@@ -129,6 +130,8 @@ end
 
 function game:draw()
     
+    local p = 0 --Player in this tile
+
    --Draw map
     for i=1,map_x do
         for j=1,map_y do
@@ -139,7 +142,11 @@ function game:draw()
             for k=1,MAX_PLAYERS do
                 if i == players[k].x and j == players[k].y then
                     head = 40
-                    if players[k].dead == true then is_dead = 0 end
+                    
+                    p = k
+
+                    if players[k].dead == true then is_dead = 0 end                    
+
                 end
             end
 
@@ -155,7 +162,28 @@ function game:draw()
             elseif map[i][j] == 4 then
                 love.graphics.setColor( (155+head)*is_dead, (155+head)*is_dead,  (155+head)*is_dead)
             end
-            love.graphics.rectangle("fill", i*TILESIZE, j*TILESIZE, TILESIZE, TILESIZE)
+            love.graphics.rectangle("fill", i*TILESIZE, j*TILESIZE, TILESIZE, TILESIZE) --Paint tile
+            
+            
+        end
+    end
+
+    --Paint players indicator
+    if not game_begin then
+        for i=1,map_x do
+            for j=1,map_y do
+                for k=1,MAX_PLAYERS do
+                    if players[k].x == i and players[k].y == j then
+                        love.graphics.setColor(55, 55, 255)
+                        love.graphics.print("P" .. k, i*TILESIZE, (j-2)*TILESIZE)
+                        if k == 1 then
+                            love.graphics.print("WASD", (i-1)*TILESIZE, (j-1)*TILESIZE)
+                        elseif k == 2 then
+                            love.graphics.print("ARROWS", (i-1)*TILESIZE, (j-1)*TILESIZE)
+                        end
+                    end
+                end
+            end
         end
     end
 end
