@@ -70,7 +70,7 @@ function game:enter()
 
             players[i].dead = false
 
-            map[players[i].x][players[i].y] = i --Paint the inicial position
+            map[players[i].x][players[i].y] = i --Draw the inicial position
         end
 
         game_started = true
@@ -130,7 +130,7 @@ function game:update(dt)
                     --Check collision
                     if map[x][y] ~= 0 then
                         players[i].dead = true
-                    --Paint map
+                    --Draw map
                     else
                         map[x][y] = i
                     end
@@ -176,13 +176,13 @@ function game:draw()
             elseif map[i][j] == 4 then
                 love.graphics.setColor( (155+head)*is_dead, (155+head)*is_dead,  (155+head)*is_dead)
             end
-            love.graphics.rectangle("fill", i*TILESIZE, j*TILESIZE, TILESIZE, TILESIZE) --Paint tile
+            love.graphics.rectangle("fill", i*TILESIZE, j*TILESIZE, TILESIZE, TILESIZE) --Draw tile
             
             
         end
     end
 
-    --Paint players indicator
+    --Draw players indicator
     if not game_begin then
         for i=1,map_x do
             for j=1,map_y do
@@ -200,6 +200,13 @@ function game:draw()
                 end
             end
         end
+    end
+    
+    --Draw HUD
+    love.graphics.setColor(195, 129, 199)
+    love.graphics.print("(q)uit        (p)ause", 0, (map_y+1)*TILESIZE)
+    if DEBUG then
+        love.graphics.print("DEBUG ON", 150, (map_y+1)*TILESIZE)
     end
 
 end
