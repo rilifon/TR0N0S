@@ -31,6 +31,8 @@ function game:enter()
         map_y = 50
         success = love.window.setMode(TILESIZE*map_x + 2*BORDER, TILESIZE*map_y + 2*BORDER, {borderless = true})
         map = {}
+        
+        --Reset map
         for i=1,map_x do
             map[i] = {}
             for j=1,map_y do
@@ -76,6 +78,7 @@ function game:enter()
 end
 
 function game:update(dt)
+    
     --Count how many players are alive
     local cont = 0
     winner = 0
@@ -91,6 +94,17 @@ function game:update(dt)
     end     
 
     if game_begin then
+        
+        
+        --Players go right the the start if they dont chose a direction
+        local did_that = false
+        if not did_that then
+            for k=1,MAX_PLAYERS do
+                if players[k].dir == 0 then players[k].dir = 3 end
+            end
+            did_that = true
+        end
+
         --Update step
         step = math.min(TIMESTEP, step + dt)
         if step >= TIMESTEP then    
@@ -105,7 +119,7 @@ function game:update(dt)
                         x = math.max(1, x - 1)         --Left
                     elseif dir == 2 then
                         y = math.max(1, y-1)           --Up
-                    elseif dir == 3 or dir == 0  then      --In case the player doesnt chose a direction in the beggining, he goes right 
+                    elseif dir == 3 then
                         x = math.min(map_x, x+1)       --Right
                     elseif dir == 4 then
                         y = math.min(map_y, y+1)       --Down
@@ -202,9 +216,11 @@ function game:keypressed(key)
         love.event.quit()
     elseif key == 'p' then
         Gamestate.switch(pause)
-    elseif key == 'r' and debug then
+    elseif key == 'r' and DEBUG then
         game_started = false
         Gamestate.switch(game)
+    elseif key == 'b' then
+        if   DEBUG then DEBUG = false else DEBUG = true end
     end
 
     --MOVEMENT (doesn't allow the player to move backwards)
