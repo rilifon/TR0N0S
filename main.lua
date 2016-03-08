@@ -8,7 +8,7 @@ local gameover = {}
 
 function love.load()
     MAX_PLAYERS = 2
-    DEBUG = false
+    DEBUG = true
     game_started = false
     Gamestate.registerEvents()
     Gamestate.switch(game)
@@ -50,8 +50,8 @@ function game:enter()
             --Get random positions for all players
             local is_rand = false
             while is_rand == false do
-                p_x = math.random(map_x-MARGIN)+MARGIN
-                p_y = math.random(map_y-MARGIN)+MARGIN
+                p_x = math.random(map_x-2*MARGIN)+MARGIN
+                p_y = math.random(map_y-2*MARGIN)+MARGIN
                 is_rand = true
                 --Iterate in all other players and checks for a valid position
                 for j=1,i-1 do
@@ -64,7 +64,7 @@ function game:enter()
             players[i].x = p_x
             players[i].y = p_y
 
-            players[i].dir = 4 --All players start with the down direction
+            players[i].dir = 0
 
             players[i].dead = false
 
@@ -102,13 +102,13 @@ function game:update(dt)
 
                     --Move players 
                     if dir == 1 then
-                        x = math.max(1, x - 1) --left
+                        x = math.max(1, x - 1)         --Left
                     elseif dir == 2 then
-                        y = math.max(1, y-1) --up
-                    elseif dir == 3 then
-                        x = math.min(map_x, x+1) --right
+                        y = math.max(1, y-1)           --Up
+                    elseif dir == 3 or dir == 0  then      --In case the player doesnt chose a direction in the beggining, he goes right 
+                        x = math.min(map_x, x+1)       --Right
                     elseif dir == 4 then
-                        y = math.min(map_y, y+1) -- down
+                        y = math.min(map_y, y+1)       --Down
                     end
                     --Update player position
                     players[i].x = x
@@ -176,16 +176,18 @@ function game:draw()
                     if players[k].x == i and players[k].y == j then
                         love.graphics.setColor(55, 55, 255)
                         love.graphics.print("P" .. k, i*TILESIZE, (j-2)*TILESIZE)
+                        love.graphics.setColor(55, 55, 155)
                         if k == 1 then
-                            love.graphics.print("WASD", (i-1)*TILESIZE, (j-1)*TILESIZE)
+                            love.graphics.print("WASD", (i-1)*TILESIZE + 1, (j-1)*TILESIZE)
                         elseif k == 2 then
-                            love.graphics.print("ARROWS", (i-1)*TILESIZE, (j-1)*TILESIZE)
+                            love.graphics.print("ARROWS", (i-1)*TILESIZE - 1, (j-1)*TILESIZE)
                         end
                     end
                 end
             end
         end
     end
+
 end
 
 function game:keypressed(key)
@@ -200,6 +202,9 @@ function game:keypressed(key)
         love.event.quit()
     elseif key == 'p' then
         Gamestate.switch(pause)
+    elseif key == 'r' and debug then
+        game_started = false
+        Gamestate.switch(game)
     end
 
     --MOVEMENT (doesn't allow the player to move backwards)
