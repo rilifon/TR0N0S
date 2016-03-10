@@ -1,4 +1,7 @@
+--HUMP STUFF
+
 Gamestate = require "hump.gamestate"
+Timer = require "hump.timer"
 
 --GAMESTATES
 local menu = {}
@@ -7,9 +10,24 @@ local pause = {}
 local gameover = {}
 
 function love.load()
+
+    --GLOBAL VARIABLES
+    DEBUG = false
+    
+    game_setup = false
     MAX_PLAYERS = 2
-    DEBUG = true
-    game_started = false
+    TIMESTEP = 0.04   --Time between each game step
+    TILESIZE = 15     --Size of the game's tile
+    BORDER = TILESIZE --Border of the game map
+    MARGIN = 12       --Size of margin for players' inicial position
+    map = {}
+    map_x = 50
+    map_y = 50
+
+    --WINDOW CONFIG
+    success = love.window.setMode(TILESIZE*map_x + 2*BORDER, TILESIZE*map_y + 2*BORDER, {borderless = true})
+
+
     Gamestate.registerEvents()
     Gamestate.switch(game)
 end
@@ -20,17 +38,11 @@ end
 
 function game:enter()
     --Setup game
-    if not game_started then
+    if not game_setup then
+        countdown = 5
+        Inicial_Timer = Timer.new()
         game_begin = false
         step = 0
-        TIMESTEP = 0.04
-        TILESIZE = 15
-        BORDER = TILESIZE
-        MARGIN = 12 --Size of margin for players' inicial position
-        map_x = 50
-        map_y = 50
-        success = love.window.setMode(TILESIZE*map_x + 2*BORDER, TILESIZE*map_y + 2*BORDER, {borderless = true})
-        map = {}
         
         --Reset map
         for i=1,map_x do
@@ -72,12 +84,75 @@ function game:enter()
 
             map[players[i].x][players[i].y] = i --Draw the inicial position
         end
+        game_setup = true
+        StartCountdown()
 
-        game_started = true
+    end
+end
+
+function StartCountdown()
+    local time = 0
+    local cd = countdown
+    Inicial_Timer.during(5, function(dt)
+                                local time = time+dt
+                                cd = cd - time 
+                                countdown = math.floor(cd)+1
+                            end,
+                            function()
+                                game_begin = true
+                            end)
+end
+
+function DrawMap()
+
+    for i=1,map_x do
+        for j=1,map_y do
+            
+            --Check if its head and if dead
+            local head = 0
+            local is_dead = 1
+            for k=1,MAX_PLAYERS do
+                if i == players[k].x and j == players[k].y then
+                    head = 40
+                    
+                    p = k
+
+                    if players[k].dead == true then is_dead = 0 end                    
+
+                end
+            end
+
+
+            if map[i][j] == 0 then
+                love.graphics.setColor( 166, 216, 74)
+            elseif map[i][j] == 1 then
+                love.graphics.setColor( (233+head)*is_dead, (131+head)*is_dead,  (0+head)*is_dead)
+            elseif map[i][j] == 2 then
+                love.graphics.setColor( (125+head)*is_dead, (0+2*head)*is_dead,  (99+head)*is_dead)
+            elseif map[i][j] == 3 then
+                love.graphics.setColor(  237*is_dead,       (26+2*head)*is_dead, (55+2*head)*is_dead)
+            elseif map[i][j] == 4 then
+                love.graphics.setColor( (155+head)*is_dead, (155+head)*is_dead,  (155+head)*is_dead)
+            end
+            love.graphics.rectangle("fill", i*TILESIZE, j*TILESIZE, TILESIZE, TILESIZE) --Draw tile
+            
+            
+        end
+    end
+end
+
+function DrawHUD()
+    love.graphics.setColor(195, 129, 199)
+    love.graphics.print("(q)uit        (p)ause", 0, (map_y+1)*TILESIZE)
+    if DEBUG then
+        love.graphics.print("DEBUG ON", 150, (map_y+1)*TILESIZE)
     end
 end
 
 function game:update(dt)
+
+    --Handles timers
+    Inicial_Timer.update(dt)
     
     --Count how many players are alive
     local cont = 0
@@ -146,41 +221,7 @@ function game:draw()
     
     local p = 0 --Player in this tile
 
-   --Draw map
-    for i=1,map_x do
-        for j=1,map_y do
-            
-            --Check if its head and if dead
-            local head = 0
-            local is_dead = 1
-            for k=1,MAX_PLAYERS do
-                if i == players[k].x and j == players[k].y then
-                    head = 40
-                    
-                    p = k
-
-                    if players[k].dead == true then is_dead = 0 end                    
-
-                end
-            end
-
-
-            if map[i][j] == 0 then
-                love.graphics.setColor( 166, 216, 74)
-            elseif map[i][j] == 1 then
-                love.graphics.setColor( (233+head)*is_dead, (131+head)*is_dead,  (0+head)*is_dead)
-            elseif map[i][j] == 2 then
-                love.graphics.setColor( (125+head)*is_dead, (0+2*head)*is_dead,  (99+head)*is_dead)
-            elseif map[i][j] == 3 then
-                love.graphics.setColor(  237*is_dead,       (26+2*head)*is_dead, (55+2*head)*is_dead)
-            elseif map[i][j] == 4 then
-                love.graphics.setColor( (155+head)*is_dead, (155+head)*is_dead,  (155+head)*is_dead)
-            end
-            love.graphics.rectangle("fill", i*TILESIZE, j*TILESIZE, TILESIZE, TILESIZE) --Draw tile
-            
-            
-        end
-    end
+    DrawMap()
 
     --Draw players indicator
     if not game_begin then
@@ -202,32 +243,28 @@ function game:draw()
         end
     end
     
-    --Draw HUD
-    love.graphics.setColor(195, 129, 199)
-    love.graphics.print("(q)uit        (p)ause", 0, (map_y+1)*TILESIZE)
-    if DEBUG then
-        love.graphics.print("DEBUG ON", 150, (map_y+1)*TILESIZE)
+    DrawHUD()
+
+    --Draw countdown
+    if not game_begin then
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.print(countdown, map_x/2 * TILESIZE, map_y/2 * TILESIZE, 0, 2, 2)
     end
 
 end
 
 function game:keypressed(key)
 
-    --BEGIN GAME
-    if key and not game_begin then
-        game_begin = true
-    end
-
     --CHANGE STATES
     if key == 'q' then
         love.event.quit()
-    elseif key == 'p' then
+    elseif key == 'p' and game_begin then
         Gamestate.switch(pause)
     elseif key == 'r' and DEBUG then
-        game_started = false
+        game_setup = false
         Gamestate.switch(game)
     elseif key == 'b' then
-        if   DEBUG then DEBUG = false else DEBUG = true end
+        if DEBUG then DEBUG = false else DEBUG = true end
     end
 
     --MOVEMENT (doesn't allow the player to move backwards)
@@ -258,39 +295,14 @@ end
 
 function pause:draw()
     
-    --Draw map
-    for i=1,map_x do
-        for j=1,map_y do
-            
-            --Check if its head and if dead
-            local head = 0
-            local is_dead = 1
-            for k=1,MAX_PLAYERS do
-                if i == players[k].x and j == players[k].y then
-                    head = 40
-                    if players[k].dead == true then is_dead = 0 end
-                end
-            end
-
-
-            if map[i][j] == 0 then
-                love.graphics.setColor( 166, 216, 74)
-            elseif map[i][j] == 1 then
-                love.graphics.setColor( (233+head)*is_dead, (131+head)*is_dead,  (0+head)*is_dead)
-            elseif map[i][j] == 2 then
-                love.graphics.setColor( (125+head)*is_dead, (0+2*head)*is_dead,  (99+head)*is_dead)
-            elseif map[i][j] == 3 then
-                love.graphics.setColor(  237*is_dead,       (26+2*head)*is_dead, (55+2*head)*is_dead)
-            elseif map[i][j] == 4 then
-                love.graphics.setColor( (155+head)*is_dead, (155+head)*is_dead,  (155+head)*is_dead)
-            end
-            love.graphics.rectangle("fill", i*TILESIZE, j*TILESIZE, TILESIZE, TILESIZE)
-        end
-    end
+    DrawMap()
 
     --Draw pause effect
     love.graphics.setColor(255, 255, 255,90)
     love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+
+    DrawHUD()
+
 end
 
 function pause:keypressed(key)
@@ -310,35 +322,7 @@ end
 
 function gameover:draw()
     
-    --Draw map
-    for i=1,map_x do
-        for j=1,map_y do
-            
-            --Check if its head and if dead
-            local head = 0
-            local is_dead = 1
-            for k=1,MAX_PLAYERS do
-                if i == players[k].x and j == players[k].y then
-                    head = 40
-                    if players[k].dead == true then is_dead = 0 end
-                end
-            end
-
-
-            if map[i][j] == 0 then
-                love.graphics.setColor( 166, 216, 74)
-            elseif map[i][j] == 1 then
-                love.graphics.setColor( (233+head)*is_dead, (131+head)*is_dead,  (0+head)*is_dead)
-            elseif map[i][j] == 2 then
-                love.graphics.setColor( (125+head)*is_dead, (0+2*head)*is_dead,  (99+head)*is_dead)
-            elseif map[i][j] == 3 then
-                love.graphics.setColor(  237*is_dead,       (26+2*head)*is_dead, (55+2*head)*is_dead)
-            elseif map[i][j] == 4 then
-                love.graphics.setColor( (155+head)*is_dead, (155+head)*is_dead,  (155+head)*is_dead)
-            end
-            love.graphics.rectangle("fill", i*TILESIZE, j*TILESIZE, TILESIZE, TILESIZE)
-        end
-    end
+    DrawMap()
 
     --Draw gameover effect and text
     if winner == 0 then
@@ -354,6 +338,8 @@ function gameover:draw()
         love.graphics.setColor(255, 255, 255)
         love.graphics.print( "WINNER IS PLAYER " .. winner, 20, 300, 0, 2, 2)
     end
+
+    DrawHUD()
 end
 
 function gameover:keypressed(key)
@@ -362,7 +348,7 @@ function gameover:keypressed(key)
     if key == 'q' then
         love.event.quit()
     elseif key == 'r' then
-        game_started = false
+        game_setup = false
         Gamestate.switch(game)
     end
 
