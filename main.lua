@@ -5,7 +5,8 @@ Timer = require "hump.timer"
 
 --MY MODULES
 
-local Draw = require "draw"
+local Draw   = require "draw"
+local Update = require "update"
 
 --GAMESTATES
 local menu = {}
@@ -15,8 +16,13 @@ local gameover = {}
 
 function love.load()
 
+    --RANDOM SEED
+    math.randomseed( os.time() )
+
     --GLOBAL VARIABLES
     DEBUG = false
+
+
     
     game_setup = false
     MAX_PLAYERS = 2
@@ -42,6 +48,7 @@ end
 ---------------
 
 function game:enter()
+    
     --Setup game
     if not game_setup then
         countdown = MAX_COUNTDOWN
@@ -80,14 +87,14 @@ function game:enter()
                 end
             end
 
-            players[i].x = p_x
-            players[i].y = p_y
+            players[i].x = p_x  --Player x position
+            players[i].y = p_y  --Player y position
 
-            players[i].dir = 0
+            players[i].dir     = 0 --Player current direction
+            players[i].nextdir = 0 --Player next direction
 
             players[i].dead = false
 
-            map[players[i].x][players[i].y] = i --Draw the inicial position
         end
         game_setup = true
         StartCountdown()
@@ -96,9 +103,10 @@ function game:enter()
 end
 
 function StartCountdown()
+    
     local time = 0
     local cd = countdown
-    Inicial_Timer.during(5, function(dt)
+    Inicial_Timer.during(MAX_COUNTDOWN, function(dt)
                                 local time = time+dt
                                 cd = cd - time 
                                 countdown = math.floor(cd)+1
@@ -113,101 +121,52 @@ function game:update(dt)
     --Handles timers
     Inicial_Timer.update(dt)
     
-    --Count how many players are alive
-    local cont = 0
-    winner = 0
-    for i=1,MAX_PLAYERS do
-        if players[i].dead == false then
-            cont = cont+1
-            winner = i
-        end
-    end
-
-    if cont == 0 or (cont == 1 and not DEBUG) then
-        Gamestate.switch(gameover)
-    end     
 
     if game_begin then
-        
-        
+            
         --Players go right the the start if they dont chose a direction
         local did_that = false
         if not did_that then
             for k=1,MAX_PLAYERS do
-                if players[k].dir == 0 then players[k].dir = 3 end
+                if players[k].dir     == 0 then players[k].dir     = 3 end
+                if players[k].nextdir == 0 then players[k].nextdir = 3 end
             end
             did_that = true
         end
 
-        --Update step
-        step = math.min(TIMESTEP, step + dt)
-        if step >= TIMESTEP then    
-            for i=1,MAX_PLAYERS do
-                if players[i].dead == false then
-                    local dir = players[i].dir
-                    local x = players[i].x
-                    local y = players[i].y
-
-                    --Move players 
-                    if dir == 1 then
-                        x = math.max(1, x - 1)         --Left
-                    elseif dir == 2 then
-                        y = math.max(1, y-1)           --Up
-                    elseif dir == 3 then
-                        x = math.min(map_x, x+1)       --Right
-                    elseif dir == 4 then
-                        y = math.min(map_y, y+1)       --Down
-                    end
-                    --Update player position
-                    players[i].x = x
-                    players[i].y = y
-                    --Check collision
-                    if map[x][y] ~= 0 then
-                        players[i].dead = true
-                    --Draw map
-                    else
-                        map[x][y] = i
-                    end
-                end
-
+        Update.tick(dt)
+    
+        --Count how many players are alive
+        local cont = 0
+        winner = 0
+        for i=1,MAX_PLAYERS do
+            if players[i].dead == false then
+                cont = cont+1
+                winner = i
             end
-            step = 0
         end
+        
+        if cont == 0 or (cont == 1 and not DEBUG) then
+            Gamestate.switch(gameover)
+        end  
     end
+
+
 end
 
 function game:draw()
     
-    local p = 0 --Player in this tile
 
     Draw.map()
 
-    --Draw players indicator
     if not game_begin then
-        for i=1,map_x do
-            for j=1,map_y do
-                for k=1,MAX_PLAYERS do
-                    if players[k].x == i and players[k].y == j then
-                        love.graphics.setColor(55, 55, 255)
-                        love.graphics.print("P" .. k, i*TILESIZE, (j-2)*TILESIZE)
-                        love.graphics.setColor(55, 55, 155)
-                        if k == 1 then
-                            love.graphics.print("WASD", (i-1)*TILESIZE + 1, (j-1)*TILESIZE)
-                        elseif k == 2 then
-                            love.graphics.print("ARROWS", (i-1)*TILESIZE - 1, (j-1)*TILESIZE)
-                        end
-                    end
-                end
-            end
-        end
+        Draw.playerIndicator()
     end
     
     Draw.HUD()
 
-    --Draw countdown
     if not game_begin then
-        love.graphics.setColor(0, 0, 0)
-        love.graphics.print(countdown, map_x/2 * TILESIZE, map_y/2 * TILESIZE, 0, 2, 2)
+        Draw.countdown()
     end
 
 end
@@ -228,22 +187,22 @@ function game:keypressed(key)
 
     --MOVEMENT (doesn't allow the player to move backwards)
     if     key == 'w' and players[1].dir ~= 4 then --move up
-        players[1].dir = 2
+        players[1].nextdir = 2
     elseif key == 'a' and players[1].dir ~= 3 then --move left
-        players[1].dir = 1
+        players[1].nextdir = 1
     elseif key == 's' and players[1].dir ~= 2 then --move down
-        players[1].dir = 4
+        players[1].nextdir = 4
     elseif key == 'd' and players[1].dir ~= 1 then --move right
-        players[1].dir = 3
+        players[1].nextdir = 3
     end
     if     key == 'up'    and players[2].dir ~= 4 then --move up
-        players[2].dir = 2
+        players[2].nextdir = 2
     elseif key == 'left'  and players[2].dir ~= 3 then --move left
-        players[2].dir = 1
+        players[2].nextdir = 1
     elseif key == 'down'  and players[2].dir ~= 2 then --move down
-        players[2].dir = 4
+        players[2].nextdir = 4
     elseif key == 'right' and players[2].dir ~= 1 then --move right
-        players[2].dir = 3
+        players[2].nextdir = 3
     end
 
 end
@@ -256,9 +215,7 @@ function pause:draw()
     
     Draw.map()
 
-    --Draw pause effect
-    love.graphics.setColor(255, 255, 255,90)
-    love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+    Draw.pause()
 
     Draw.HUD()
 
@@ -283,20 +240,7 @@ function gameover:draw()
     
     Draw.map()
 
-    --Draw gameover effect and text
-    if winner == 0 then
-        love.graphics.setColor(255, 0, 0,90)
-        love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
-        
-        love.graphics.setColor(255, 255, 255)
-        love.graphics.print( "DRAW!", 20, 300, 0, 2, 2)
-    else
-        love.graphics.setColor(12, 69, 203,90)
-        love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
-
-        love.graphics.setColor(255, 255, 255)
-        love.graphics.print( "WINNER IS PLAYER " .. winner, 20, 300, 0, 2, 2)
-    end
+    Draw.gameover()
 
     Draw.HUD()
 end
