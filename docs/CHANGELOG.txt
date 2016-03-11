@@ -1,0 +1,18 @@
+
+=====================
+THE HISTORY OF TR0N0S
+=====================
+
+********************************************
+(11/03/2016) Ver 0.0.8 -  H3LL0 TR0N0S
+********************************************
+
+-Added a changelog, documenting big changes
+-Improved README
+
+-Added buttons
+-Added setup screen
+-Added fonts! (Source on README)
+
+-Better code!
+

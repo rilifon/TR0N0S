@@ -1,46 +1,59 @@
 --HUMP STUFF
 
 Gamestate = require "hump.gamestate"
-Timer = require "hump.timer"
+Timer     = require "hump.timer"
+Class     = require "hump.class"
 
 --MY MODULES
 
 local Draw   = require "draw"
-local Update = require "update"
+local Util   = require "util"
+local Button = require "button"
+
 
 --GAMESTATES
-local menu = {}
-local game = {}
-local pause = {}
+local menu     = {}
+local setup    = {}
+local game     = {}
+local pause    = {}
 local gameover = {}
 
 function love.load()
 
-    --RANDOM SEED
-    math.randomseed( os.time() )
-
-    --GLOBAL VARIABLES
-    DEBUG = false
-
-
-    
-    game_setup = false
-    MAX_PLAYERS = 2
-    MAX_COUNTDOWN = 3
-    TIMESTEP = 0.04   --Time between each game step
-    TILESIZE = 15     --Size of the game's tile
-    BORDER = TILESIZE --Border of the game map
-    MARGIN = 12       --Size of margin for players' inicial position
-    map = {}
-    map_x = 50
-    map_y = 50
-
-    --WINDOW CONFIG
-    success = love.window.setMode(TILESIZE*map_x + 2*BORDER, TILESIZE*map_y + 2*BORDER, {borderless = true})
-
+    Util.configGame()
 
     Gamestate.registerEvents()
-    Gamestate.switch(game)
+    Gamestate.switch(setup)
+end
+
+
+---------------
+--STATE : SETUP
+---------------
+function setup:enter()
+    if not main_setup then
+        Button.setup()
+    end
+end
+
+
+function setup:draw()
+    
+    Draw.setup()
+
+    Draw.HUD()
+end
+
+function setup:keypressed(key)
+
+    --CHANGE STATES
+    if      key == 'q' then
+        love.event.quit()
+    elseif  key == "return" then
+        Gamestate.switch(game)
+    elseif key == 'b' then
+        if DEBUG then DEBUG = false else DEBUG = true end
+    end
 end
 
 ---------------
@@ -49,71 +62,8 @@ end
 
 function game:enter()
     
-    --Setup game
-    if not game_setup then
-        countdown = MAX_COUNTDOWN
-        Inicial_Timer = Timer.new()
-        game_begin = false
-        step = 0
-        
-        --Reset map
-        for i=1,map_x do
-            map[i] = {}
-            for j=1,map_y do
-                map[i][j] = 0
-            end
-        end
-        
-        local p_x = 1
-        local p_y = 1
+   Util.setupGame()
 
-        --Setup players
-        players = {}
-        for i=1,MAX_PLAYERS do
-            
-            players[i] = {}
-            
-            --Get random positions for all players
-            local is_rand = false
-            while is_rand == false do
-                p_x = math.random(map_x-2*MARGIN)+MARGIN
-                p_y = math.random(map_y-2*MARGIN)+MARGIN
-                is_rand = true
-                --Iterate in all other players and checks for a valid position
-                for j=1,i-1 do
-                    if(p_x == players[j].x and p_y == players[j].y) then
-                        is_rand = false
-                    end
-                end
-            end
-
-            players[i].x = p_x  --Player x position
-            players[i].y = p_y  --Player y position
-
-            players[i].dir     = 0 --Player current direction
-            players[i].nextdir = 0 --Player next direction
-
-            players[i].dead = false
-
-        end
-        game_setup = true
-        StartCountdown()
-
-    end
-end
-
-function StartCountdown()
-    
-    local time = 0
-    local cd = countdown
-    Inicial_Timer.during(MAX_COUNTDOWN, function(dt)
-                                local time = time+dt
-                                cd = cd - time 
-                                countdown = math.floor(cd)+1
-                            end,
-                            function()
-                                game_begin = true
-                            end)
 end
 
 function game:update(dt)
@@ -123,29 +73,11 @@ function game:update(dt)
     
 
     if game_begin then
-            
-        --Players go right the the start if they dont chose a direction
-        local did_that = false
-        if not did_that then
-            for k=1,MAX_PLAYERS do
-                if players[k].dir     == 0 then players[k].dir     = 3 end
-                if players[k].nextdir == 0 then players[k].nextdir = 3 end
-            end
-            did_that = true
-        end
 
-        Update.tick(dt)
+        Util.tick(dt)
     
         --Count how many players are alive
-        local cont = 0
-        winner = 0
-        for i=1,MAX_PLAYERS do
-            if players[i].dead == false then
-                cont = cont+1
-                winner = i
-            end
-        end
-        
+        local cont = Util.countPlayers()
         if cont == 0 or (cont == 1 and not DEBUG) then
             Gamestate.switch(gameover)
         end  
@@ -228,6 +160,8 @@ function pause:keypressed(key)
         love.event.quit()
     elseif key == 'p' then
         Gamestate.switch(game)
+    elseif key == 'b' then
+        if DEBUG then DEBUG = false else DEBUG = true end
     end
 
 end
