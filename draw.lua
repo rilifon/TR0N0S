@@ -7,21 +7,60 @@ local FONT_FIX_Y = 8
 
 --Draw all buttons
 function draw.setup()
+    --Draw all buttons
     for i, v in ipairs(B_T) do
-        --Draws button box
-        love.graphics.setColor(233, 131, 0)
-        love.graphics.rectangle("fill", v.x, v.y, v.w, v.h)
-        
-        local fwidth  = v.font:getWidth( v.text)
-        local fheight = v.font:getHeight(v.text)
-        local tx = (v.w - fwidth)/2
-        local ty = (v.h - fheight)/2
-
-        --Draws button text
-        love.graphics.setColor( 0, 0, 0 )
-        love.graphics.setFont(v.font)
-        love.graphics.print(v.text, v.x + tx , v.y + ty)
+        drawButton(v)
     end
+
+    --Draw all textboxes
+    for i, v in ipairs(TB_T) do
+        drawTextBox(v)
+    end
+
+    --Draw variables
+    local font = font_but_m
+    love.graphics.setColor( 255, 255, 255)
+    love.graphics.setFont(font)
+    --MAX PLAYERS var
+    love.graphics.print(MAX_PLAYERS, 150, 120, 0, 2, 2)
+
+
+end
+
+function drawButton(button)
+    --Draws button box
+    love.graphics.setColor(233, 131, 0)
+    love.graphics.rectangle("fill", button.x, button.y, button.w, button.h)
+    
+    local fwidth  = button.font:getWidth( button.text)
+    local fheight = button.font:getHeight(button.text)
+    local tx = (button.w - fwidth)/2
+    local ty = (button.h - fheight)/2
+
+    --Draws button text
+    local font = font_but_m
+    love.graphics.setColor( 0, 0, 0 )
+    love.graphics.setFont(font)
+    love.graphics.print(button.text, button.x + tx , button.y + ty)
+
+end
+
+function drawTextBox(textbox)
+    --Draws textbox box
+    love.graphics.setColor(233, 131, 0)
+    love.graphics.rectangle("fill", textbox.x, textbox.y, textbox.w, textbox.h)
+    
+    local fwidth  = textbox.font:getWidth( textbox.text)
+    local fheight = textbox.font:getHeight(textbox.text)
+    local tx = (textbox.w - fwidth)/2
+    local ty = (textbox.h - fheight)/2
+
+    --Draws textbox text
+    local font = font_but_m
+    love.graphics.setColor( 0, 0, 0 )
+    love.graphics.setFont(font)
+    love.graphics.print(textbox.text, textbox.x + tx , textbox.y + ty)
+
 end
 
 --Draws the game map

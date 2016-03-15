@@ -1,4 +1,4 @@
---MODULE FOR BUTTONS--
+--MODULE FOR BUTTONS AND STUFF--
 
 local button = {}
 
@@ -18,15 +18,48 @@ But = Class{
 function button.setup()
 	--Button table
 	B_T = {}
-	max_player_up = But(80,40,160,60, "max player", font_but_m, function()
+	local x, y, w, h, font
+	local gap = 5 --Gap between two buttons
+	w = 160
+	h = 60
+	font = font_but_m
+
+	--MAX_PLAYERS BUTTON
+	x = 300
+	y = 20
+	max_player_up = But(x, y, w, h, "+", font, function()
 																if MAX_PLAYERS < 4 then
 																	MAX_PLAYERS = MAX_PLAYERS + 1
 																end
 															end)
 	table.insert(B_T, max_player_up)
+	max_player_down = But(x, y + h + gap, w, h, "-", font, function()
+																if MAX_PLAYERS > 1 then
+																	MAX_PLAYERS = MAX_PLAYERS - 1
+																end
+															end)
+	table.insert(B_T, max_player_down)
+
+
+
 end
 
+--Check if a mouse click collides with any button
+function button.checkCollision(x,y)
+	for i,v in ipairs(B_T) do
+		if 	v.x <= x
+			and
+			x <= v.x + v.w
+			and
+			v.y <= y
+			and
+			y <= v.y + v.h then
 
+			v.func()
+		end
+
+	end
+end
 
 
 return button

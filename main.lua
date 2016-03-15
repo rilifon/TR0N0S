@@ -1,14 +1,14 @@
 --HUMP STUFF
-
 Gamestate = require "hump.gamestate"
 Timer     = require "hump.timer"
 Class     = require "hump.class"
 
---MY MODULES
 
-local Draw   = require "draw"
-local Util   = require "util"
-local Button = require "button"
+--MY MODULES
+local Draw    = require "draw"
+local Util    = require "util"
+local Button  = require "button"
+local TextBox = require "textbox"
 
 
 --GAMESTATES
@@ -33,6 +33,7 @@ end
 function setup:enter()
     if not main_setup then
         Button.setup()
+        TextBox.setup()
     end
 end
 
@@ -53,6 +54,12 @@ function setup:keypressed(key)
         Gamestate.switch(game)
     elseif key == 'b' then
         if DEBUG then DEBUG = false else DEBUG = true end
+    end
+end
+
+function setup:mousepressed(x, y, button, istouch)
+    if button == 1 then
+        Button.checkCollision(x,y)
     end
 end
 
@@ -187,6 +194,8 @@ function gameover:keypressed(key)
     elseif key == 'r' then
         game_setup = false
         Gamestate.switch(game)
+    elseif key == 'b' then
+        if DEBUG then DEBUG = false else DEBUG = true end
     end
 
 end

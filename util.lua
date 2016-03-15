@@ -14,6 +14,8 @@ function util.configGame()
     main_setup = false --Setup of whole game
     game_setup = false --Inicial setup for each game
     MAX_PLAYERS = 2    --Number of players playing
+    WASD_PLAYER = 1    --Player using wasd keys
+    ARROWS_PLAYER = 2  --Player using arrow keys
     MAX_COUNTDOWN = 3  --Countdown in the beggining of each match
     TIMESTEP = 0.04    --Time between each game step
     TILESIZE = 15      --Size of the game's tile
