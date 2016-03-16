@@ -39,7 +39,7 @@ PLAYER = Class{
 --Setup the first two players
 function player.setup()
 	P_T = {}   --Players table
-	PTB_T = {} --PLayers TextBox table
+	PB_T = {} --PLayers Button table
 
 	local rgb_b, rgb_h  --Color for body and head
 	
@@ -56,7 +56,7 @@ function player.setup()
 	table.insert(P_T, P_2)
 
 	--Creates textboxes for current players
-	Util.updatePlayersBox()
+	Util.updatePlayersB()
 
 end
 --Return functions

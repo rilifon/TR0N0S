@@ -51,16 +51,19 @@ function button.setup()
 				local rgb_h = COLOR(math.random(255), math.random(255), math.random(255))
 				local P   = PLAYER(N_PLAYERS, false, nil, nil, nil, nil, rgb_b, rgb_h, true, 1, nil)
 				table.insert(P_T, P)
-				Util.updatePlayersBox()
+				Util.updatePlayersB()
 			end
 		end)
 	table.insert(B_T, n_player_up)
 	n_player_down = But(x, y + h + gap, w, h, "-", font, color_b, color_t,
 		function()
 			if N_PLAYERS > 1 then
+				local p = P_T[N_PLAYERS]
+				if p.control == "WASD" then WASD_PLAYER = 0
+				elseif p.control == "ARROWS" then ARROWS_PLAYER = 0 end
 				table.remove(P_T, N_PLAYERS)
 				N_PLAYERS = N_PLAYERS - 1
-				Util.updatePlayersBox()
+				Util.updatePlayersB()
 			end
 		end)
 	table.insert(B_T, n_player_down)
@@ -69,7 +72,22 @@ end
 
 --Check if a mouse click collides with any button
 function button.checkCollision(x,y)
+	--Iterate on default buttons table
 	for i,v in ipairs(B_T) do
+		if 	v.x <= x
+			and
+			x <= v.x + v.w
+			and
+			v.y <= y
+			and
+			y <= v.y + v.h then
+
+			v.func()
+		end
+
+	end
+	--Iterate on players buttons table
+	for i,v in ipairs(PB_T) do
 		if 	v.x <= x
 			and
 			x <= v.x + v.w

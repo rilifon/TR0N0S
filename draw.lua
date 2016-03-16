@@ -17,9 +17,9 @@ function draw.setup()
         drawTextBox(v)
     end
 
-    --Draw all players textboxes
-    for i, v in ipairs(PTB_T) do
-        drawTextBox(v)
+    --Draw all players buttons
+    for i, v in ipairs(PB_T) do
+        drawButton(v)
     end
 
     --Draw variables
@@ -61,7 +61,7 @@ function drawTextBox(textbox)
     local ty = (textbox.h - fheight)/2                   --Relative y position of font on textbox
 
     --Draws textbox text
-    local font = font_but_m
+    local font = textbox.font
     love.graphics.setColor(textbox.t_color.r, textbox.t_color.g, textbox.t_color.b)
     love.graphics.setFont(font)
     love.graphics.print(textbox.text, textbox.x + tx , textbox.y + ty)
@@ -167,6 +167,13 @@ function draw.playerIndicator()
         elseif p.control == "ARROWS" then
             love.graphics.print("ARROWS", (p.x-1)*TILESIZE - 1, (p.y-1)*TILESIZE)
         end
+    end
+end
+
+--Draws the winner of the match
+function draw.winner()
+    for i, v in ipairs(DTB_T) do
+        drawTextBox(v)
     end
 end
 

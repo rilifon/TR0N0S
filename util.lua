@@ -13,12 +13,12 @@ function util.configGame()
     DEBUG = false      --DEBUG mode status
     main_setup = false --Setup of whole game
     game_setup = false --Inicial setup for each game
-    MAX_PLAYERS = 7    --Max number of players in a game
+    MAX_PLAYERS = 10    --Max number of players in a game
     N_PLAYERS = 2      --Number of players playing
     WASD_PLAYER = 1    --Player using wasd keys
     ARROWS_PLAYER = 2  --Player using arrow keys
-    MAX_COUNTDOWN = 3  --Countdown in the beggining of each match
-    TIMESTEP = 0.06    --Time between each game step
+    MAX_COUNTDOWN = 3  --Countdown in the beggining of each game
+    TIMESTEP = 0.05    --Time between each game step
     TILESIZE = 15      --Size of the game's tile
     BORDER = TILESIZE  --Border of the game map
     MARGIN = 12        --Size of margin for players' inicial position
@@ -36,8 +36,18 @@ function util.configGame()
     love.graphics.setFont(font_reg_m)
 end
 
+--Clears all elements in a table
+function util.clearTable(T)
+    --Clear PB_T table
+    for k in pairs (T) do
+        T[k] = nil
+    end
+
+end
+
  --Setup a new game
 function util.setupGame()
+    
     if not game_setup then
         countdown = MAX_COUNTDOWN
         Inicial_Timer = Timer.new()
@@ -55,30 +65,37 @@ function util.setupGame()
     end
 end
 
+--Start the countdown to start a game
 function StartCountdown()
     
-    local time = 0
+    time = 0
     local cd = countdown
-    Inicial_Timer.during(MAX_COUNTDOWN, function(dt)
-                                local time = time+dt
-                                cd = cd - time 
-                                countdown = math.floor(cd)+1
-                            end,
-                            function()
-                                game_begin = true
+    Inicial_Timer.during(MAX_COUNTDOWN, 
+        
+        --Decreases countdown
+        function(dt)
+            local t = time+dt
+            cd = cd - t
+            countdown = math.floor(cd)+1
+        end,
 
-                                --Players go at a random direction at the start if they dont chose any
-                                for i, p in ipairs(P_T) do
-                                    local rand = math.random(4)
-                                    if p.dir     == nil then p.dir     = rand end
-                                    if p.nextdir == nil then p.nextdir = rand end
-                                end
-                            end)
+        --After countdown, start game and fixes players positions
+        function()
+             game_begin = true
+
+            --Players go at a random direction at the start if they dont chose any
+            for i, p in ipairs(P_T) do
+                local rand = math.random(4)
+                if p.dir     == nil then p.dir     = rand end
+                if p.nextdir == nil then p.nextdir = rand end
+            end
+        end)
 end
 
 
 --Update step and all players position
 function util.tick(dt)
+    
     step = math.min(TIMESTEP, step + dt)
     if step >= TIMESTEP then    
         
@@ -95,6 +112,7 @@ end
 
 --Updates cpu players position
 function UpdateCPU()
+    
     for i, p in ipairs(P_T) do
         if not p.dead and p.cpu then
             local dir = p.dir
@@ -106,19 +124,13 @@ function UpdateCPU()
 
 
             --CPU LEVEL 1
-            --Has 80% of going the same direction, and 20% of "turning" left or right
             if p.level == 1 then
 
-                --Chooses a random different valid (not reverse) direction
-                if math.random() <= .2 then
-                    --"Turn right"    
-                    if math.random() <= .5 then
-                        dir = dir%4 + 1
-                    --"Turn left"
-                    else
-                        dir = (dir+2)%4 + 1
-                    end
-                end
+               dir = CPU_Level1(p)
+
+            elseif p.level == 2 then
+
+               dir = CPU_Level2(p)
 
             end
 
@@ -144,6 +156,70 @@ function UpdateCPU()
         end
 
     end
+end
+
+--CPU LEVEL 1
+--Has 80% of going the same direction, and 20% of "turning" left or right
+function CPU_Level1(p)
+    local dir = p.dir
+    
+    --Chooses a random different valid (not reverse) direction
+    if math.random() <= .2 then
+        --"Turn right"    
+        if math.random() <= .5 then
+            dir = dir%4 + 1
+        --"Turn left"
+        else
+            dir = (dir+2)%4 + 1
+        end
+    end
+
+    return dir
+end
+
+--CPU LEVEL 2
+--If it would reach a wall, goes around
+function CPU_Level2(p)
+    local dir = p.dir
+    local next_x = p.x
+    local next_y = p.y --Position that the CPU will go if move forward
+    local left_x = p.x
+    local left_y = p.y --Position that the CPU will go if turn left
+            
+    --Get positions
+    if dir == 1 then         --Left
+        next_x = next_x - 1
+        left_y = left_y + 1
+    elseif dir == 2 then     --Up
+        next_y = next_y - 1
+        left_x = left_x - 1 
+    elseif dir == 3 then     --Right
+        next_x = next_x + 1
+        left_y = left_y - 1
+    elseif dir == 4 then     --Down
+        next_y = next_y + 1
+        left_x = left_x + 1       
+    end
+
+    --Found obstacle
+    if  not validPosition(next_x, next_y) or map[next_x][next_y] ~= 0 then
+        if  validPosition(left_x, left_y) and map[left_x][left_y] == 0 then
+            dir = (dir + 2)%4 + 1 --turn left
+        else
+            dir = dir%4 + 1       --turn right
+        end
+    end
+
+    return dir
+end
+
+--Checks if position (x,y) is inside map
+function validPosition(x, y)
+    if x < 1 or x > map_x or y < 1 or y > map_y then
+        return false
+    end
+    return true 
+
 end
 
 --Updates non-cpu players positions
@@ -180,16 +256,13 @@ function UpdateHuman()
     end
 end
 
---Update players textbox on setup
-function util.updatePlayersBox()
+--Update players buttons on setup
+function util.updatePlayersB()
     local font = font_but_m
     local color_b = COLOR(133, 121, 0)
     local color_t = COLOR(0, 0, 0)    
 
-    --Clear PTB_T table
-    for k in pairs (PTB_T) do
-        PTB_T[k] = nil
-    end
+    util.clearTable(PB_T)
 
     for i, p in ipairs(P_T) do
         local cputext, controltext
@@ -201,8 +274,53 @@ function util.updatePlayersBox()
             controltext = p.control
         end
 
-        local ptb = TB(40, 200 + 45*i, 500, 40, "PLAYER " .. i .. " " .. cputext .. " (" .. controltext .. ")", font, color_b, color_t)
-        table.insert(PTB_T, ptb)
+        local pb = But(40, 200 + 45*i, 500, 40,
+                        "PLAYER " .. i .. " " .. cputext .. " (" .. controltext .. ")",
+                        font, color_b, color_t, 
+                        --Change players from CPU to HUMAN witha controller
+                        function()
+                            --Human with WASD controls, on click, becomes ARROWS if possible, else becomes CPU
+                            if not p.cpu and p.control == "WASD" then
+                                if ARROWS_PLAYER == 0 then
+                                    p.control = "ARROWS"
+                                    ARROWS_PLAYER = p.number
+                                    WASD_PLAYER = 0
+                                else
+                                    p.cpu = true
+                                    p.level = 1
+                                    p.control = nil
+                                    WASD_PLAYER = 0
+                                end
+
+                            --Human with ARROWS controls, on click, becomes CPU Level1
+                            elseif not p.cpu and p.control == "ARROWS" then
+                                p.cpu = true
+                                p.level = 1
+                                p.control = nil
+                                ARROWS_PLAYER = 0
+
+                            --CPU Level1, on click, becomes CPU Level2
+                            elseif p.cpu and p.level == 1 then
+                                p.level = 2
+
+                            --CPU Level2, on click, becomes WASD or ARROWS if possible
+                            elseif p.cpu and p.level == 2 then
+                                if WASD_PLAYER == 0 then
+                                    p.control = "WASD"
+                                    WASD_PLAYER = p.number
+                                    p.cpu = false
+                                    p.level = nil
+                                elseif ARROWS_PLAYER == 0 then
+                                    p.control = "ARROWS"
+                                    ARROWS_PLAYER = p.number
+                                    p.cpu = false
+                                    p.level = nil
+                                end
+                            end
+
+                            util.updatePlayersB()
+                        end)
+        table.insert(PB_T, pb)
     end
 end
 
@@ -287,6 +405,19 @@ function resetMap()
             map[i][j] = 0
         end
     end
+end
+
+--Creates a textbox for the winner, right next to the player
+function util.setupWinner()
+    local font = font_reg_s
+    local b_color = COLOR(255, 255, 255)
+    local t_color = COLOR(0, 0, 0)
+    local p, tb
+    if winner ~= 0 then
+        p = P_T[winner]
+        tb = TB((p.x-2)*TILESIZE, (p.y-1)*TILESIZE, 5*TILESIZE, TILESIZE, ">>WINNER<<",font, b_color, t_color)
+    end
+    table.insert(DTB_T, tb)
 end
     
 

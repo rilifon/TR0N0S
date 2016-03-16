@@ -4,6 +4,13 @@ THE HISTORY OF TR0N0S
 =====================
 
 
+********************************************
+(xx/xx/2016) Ver 0.1.0 -  --
+********************************************
+
+-Setup screen customizable players improved (change controls/cpu)
+
+-CPU Level 2!
 
 ********************************************
 (16/03/2016) Ver 0.0.9 -  C0MPUT3RY GUY

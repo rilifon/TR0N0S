@@ -1,5 +1,5 @@
 
-﻿TR0N0S version 0.0.8 indev
+﻿TR0N0S version 0.0.9 indev
 =====================
 
 A GAME BY MARVELLOUS SOFT/USPGAMEDEV

@@ -33,6 +33,7 @@ end
 --STATE : SETUP
 ---------------
 function setup:enter()
+    
     if not main_setup then
         Player.setup()
         Button.setup()
@@ -40,6 +41,13 @@ function setup:enter()
     end
 end
 
+--When leaving, clears tables with buttons and textboxes
+function setup:leave()
+    
+    Util.clearTable(DTB_T)
+    Util.clearTable(PB_T)
+    Util.clearTable(B_T)
+end
 
 function setup:draw()
     
@@ -130,7 +138,7 @@ function game:keypressed(key)
     
     --MOVEMENT (doesn't allow the player to move backwards)
     
-    local i = WASD_PLAYER    
+    local i = WASD_PLAYER   
     if     key == 'w' and P_T[i].dir ~= 4 then --move up
         P_T[i].nextdir = 2
     elseif key == 'a' and P_T[i].dir ~= 3 then --move left
@@ -141,7 +149,7 @@ function game:keypressed(key)
         P_T[i].nextdir = 3
     end
 
-    local i = ARROWS_PLAYER
+    local i = ARROWS_PLAYER 
     if     key == 'up'    and P_T[i].dir ~= 4 then --move up
         P_T[i].nextdir = 2
     elseif key == 'left'  and P_T[i].dir ~= 3 then --move left
@@ -161,6 +169,8 @@ end
 function pause:draw()
     
     Draw.map()
+
+    Draw.playerIndicator()
 
     Draw.pause()
 
@@ -185,9 +195,21 @@ end
 --STATE : GAMEOVER
 ------------------
 
+function gameover:enter()
+
+    Util.setupWinner()
+end
+
+function gameover:leave()
+
+    Util.clearTable(DTB_T)
+end
+
 function gameover:draw()
     
     Draw.map()
+
+    Draw.winner()
 
     Draw.gameover()
 
