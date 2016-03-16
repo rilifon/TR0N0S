@@ -9,6 +9,8 @@ local Draw    = require "draw"
 local Util    = require "util"
 local Button  = require "button"
 local TextBox = require "textbox"
+local Player  = require "player"
+local Rgb     = require "rgb"
 
 
 --GAMESTATES
@@ -32,6 +34,7 @@ end
 ---------------
 function setup:enter()
     if not main_setup then
+        Player.setup()
         Button.setup()
         TextBox.setup()
     end
@@ -124,24 +127,29 @@ function game:keypressed(key)
         if DEBUG then DEBUG = false else DEBUG = true end
     end
 
+    
     --MOVEMENT (doesn't allow the player to move backwards)
-    if     key == 'w' and players[1].dir ~= 4 then --move up
-        players[1].nextdir = 2
-    elseif key == 'a' and players[1].dir ~= 3 then --move left
-        players[1].nextdir = 1
-    elseif key == 's' and players[1].dir ~= 2 then --move down
-        players[1].nextdir = 4
-    elseif key == 'd' and players[1].dir ~= 1 then --move right
-        players[1].nextdir = 3
+    
+    local i = WASD_PLAYER    
+    if     key == 'w' and P_T[i].dir ~= 4 then --move up
+        P_T[i].nextdir = 2
+    elseif key == 'a' and P_T[i].dir ~= 3 then --move left
+        P_T[i].nextdir = 1
+    elseif key == 's' and P_T[i].dir ~= 2 then --move down
+        P_T[i].nextdir = 4
+    elseif key == 'd' and P_T[i].dir ~= 1 then --move right
+        P_T[i].nextdir = 3
     end
-    if     key == 'up'    and players[2].dir ~= 4 then --move up
-        players[2].nextdir = 2
-    elseif key == 'left'  and players[2].dir ~= 3 then --move left
-        players[2].nextdir = 1
-    elseif key == 'down'  and players[2].dir ~= 2 then --move down
-        players[2].nextdir = 4
-    elseif key == 'right' and players[2].dir ~= 1 then --move right
-        players[2].nextdir = 3
+
+    local i = ARROWS_PLAYER
+    if     key == 'up'    and P_T[i].dir ~= 4 then --move up
+        P_T[i].nextdir = 2
+    elseif key == 'left'  and P_T[i].dir ~= 3 then --move left
+        P_T[i].nextdir = 1
+    elseif key == 'down'  and P_T[i].dir ~= 2 then --move down
+        P_T[i].nextdir = 4
+    elseif key == 'right' and P_T[i].dir ~= 1 then --move right
+        P_T[i].nextdir = 3
     end
 
 end
