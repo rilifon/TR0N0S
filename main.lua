@@ -1,14 +1,18 @@
 --HUMP STUFF
-
 Gamestate = require "hump.gamestate"
 Timer     = require "hump.timer"
 Class     = require "hump.class"
 
---MY MODULES
 
-local Draw   = require "draw"
-local Util   = require "util"
-local Button = require "button"
+--MY MODULES
+local Draw    = require "draw"
+local Util    = require "util"
+local Button  = require "button"
+local TextBox = require "textbox"
+local Text    = require "text"
+local Player  = require "player"
+local Rgb     = require "rgb"
+local Filter  = require "filter"
 
 
 --GAMESTATES
@@ -31,17 +35,24 @@ end
 --STATE : SETUP
 ---------------
 function setup:enter()
-    if not main_setup then
-        Button.setup()
-    end
+    
+    Draw.setup_setup()
+
 end
 
+--When leaving, clears tables with buttons and textboxes
+function setup:leave()
+    
+    Util.clearAllTables()
+
+    Util.setupMatch()
+
+end
 
 function setup:draw()
     
-    Draw.setup()
+    Draw.setup_state()
 
-    Draw.HUD()
 end
 
 function setup:keypressed(key)
@@ -50,9 +61,16 @@ function setup:keypressed(key)
     if      key == 'q' then
         love.event.quit()
     elseif  key == "return" then
+        MATCH_BEGIN = true
         Gamestate.switch(game)
     elseif key == 'b' then
-        if DEBUG then DEBUG = false else DEBUG = true end
+        Draw.toggleDebug()
+    end
+end
+
+function setup:mousepressed(x, y, button, istouch)
+    if button == 1 then
+        Button.checkCollision(x,y)
     end
 end
 
@@ -62,7 +80,15 @@ end
 
 function game:enter()
     
-   Util.setupGame()
+    Util.setupGame()
+
+    Draw.game_setup()
+
+end
+
+function game:leave()
+
+    Util.clearAllTables()
 
 end
 
@@ -88,18 +114,7 @@ end
 
 function game:draw()
     
-
-    Draw.map()
-
-    if not game_begin then
-        Draw.playerIndicator()
-    end
-    
-    Draw.HUD()
-
-    if not game_begin then
-        Draw.countdown()
-    end
+    Draw.game_state()
 
 end
 
@@ -114,27 +129,32 @@ function game:keypressed(key)
         game_setup = false
         Gamestate.switch(game)
     elseif key == 'b' then
-        if DEBUG then DEBUG = false else DEBUG = true end
+        Draw.toggleDebug()
     end
 
+    
     --MOVEMENT (doesn't allow the player to move backwards)
-    if     key == 'w' and players[1].dir ~= 4 then --move up
-        players[1].nextdir = 2
-    elseif key == 'a' and players[1].dir ~= 3 then --move left
-        players[1].nextdir = 1
-    elseif key == 's' and players[1].dir ~= 2 then --move down
-        players[1].nextdir = 4
-    elseif key == 'd' and players[1].dir ~= 1 then --move right
-        players[1].nextdir = 3
+    
+    local i = WASD_PLAYER   
+    if     key == 'w' and P_T[i].dir ~= 4 then --move up
+        P_T[i].nextdir = 2
+    elseif key == 'a' and P_T[i].dir ~= 3 then --move left
+        P_T[i].nextdir = 1
+    elseif key == 's' and P_T[i].dir ~= 2 then --move down
+        P_T[i].nextdir = 4
+    elseif key == 'd' and P_T[i].dir ~= 1 then --move right
+        P_T[i].nextdir = 3
     end
-    if     key == 'up'    and players[2].dir ~= 4 then --move up
-        players[2].nextdir = 2
-    elseif key == 'left'  and players[2].dir ~= 3 then --move left
-        players[2].nextdir = 1
-    elseif key == 'down'  and players[2].dir ~= 2 then --move down
-        players[2].nextdir = 4
-    elseif key == 'right' and players[2].dir ~= 1 then --move right
-        players[2].nextdir = 3
+
+    local i = ARROWS_PLAYER 
+    if     key == 'up'    and P_T[i].dir ~= 4 then --move up
+        P_T[i].nextdir = 2
+    elseif key == 'left'  and P_T[i].dir ~= 3 then --move left
+        P_T[i].nextdir = 1
+    elseif key == 'down'  and P_T[i].dir ~= 2 then --move down
+        P_T[i].nextdir = 4
+    elseif key == 'right' and P_T[i].dir ~= 1 then --move right
+        P_T[i].nextdir = 3
     end
 
 end
@@ -143,13 +163,21 @@ end
 --STATE : PAUSE
 ---------------
 
+function pause:enter()
+
+    Draw.pause_setup()
+
+end
+
+function pause:leave()
+
+    Util.clearAllTables()
+    
+end
+
 function pause:draw()
     
-    Draw.map()
-
-    Draw.pause()
-
-    Draw.HUD()
+    Draw.pause_state()
 
 end
 
@@ -161,7 +189,7 @@ function pause:keypressed(key)
     elseif key == 'p' then
         Gamestate.switch(game)
     elseif key == 'b' then
-        if DEBUG then DEBUG = false else DEBUG = true end
+        Draw.toggleDebug()
     end
 
 end
@@ -170,13 +198,24 @@ end
 --STATE : GAMEOVER
 ------------------
 
+function gameover:enter()
+
+    Util.setupWinner()
+
+    Draw.gameover_setup()
+
+end
+
+function gameover:leave()
+
+    Util.clearAllTables()
+    
+end
+
 function gameover:draw()
     
-    Draw.map()
+    Draw.gameover_state()
 
-    Draw.gameover()
-
-    Draw.HUD()
 end
 
 function gameover:keypressed(key)
@@ -184,9 +223,15 @@ function gameover:keypressed(key)
     --CHANGE STATES
     if key == 'q' then
         love.event.quit()
-    elseif key == 'r' then
+    elseif key == 'return' then
         game_setup = false
-        Gamestate.switch(game)
+        if MATCH_BEGIN == false then
+            Gamestate.switch(setup)
+        else            
+            Gamestate.switch(game)
+        end
+    elseif key == 'b' then
+        Draw.toggleDebug()
     end
 
 end

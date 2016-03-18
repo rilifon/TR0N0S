@@ -3,6 +3,37 @@
 THE HISTORY OF TR0N0S
 =====================
 
+
+********************************************
+(18/03/2016) Ver 0.1.8 -  B3TA UP0N U$
+********************************************
+
+-BETA RELEASE OF TR0NOS!
+
+-Setup screen customizable players improved
+	~Change controls/cpu level for every player
+	~Players' button have their respective body color
+
+-Matches!
+	~For every match, you can define a "best of"
+	~Every player has their own score
+
+-CPU Level 2!
+
+-Improved code a lot!
+	~Functions have better names and in more suitable modules
+	-Refactored drawing so almost every graphic element is one of the main draw classes
+
+********************************************
+(16/03/2016) Ver 0.0.9 -  C0MPUT3RY GUY
+********************************************
+
+-Setup screen with customizable players (add and remove)
+
+-First simple AI: CPU Level 1
+
+-Different colors!
+
 ********************************************
 (11/03/2016) Ver 0.0.8 -  H3LL0 TR0N0S
 ********************************************

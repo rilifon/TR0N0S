@@ -1,32 +1,75 @@
---MODULE FOR BUTTONS--
+--MODULE FOR BUTTONS AND STUFF--
+
 
 local button = {}
 
 --Button object
 But = Class{
-	init = function(self, x, y, w, h, text, font, func)
+	init = function(self, x, y, w, h, text, font, b_color, t_color, func)
 		self.x     = x     --x position
 		self.y     = y     --y position
 		self.w     = w     --width
 		self.h     = h     --height
 		self.text  = text  --text on button
 	    self.font  = font  --size of text
+	    --Color of box
+        self.b_color = {}
+        self.b_color.r = b_color.r
+        self.b_color.g = b_color.g
+        self.b_color.b = b_color.b
+        if b_color.a then
+        	self.b_color.a = b_color.a
+        else
+        	self.b_color.a = 255
+        end
+        --Color of text
+        self.t_color = {}
+        self.t_color.r = t_color.r
+        self.t_color.g = t_color.g
+        self.t_color.b = t_color.b
+        if t_color.a then
+        	self.t_color.a = t_color.a
+        else
+        	self.t_color.a = 255
+        end
+
 		self.func  = func  --function to call when pressed
+
 	end
 }
 
-function button.setup()
-	--Button table
-	B_T = {}
-	max_player_up = But(80,40,160,60, "max player", font_but_m, function()
-																if MAX_PLAYERS < 4 then
-																	MAX_PLAYERS = MAX_PLAYERS + 1
-																end
-															end)
-	table.insert(B_T, max_player_up)
+
+--Check if a mouse click collides with any button
+function button.checkCollision(x,y)
+	--Iterate on default buttons table
+	for i,v in pairs(B_T) do
+		if 	v.x <= x
+			and
+			x <= v.x + v.w
+			and
+			v.y <= y
+			and
+			y <= v.y + v.h then
+
+			v.func()
+		end
+
+	end
+	--Iterate on players buttons table
+	for i,v in pairs(PB_T) do
+		if 	v.x <= x
+			and
+			x <= v.x + v.w
+			and
+			v.y <= y
+			and
+			y <= v.y + v.h then
+
+			v.func()
+		end
+
+	end
 end
-
-
 
 
 return button
