@@ -11,20 +11,40 @@ function util.configGame()
     --GLOBAL VARIABLES
 
     DEBUG = false      --DEBUG mode status
-    main_setup = false --Setup of whole game
-    game_setup = false --Inicial setup for each game
+    
+    --MATCH/GAME SETUP VARS
+    game_setup = false  --Inicial setup for each game
+    BESTOF = 1          --Best of X games that will be played in the match
+    MATCH_BEGIN = false --If is in a current match
     MAX_PLAYERS = 10    --Max number of players in a game
-    N_PLAYERS = 2      --Number of players playing
+    N_PLAYERS = 2       --Number of players playing
+    
+    --CONTROL VARS
     WASD_PLAYER = 1    --Player using wasd keys
     ARROWS_PLAYER = 2  --Player using arrow keys
+    
+    --TIME VARS
     MAX_COUNTDOWN = 3  --Countdown in the beggining of each game
     TIMESTEP = 0.05    --Time between each game step
     TILESIZE = 15      --Size of the game's tile
-    BORDER = TILESIZE  --Border of the game map
+
+    --MAP VARS
+    HUDSIZE = 100       --Size of window dedicated for HUD
+    BORDER = 4*TILESIZE  --Border of the game map
     MARGIN = 12        --Size of margin for players' inicial position
     map = {}           --Game map
     map_x = 50         --Map x size (in tiles)
     map_y = 50         --Map y size (in tiles)
+
+    --DRAWING TABLES
+    TB_T  = {}  --Default TextBox table
+    B_T   = {}  --Default Button table
+    TXT_T = {}  --Default Text table
+    F_T   = {}  --Filter table
+    PB_T  = {}  --Players Button table
+
+    --OTHER TABLES
+    P_T   = {}  --Players table
 
     --WINDOW CONFIG
     success = love.window.setMode(TILESIZE*map_x + 2*BORDER, TILESIZE*map_y + 2*BORDER, {borderless = not DEBUG})
@@ -34,15 +54,56 @@ function util.configGame()
     font_reg_m = love.graphics.newFont( "assets/FUTUVA.ttf", 30) --Font for regular text, medium size
     font_reg_s = love.graphics.newFont( "assets/FUTUVA.ttf", 16) --Font for regular text, small size
     love.graphics.setFont(font_reg_m)
+
+    --Creates first two players
+    local rgb_b, rgb_h  --Color for body and head
+
+    --Player 1
+    rgb_b = COLOR(233, 131,  0)
+    rgb_h = COLOR(255, 161, 30)
+    local P_1   = PLAYER(1, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "WASD")
+    table.insert(P_T, P_1)
+
+    --Player 2
+    rgb_b = COLOR(125, 0,  99)
+    rgb_h = COLOR(255, 30, 129)
+    local P_2   = PLAYER(2, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "ARROWS")
+    table.insert(P_T, P_2)
+
+
 end
 
 --Clears all elements in a table
 function util.clearTable(T)
-    --Clear PB_T table
+    
+    if not T then return end --If table is empty
+    --Clear T table
     for k in pairs (T) do
         T[k] = nil
     end
 
+end
+
+--Clear all buttons and textboxes tables
+function util.clearAllTables()
+    
+    util.clearTable(TB_T)
+
+    util.clearTable(B_T)
+
+    util.clearTable(TXT_T)
+
+    util.clearTable(F_T)
+
+    util.clearTable(PB_T)
+
+end
+
+--Setup a new match
+function util.setupMatch()
+    for i, p in ipairs(P_T) do
+        p.score = 0
+    end
 end
 
  --Setup a new game
@@ -81,7 +142,10 @@ function StartCountdown()
 
         --After countdown, start game and fixes players positions
         function()
-             game_begin = true
+
+            RemovePlayerIndicator()
+
+            game_begin = true
 
             --Players go at a random direction at the start if they dont chose any
             for i, p in ipairs(P_T) do
@@ -90,6 +154,22 @@ function StartCountdown()
                 if p.nextdir == nil then p.nextdir = rand end
             end
         end)
+end
+
+--Remove all player indicator text
+function RemovePlayerIndicator()
+
+    for i, p in ipairs(P_T) do
+        TXT_T["player"..p.number.."txt"] = nil
+        if  p.control == "WASD" then
+            TXT_T["WASD"] = nil
+        elseif p.control == "ARROWS" then
+            TXT_T["ARROWS"] = nil
+        else
+            TXT_T["CPU"..i] = nil
+        end
+    end
+
 end
 
 
@@ -257,10 +337,12 @@ function UpdateHuman()
 end
 
 --Update players buttons on setup
+--TODO: improve so it doesnt delete all buttons and creates new ones
 function util.updatePlayersB()
-    local font = font_but_m
-    local color_b = COLOR(133, 121, 0)
-    local color_t = COLOR(0, 0, 0)    
+    
+    local font = font_reg_m
+    local color_b
+    local color_t  
 
     util.clearTable(PB_T)
 
@@ -273,6 +355,17 @@ function util.updatePlayersB()
             cputext = "HUMAN"
             controltext = p.control
         end
+
+        --Counting the perceptive luminance - human eye favors green color... 
+        local pl = 1 - ( 0.299 * p.b_color.r + 0.587 * p.b_color.g + 0.114 * p.b_color.b)/255;
+
+        if pl < 0.5 then
+            color_t = COLOR(0, 0, 0)       --bright colors - using black font
+        else
+            color_t = COLOR(255, 255, 255) --dark colors - using white font
+        end
+
+        color_b = COLOR(p.b_color.r, p.b_color.g, p.b_color.b)
 
         local pb = But(40, 200 + 45*i, 500, 40,
                         "PLAYER " .. i .. " " .. cputext .. " (" .. controltext .. ")",
@@ -303,7 +396,7 @@ function util.updatePlayersB()
                             elseif p.cpu and p.level == 1 then
                                 p.level = 2
 
-                            --CPU Level2, on click, becomes WASD or ARROWS if possible
+                            --CPU Level2, on click, becomes WASD or ARROWS if possible. Else becomes CPU Level1
                             elseif p.cpu and p.level == 2 then
                                 if WASD_PLAYER == 0 then
                                     p.control = "WASD"
@@ -315,6 +408,8 @@ function util.updatePlayersB()
                                     ARROWS_PLAYER = p.number
                                     p.cpu = false
                                     p.level = nil
+                                else
+                                    p.level = 1
                                 end
                             end
 
@@ -352,7 +447,8 @@ end
 
 --Count how many players are alive and declare a winner
 function util.countPlayers()
-	cont = 0
+	
+    cont = 0
     winner = 0
     for i, p in ipairs(P_T) do
         if p.dead == false then
@@ -399,6 +495,7 @@ end
 
 --Reset map, puttting 0 in all positions
 function resetMap()
+    
     for i=1,map_x do
         map[i] = {}
         for j=1,map_y do
@@ -407,17 +504,20 @@ function resetMap()
     end
 end
 
---Creates a textbox for the winner, right next to the player
+--Handles winner of every game, and checks if match is over
 function util.setupWinner()
-    local font = font_reg_s
-    local b_color = COLOR(255, 255, 255)
-    local t_color = COLOR(0, 0, 0)
-    local p, tb
+    
     if winner ~= 0 then
         p = P_T[winner]
-        tb = TB((p.x-2)*TILESIZE, (p.y-1)*TILESIZE, 5*TILESIZE, TILESIZE, ">>WINNER<<",font, b_color, t_color)
+        --Increses player score
+        p.score = p.score + 1
+
+        if p.score >= BESTOF then
+            MATCH_BEGIN = false
+        end
+
     end
-    table.insert(DTB_T, tb)
+
 end
     
 
