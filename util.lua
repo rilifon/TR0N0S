@@ -14,7 +14,7 @@ function util.configGame()
     
     --MATCH/GAME SETUP VARS
     game_setup = false  --Inicial setup for each game
-    BESTOF = 1          --Best of X games that will be played in the match
+    BESTOF = 3          --Best of X games that will be played in the match
     MATCH_BEGIN = false --If is in a current match
     MAX_PLAYERS = 10    --Max number of players in a game
     N_PLAYERS = 2       --Number of players playing
@@ -55,18 +55,20 @@ function util.configGame()
     font_reg_s = love.graphics.newFont( "assets/FUTUVA.ttf", 16) --Font for regular text, small size
     love.graphics.setFont(font_reg_m)
 
-    --Creates first two players
-    local rgb_b, rgb_h  --Color for body and head
+    --Creates first two players with random colors
+    local r, g, b, rgb_b, rgb_h  --Color for body and head
 
     --Player 1
-    rgb_b = COLOR(233, 131,  0)
-    rgb_h = COLOR(255, 161, 30)
+    r, g, b = math.random(255), math.random(255), math.random(255)
+    rgb_b = COLOR(r, g, b)
+    rgb_h = COLOR((r+127)%255, (g+127)%255, (b+127)%255)
     local P_1   = PLAYER(1, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "WASD")
     table.insert(P_T, P_1)
 
     --Player 2
-    rgb_b = COLOR(125, 0,  99)
-    rgb_h = COLOR(255, 30, 129)
+    r, g, b = math.random(255), math.random(255), math.random(255)
+    rgb_b = COLOR(r, g, b)
+    rgb_h = COLOR((r+127)%255, (g+127)%255, (b+127)%255)
     local P_2   = PLAYER(2, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "ARROWS")
     table.insert(P_T, P_2)
 
@@ -208,6 +210,8 @@ function UpdateCPU()
 
                dir = CPU_Level1(p)
 
+
+            --CPU LEVEL 2
             elseif p.level == 2 then
 
                dir = CPU_Level2(p)
@@ -238,7 +242,7 @@ function UpdateCPU()
     end
 end
 
---CPU LEVEL 1
+--CPU LEVEL 1 - "L4-M0"
 --Has 80% of going the same direction, and 20% of "turning" left or right
 function CPU_Level1(p)
     local dir = p.dir
@@ -257,7 +261,7 @@ function CPU_Level1(p)
     return dir
 end
 
---CPU LEVEL 2
+--CPU LEVEL 2 - "R0UND-R0B1N"
 --If it would reach a wall, goes around
 function CPU_Level2(p)
     local dir = p.dir
@@ -367,6 +371,7 @@ function util.updatePlayersB()
 
         color_b = COLOR(p.b_color.r, p.b_color.g, p.b_color.b)
 
+        --Creates player button
         local pb = But(40, 200 + 45*i, 500, 40,
                         "PLAYER " .. i .. " " .. cputext .. " (" .. controltext .. ")",
                         font, color_b, color_t, 
@@ -416,6 +421,9 @@ function util.updatePlayersB()
                             util.updatePlayersB()
                         end)
         table.insert(PB_T, pb)
+        --Creates players head color box
+        local ptb = TB(540, 200 + 45*i, 40, 40, "", font, p.h_color, COLOR(0,0,0))
+        TB_T["P"..p.number.."tb"] = ptb
     end
 end
 

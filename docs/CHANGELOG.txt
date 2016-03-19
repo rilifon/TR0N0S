@@ -5,20 +5,32 @@ THE HISTORY OF TR0N0S
 
 
 ********************************************
+(19/03/2016) Ver 0.2.0 -  BYUT1FUL L1GHT$
+********************************************
+
+-Players head contrast with their body
+
+-Players head indicator
+	~On setup, draws player head representation next to button
+	
+-Inicial two players have random colors
+
+
+********************************************
 (18/03/2016) Ver 0.1.8 -  B3TA UP0N U$
 ********************************************
 
 -BETA RELEASE OF TR0NOS!
 
--Setup screen customizable players improved
-	~Change controls/cpu level for every player
-	~Players' button have their respective body color
-
 -Matches!
 	~For every match, you can define a "best of"
 	~Every player has their own score
 
--CPU Level 2!
+-CPU Level 2 - R0UND-R0B1N!
+
+-Setup screen customizable players improved
+	~Change controls/cpu level for every player
+	~Players' button have their respective body color
 
 -Improved code a lot!
 	~Functions have better names and in more suitable modules
@@ -30,7 +42,7 @@ THE HISTORY OF TR0N0S
 
 -Setup screen with customizable players (add and remove)
 
--First simple AI: CPU Level 1
+-First simple AI: CPU Level 1 - L4-M0
 
 -Different colors!
 

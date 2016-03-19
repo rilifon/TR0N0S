@@ -42,8 +42,9 @@ function draw.setup_setup()
             if N_PLAYERS < MAX_PLAYERS then
                 N_PLAYERS = N_PLAYERS + 1
                 --Insert new CPU player
-                local rgb_b = COLOR(math.random(255), math.random(255), math.random(255))
-                local rgb_h = COLOR(math.random(255), math.random(255), math.random(255))
+                local r, g, b = math.random(255), math.random(255), math.random(255)
+                local rgb_b = COLOR(r, g, b)
+                local rgb_h = COLOR((r+127)%255, (g+127)%255, (b+127)%255)
                 local P   = PLAYER(N_PLAYERS, false, nil, nil, nil, nil, rgb_b, rgb_h, true, 1, nil)
                 table.insert(P_T, P)
                 Util.updatePlayersB()
@@ -59,6 +60,10 @@ function draw.setup_setup()
                 if p.control == "WASD" then WASD_PLAYER = 0
                 elseif p.control == "ARROWS" then ARROWS_PLAYER = 0 end
                 table.remove(P_T, N_PLAYERS)
+
+                --Removes player "head box"
+                TB_T["P"..p.number.."tb"] = nil
+                
                 N_PLAYERS = N_PLAYERS - 1
                 Util.updatePlayersB()
             end

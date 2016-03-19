@@ -1,5 +1,5 @@
 
-﻿TR0N0S version 0.0.9 indev
+﻿TR0N0S version 0.2.0 indev
 =====================
 
 A GAME BY MARVELLOUS SOFT/USPGAMEDEV
@@ -55,8 +55,15 @@ Check the useful links on the bottom of this document
 -TEAM
 
 	Ricardo Lira
+
+-ADVISORS
+
+	Chief Advisor:
+		Fernando Omar Aluani
+	
 	Renato Lui Geh
 	Yan Couto
+
 
 -PLATAFORM
 
@@ -82,6 +89,7 @@ Check the useful links on the bottom of this document
 -SPECIAL THANKS
 
 -Fernando Omar Aluani-
+-Wilson Kazuo-
 
 for helping in the majority of the beta testing
 
