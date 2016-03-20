@@ -5,14 +5,15 @@ Class     = require "hump.class"
 
 
 --MY MODULES
-local Draw    = require "draw"
-local Util    = require "util"
-local Button  = require "button"
-local TextBox = require "textbox"
-local Text    = require "text"
-local Player  = require "player"
-local Rgb     = require "rgb"
-local Filter  = require "filter"
+local Draw     = require "draw"
+local Util     = require "util"
+local Button   = require "button"
+local TextBox  = require "textbox"
+local Text     = require "text"
+local Player   = require "player"
+local Rgb      = require "rgb"
+local Filter   = require "filter"
+local Particle = require "particle"
 
 
 --GAMESTATES
@@ -29,6 +30,7 @@ function love.load()
     Gamestate.registerEvents()
     Gamestate.switch(setup)
 end
+
 
 
 ---------------
@@ -88,14 +90,14 @@ end
 
 function game:leave()
 
-    Util.clearAllTables()
+    Util.clearAllTables("notPart")
 
 end
 
 function game:update(dt)
 
     --Handles timers
-    Inicial_Timer.update(dt)
+    Game_Timer.update(dt)
     
 
     if game_begin then
@@ -171,7 +173,7 @@ end
 
 function pause:leave()
 
-    Util.clearAllTables()
+    Util.clearAllTables("notPart")
     
 end
 
@@ -234,4 +236,14 @@ function gameover:keypressed(key)
         Draw.toggleDebug()
     end
 
+end
+
+--------------------
+--ZOEIRAZOEIRAZOEIRA
+--------------------
+
+function love.keypressed(key)
+    if key == "0" then
+        Util.mayts()
+    end
 end

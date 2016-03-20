@@ -11,7 +11,7 @@ COLOR = Class{
         if a then
         	self.a = a
         else
-        	a = 255
+        	self.a = 255
         end
         
     end

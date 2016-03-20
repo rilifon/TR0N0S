@@ -1,3 +1,5 @@
+local Particle = require "particle"
+
 --MODULE WITH USEFUL LOGICAL, MATHEMATICAL AND USEFUL STUFF--
 
 local util = {}
@@ -7,6 +9,7 @@ function util.configGame()
     
     --RANDOM SEED
     math.randomseed( os.time() )
+    math.random(); math.random(); --Improves random
 
     --GLOBAL VARIABLES
 
@@ -37,11 +40,12 @@ function util.configGame()
     map_y = 50         --Map y size (in tiles)
 
     --DRAWING TABLES
-    TB_T  = {}  --Default TextBox table
-    B_T   = {}  --Default Button table
-    TXT_T = {}  --Default Text table
-    F_T   = {}  --Filter table
-    PB_T  = {}  --Players Button table
+    TB_T   = {}  --Default TextBox table
+    B_T    = {}  --Default Button table
+    TXT_T  = {}  --Default Text table
+    F_T    = {}  --Filter table
+    PB_T   = {}  --Players Button table
+    PART_T = {}  --Particles table
 
     --OTHER TABLES
     P_T   = {}  --Players table
@@ -87,7 +91,7 @@ function util.clearTable(T)
 end
 
 --Clear all buttons and textboxes tables
-function util.clearAllTables()
+function util.clearAllTables(mode)
     
     util.clearTable(TB_T)
 
@@ -98,6 +102,10 @@ function util.clearAllTables()
     util.clearTable(F_T)
 
     util.clearTable(PB_T)
+
+    if mode ~= "notPart" then
+        util.clearTable(PART_T)
+    end
 
 end
 
@@ -113,7 +121,7 @@ function util.setupGame()
     
     if not game_setup then
         countdown = MAX_COUNTDOWN
-        Inicial_Timer = Timer.new()
+        Game_Timer = Timer.new()
         game_begin = false
         step = 0
         winner = 0
@@ -133,7 +141,7 @@ function StartCountdown()
     
     time = 0
     local cd = countdown
-    Inicial_Timer.during(MAX_COUNTDOWN, 
+    Game_Timer.during(MAX_COUNTDOWN, 
         
         --Decreases countdown
         function(dt)
@@ -186,6 +194,8 @@ function util.tick(dt)
         UpdateHuman()
 
         CheckCollision()
+
+        Particle.update(dt)
 
         --Reset step counter
         step = 0
@@ -431,6 +441,8 @@ end
 --Checks collision between players and walls/another player
 function CheckCollision()
 	
+    local color = COLOR(255,0,0)
+
 	for i, p1 in ipairs(P_T) do
 		
 		if not p1.dead then
@@ -438,13 +450,17 @@ function CheckCollision()
 			--Check collision with wall
 			if map[p1.x][p1.y] ~= 0 then
 				p1.dead = true
+                Particle.explosion(p1.x, p1.y, color)
 			end
 
 			--Check collision with other players
 			for j=i+1, #P_T do
 				if p1.x == P_T[j].x and p1.y == P_T[j].y then
 					p1.dead = true
+
 					P_T[j].dead = true
+
+                    Particle.explosion(p1.x, p1.y, color)
 				end
 			end
 
@@ -527,7 +543,26 @@ function util.setupWinner()
     end
 
 end
-    
+
+function util.mayts()
+    for i, v in pairs(TXT_T) do
+        v.text = "mayts"
+    end
+
+    for i, v in pairs(TB_T) do
+        v.text = "mayts"
+    end
+
+    for i, v in pairs(B_T) do
+        v.text = "mayts"
+    end
+
+
+    for i, v in pairs(PB_T) do
+        v.text = "mayts"
+    end
+
+end
 
 
 --Return functions

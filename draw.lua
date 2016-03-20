@@ -287,7 +287,7 @@ end
 --BASIC DRAW FUNCTIONS
 ----------------------
 
---Draws every button and textbox from tables
+--Draws every drawable from tables
 function DrawAll()
     
     DrawTB()
@@ -297,6 +297,8 @@ function DrawAll()
     DrawTXT()
 
     DrawPB()
+
+    DrawPART()
 
     DrawF()
 
@@ -344,6 +346,14 @@ function DrawPB()
    
     for i, v in pairs(PB_T) do
         drawButton(v)
+    end
+end
+
+--Draw all particles
+function DrawPART()
+   
+    for i, v in pairs(PART_T) do
+        drawParticle(v)
     end
 end
 
@@ -402,6 +412,13 @@ function drawFilter(filter)
 
     love.graphics.setColor(filter.color.r, filter.color.g, filter.color.b, filter.color.a)
     love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+
+end
+
+function drawParticle(particle)
+    local r = 3
+    love.graphics.setColor(particle.color.r, particle.color.g, particle.color.b, particle.color.a)
+    love.graphics.circle("fill", particle.x*TILESIZE + BORDER, particle.y * TILESIZE + BORDER, r)
 
 end
 
