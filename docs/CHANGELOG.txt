@@ -10,6 +10,9 @@ THE HISTORY OF TR0N0S
 -EXPLOSIONS!!
 	~particles explosions when players collide
 
+-New CPU!
+	CPU Level 3 - R0B1N, goes around everything
+
 ********************************************
 (19/03/2016) Ver 0.2.0 -  BYUT1FUL L1GHT$
 ********************************************
@@ -32,7 +35,7 @@ THE HISTORY OF TR0N0S
 	~For every match, you can define a "best of"
 	~Every player has their own score
 
--CPU Level 2 - R0UND-R0B1N!
+-CPU Level 2 - TIMMY-2000!
 
 -Setup screen customizable players improved
 	~Change controls/cpu level for every player

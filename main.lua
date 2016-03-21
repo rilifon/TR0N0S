@@ -239,6 +239,10 @@ function gameover:keypressed(key)
 end
 
 --------------------
+--DEBUG
+--------------------
+
+--------------------
 --ZOEIRAZOEIRAZOEIRA
 --------------------
 

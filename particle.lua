@@ -23,7 +23,7 @@ PARTICLE = Class{
     end
 }
 
---Creates a p colored article explosion starting position (x,y)
+--Creates a colored article explosion starting position (x,y)
 function particle.explosion(x, y, color)
     local duration = 1    --Duration particles will stay on screen
     local max_part = 30   --Number of particles created in a explosion

@@ -226,6 +226,11 @@ function UpdateCPU()
 
                dir = CPU_Level2(p)
 
+            --CPU LEVEL 3
+            elseif p.level == 3 then
+
+               dir = CPU_Level3(p)
+
             end
 
 
@@ -271,29 +276,17 @@ function CPU_Level1(p)
     return dir
 end
 
---CPU LEVEL 2 - "R0UND-R0B1N"
---If it would reach a wall, goes around
+--CPU LEVEL 2 - "TIMMY-2000"
+--If it would reach an obstacle, turns direction
 function CPU_Level2(p)
+    
+
     local dir = p.dir
-    local next_x = p.x
-    local next_y = p.y --Position that the CPU will go if move forward
-    local left_x = p.x
-    local left_y = p.y --Position that the CPU will go if turn left
+    local next_x, next_y --Position that the CPU will go if move forward
+    local left_x, left_y --Position that the CPU will go if turn left
             
-    --Get positions
-    if dir == 1 then         --Left
-        next_x = next_x - 1
-        left_y = left_y + 1
-    elseif dir == 2 then     --Up
-        next_y = next_y - 1
-        left_x = left_x - 1 
-    elseif dir == 3 then     --Right
-        next_x = next_x + 1
-        left_y = left_y - 1
-    elseif dir == 4 then     --Down
-        next_y = next_y + 1
-        left_x = left_x + 1       
-    end
+    next_x, next_y = nextPosition(p.x, p.y, dir)
+    left_x, left_y = nextPosition(p.x, p.y, (dir + 2)%4 + 1)
 
     --Found obstacle
     if  not validPosition(next_x, next_y) or map[next_x][next_y] ~= 0 then
@@ -307,12 +300,82 @@ function CPU_Level2(p)
     return dir
 end
 
+--CPU LEVEL 3 - "R0B1N"
+--Goes around everything
+function CPU_Level3(p)
+
+    local dir = p.dir
+    local next_x, next_y   --Position that the CPU will go if move forward
+    local left_x, left_y   --Position that the CPU will go if turn left
+    local right_x, right_y --Position that the CPU will go if turn left
+    local side = p.side    --Side CPU is going around
+
+    next_x, next_y   = nextPosition(p.x, p.y, dir)
+    left_x, left_y   = nextPosition(p.x, p.y, (dir + 2)%4 + 1)
+    right_x, right_y = nextPosition(p.x, p.y, dir%4 + 1)
+
+    if side == "left" then
+
+        --Can go left?
+        if validPosition(left_x, left_y) and map[left_x][left_y] == 0 then
+            dir = (dir + 2)%4 + 1 --turn left
+        --Can't go forward?
+        elseif not validPosition(next_x, next_y) or map[next_x][next_y] ~= 0 then
+            dir = dir%4 + 1       --turn right
+        end
+
+    elseif side == "right" then
+
+        --Can go right?
+        if validPosition(right_x, right_y) and map[right_x][right_y] == 0 then
+            dir = dir%4 + 1       --turn right
+        --Can't go forward?
+        elseif not validPosition(next_x, next_y) or map[next_x][next_y] ~= 0 then
+            dir = (dir + 2)%4 + 1 --turn left
+        end
+
+    elseif side == nil then
+
+        --Found obstacle
+        if  not validPosition(next_x, next_y) or map[next_x][next_y] ~= 0 then
+            if  validPosition(left_x, left_y) and map[left_x][left_y] == 0 then
+                dir = (dir + 2)%4 + 1 --turn left
+                p.side = "right"
+            else
+                dir = dir%4 + 1       --turn right
+                p.side = "left"
+            end
+       
+        end
+    end
+
+    return dir
+
+end
+
 --Checks if position (x,y) is inside map
 function validPosition(x, y)
     if x < 1 or x > map_x or y < 1 or y > map_y then
         return false
     end
     return true 
+
+end
+
+--Returns next position starting in (x,y) and going direction dir
+function nextPosition(x, y, dir)
+
+    if dir == 1 then     --Left
+        x = x - 1
+    elseif dir == 2 then --Up
+        y = y - 1      
+    elseif dir == 3 then --Right
+        x = x + 1
+    elseif dir == 4 then --Down
+        y = y + 1
+    end
+
+    return x, y
 
 end
 
@@ -407,12 +470,12 @@ function util.updatePlayersB()
                                 p.control = nil
                                 ARROWS_PLAYER = 0
 
-                            --CPU Level1, on click, becomes CPU Level2
-                            elseif p.cpu and p.level == 1 then
-                                p.level = 2
+                            --CPU Level different from 3, on click, becomes next level CPU
+                            elseif p.cpu and p.level ~= 3 then
+                                p.level = p.level + 1
 
-                            --CPU Level2, on click, becomes WASD or ARROWS if possible. Else becomes CPU Level1
-                            elseif p.cpu and p.level == 2 then
+                            --CPU Level3, on click, becomes WASD or ARROWS if possible. Else becomes CPU Level1
+                            elseif p.cpu and p.level == 3 then
                                 if WASD_PLAYER == 0 then
                                     p.control = "WASD"
                                     WASD_PLAYER = p.number
@@ -513,6 +576,8 @@ function setupPlayers()
         p.nextdir = nil --Player next direction
 
         p.dead = false
+
+        p.side = nil
 
     end
 end
