@@ -4,6 +4,10 @@ local Particle = require "particle"
 
 local util = {}
 
+--------------------
+--SETUP FUNCTIONS
+--------------------
+
 --Set game's global variables, random seed and window configuration
 function util.configGame()
     
@@ -28,7 +32,7 @@ function util.configGame()
     
     --TIME VARS
     MAX_COUNTDOWN = 3  --Countdown in the beggining of each game
-    TIMESTEP = 0.05    --Time between each game step
+    TIMESTEP = 0.04    --Time between each game step
     TILESIZE = 15      --Size of the game's tile
 
     --MAP VARS
@@ -76,52 +80,27 @@ function util.configGame()
     local P_2   = PLAYER(2, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "ARROWS")
     table.insert(P_T, P_2)
 
-
 end
 
---Clears all elements in a table
-function util.clearTable(T)
-    
-    if not T then return end --If table is empty
-    --Clear T table
-    for k in pairs (T) do
-        T[k] = nil
-    end
-
-end
-
---Clear all buttons and textboxes tables
-function util.clearAllTables(mode)
-    
-    util.clearTable(TB_T)
-
-    util.clearTable(B_T)
-
-    util.clearTable(TXT_T)
-
-    util.clearTable(F_T)
-
-    util.clearTable(PB_T)
-
-    if mode ~= "notPart" then
-        util.clearTable(PART_T)
-    end
-
-end
-
---Setup a new match
+--Setup a new match, setting all scores to zero
 function util.setupMatch()
+   
     for i, p in ipairs(P_T) do
         p.score = 0
     end
+
 end
 
  --Setup a new game
 function util.setupGame()
     
     if not game_setup then
-        countdown = MAX_COUNTDOWN
-        Game_Timer = Timer.new()
+        countdown = MAX_COUNTDOWN --Setup countdown
+        
+        if not Game_Timer then
+            Game_Timer = Timer.new()  --Timer for all game-related timing stuff
+        end
+
         game_begin = false
         step = 0
         winner = 0
@@ -136,56 +115,56 @@ function util.setupGame()
     end
 end
 
---Start the countdown to start a game
-function StartCountdown()
+
+--Setup all players
+function setupPlayers()
     
-    time = 0
-    local cd = countdown
-    Game_Timer.during(MAX_COUNTDOWN, 
-        
-        --Decreases countdown
-        function(dt)
-            local t = time+dt
-            cd = cd - t
-            countdown = math.floor(cd)+1
-        end,
-
-        --After countdown, start game and fixes players positions
-        function()
-
-            RemovePlayerIndicator()
-
-            game_begin = true
-
-            --Players go at a random direction at the start if they dont chose any
-            for i, p in ipairs(P_T) do
-                local rand = math.random(4)
-                if p.dir     == nil then p.dir     = rand end
-                if p.nextdir == nil then p.nextdir = rand end
-            end
-        end)
-end
-
---Remove all player indicator text
-function RemovePlayerIndicator()
-
+    local p_x
+    local p_y
+    players = {}
+    
     for i, p in ipairs(P_T) do
-        TXT_T["player"..p.number.."txt"] = nil
-        if  p.control == "WASD" then
-            TXT_T["WASD"] = nil
-        elseif p.control == "ARROWS" then
-            TXT_T["ARROWS"] = nil
-        else
-            TXT_T["CPU"..i] = nil
-        end
-    end
 
+        --Get random positions for all players
+        local is_rand = false
+        while is_rand == false do
+            p_x = math.random(map_x-2*MARGIN)+MARGIN
+            p_y = math.random(map_y-2*MARGIN)+MARGIN
+            is_rand = true
+            --Iterate in all other players and checks for a valid position
+            for j=1,i-1 do
+                if(p_x == P_T[j].x and p_y == P_T[j].y) then
+                    is_rand = false
+                end
+            end
+        end
+
+        p.x = p_x  --Player x position
+        p.y = p_y  --Player y position
+
+        p.dir     = nil --Player current direction
+        p.nextdir = nil --Player next direction
+
+        p.dead = false
+
+        p.side = nil
+
+    end
 end
+
+
+------------------
+--UPDATE FUNCTIONS
+------------------
 
 
 --Update step and all players position
 function util.tick(dt)
     
+    --Update "real-time" stuff
+    Particle.update(dt)
+    
+    --Update "timestep" stuff
     step = math.min(TIMESTEP, step + dt)
     if step >= TIMESTEP then    
         
@@ -194,8 +173,6 @@ function util.tick(dt)
         UpdateHuman()
 
         CheckCollision()
-
-        Particle.update(dt)
 
         --Reset step counter
         step = 0
@@ -257,127 +234,7 @@ function UpdateCPU()
     end
 end
 
---CPU LEVEL 1 - "L4-M0"
---Has 80% of going the same direction, and 20% of "turning" left or right
-function CPU_Level1(p)
-    local dir = p.dir
-    
-    --Chooses a random different valid (not reverse) direction
-    if math.random() <= .2 then
-        --"Turn right"    
-        if math.random() <= .5 then
-            dir = dir%4 + 1
-        --"Turn left"
-        else
-            dir = (dir+2)%4 + 1
-        end
-    end
 
-    return dir
-end
-
---CPU LEVEL 2 - "TIMMY-2000"
---If it would reach an obstacle, turns direction
-function CPU_Level2(p)
-    
-
-    local dir = p.dir
-    local next_x, next_y --Position that the CPU will go if move forward
-    local left_x, left_y --Position that the CPU will go if turn left
-            
-    next_x, next_y = nextPosition(p.x, p.y, dir)
-    left_x, left_y = nextPosition(p.x, p.y, (dir + 2)%4 + 1)
-
-    --Found obstacle
-    if  not validPosition(next_x, next_y) or map[next_x][next_y] ~= 0 then
-        if  validPosition(left_x, left_y) and map[left_x][left_y] == 0 then
-            dir = (dir + 2)%4 + 1 --turn left
-        else
-            dir = dir%4 + 1       --turn right
-        end
-    end
-
-    return dir
-end
-
---CPU LEVEL 3 - "R0B1N"
---Goes around everything
-function CPU_Level3(p)
-
-    local dir = p.dir
-    local next_x, next_y   --Position that the CPU will go if move forward
-    local left_x, left_y   --Position that the CPU will go if turn left
-    local right_x, right_y --Position that the CPU will go if turn left
-    local side = p.side    --Side CPU is going around
-
-    next_x, next_y   = nextPosition(p.x, p.y, dir)
-    left_x, left_y   = nextPosition(p.x, p.y, (dir + 2)%4 + 1)
-    right_x, right_y = nextPosition(p.x, p.y, dir%4 + 1)
-
-    if side == "left" then
-
-        --Can go left?
-        if validPosition(left_x, left_y) and map[left_x][left_y] == 0 then
-            dir = (dir + 2)%4 + 1 --turn left
-        --Can't go forward?
-        elseif not validPosition(next_x, next_y) or map[next_x][next_y] ~= 0 then
-            dir = dir%4 + 1       --turn right
-        end
-
-    elseif side == "right" then
-
-        --Can go right?
-        if validPosition(right_x, right_y) and map[right_x][right_y] == 0 then
-            dir = dir%4 + 1       --turn right
-        --Can't go forward?
-        elseif not validPosition(next_x, next_y) or map[next_x][next_y] ~= 0 then
-            dir = (dir + 2)%4 + 1 --turn left
-        end
-
-    elseif side == nil then
-
-        --Found obstacle
-        if  not validPosition(next_x, next_y) or map[next_x][next_y] ~= 0 then
-            if  validPosition(left_x, left_y) and map[left_x][left_y] == 0 then
-                dir = (dir + 2)%4 + 1 --turn left
-                p.side = "right"
-            else
-                dir = dir%4 + 1       --turn right
-                p.side = "left"
-            end
-       
-        end
-    end
-
-    return dir
-
-end
-
---Checks if position (x,y) is inside map
-function validPosition(x, y)
-    if x < 1 or x > map_x or y < 1 or y > map_y then
-        return false
-    end
-    return true 
-
-end
-
---Returns next position starting in (x,y) and going direction dir
-function nextPosition(x, y, dir)
-
-    if dir == 1 then     --Left
-        x = x - 1
-    elseif dir == 2 then --Up
-        y = y - 1      
-    elseif dir == 3 then --Right
-        x = x + 1
-    elseif dir == 4 then --Down
-        y = y + 1
-    end
-
-    return x, y
-
-end
 
 --Updates non-cpu players positions
 function UpdateHuman()
@@ -412,6 +269,230 @@ function UpdateHuman()
         end
     end
 end
+
+-----------------------
+--USEFUL GAME FUNCTIONS
+-----------------------
+
+--Checks collision between players and walls/another player
+function CheckCollision()
+    
+    local color = COLOR(255,0,0)
+
+    for i, p1 in ipairs(P_T) do
+        
+        if not p1.dead then
+            
+            --Check collision with wall
+            if map[p1.x][p1.y] ~= 0 then
+                p1.dead = true
+                Particle.explosion(p1.x, p1.y, color)
+            end
+
+            --Check collision with other players
+            for j=i+1, #P_T do
+                if p1.x == P_T[j].x and p1.y == P_T[j].y then
+                    p1.dead = true
+
+                    P_T[j].dead = true
+
+                    Particle.explosion(p1.x, p1.y, color)
+                end
+            end
+
+        end
+
+    end
+end
+
+--Count how many players are alive and declare a winner
+function util.countPlayers()
+    
+    cont = 0
+    winner = 0
+    for i, p in ipairs(P_T) do
+        if p.dead == false then
+            cont = cont+1
+            winner = p.number
+        end
+    end
+    return cont 
+end
+
+
+--Handles winner of every game, and checks if match is over
+function util.checkWinner()
+    
+    if winner ~= 0 then
+        p = P_T[winner]
+        --Increses player score
+        p.score = p.score + 1
+
+        if p.score >= BESTOF then
+            MATCH_BEGIN = false    --End of match, a player has reached target score
+        end
+
+    end
+
+end
+
+--------------------
+--CPU'S AI FUNCTIONS
+--------------------
+
+--CPU LEVEL 1 - "L4-M0"
+--Has 80% of going the same direction, and 20% of "turning" left or right
+function CPU_Level1(p)
+    local dir = p.dir
+
+    --Chooses a random different valid (not reverse) direction
+    if math.random() <= .2 then
+        --"Turn right"    
+        if math.random() <= .5 then
+            dir = dir%4 + 1
+        --"Turn left"
+        else
+            dir = (dir+2)%4 + 1
+        end
+    end
+
+    return dir
+end
+
+--CPU LEVEL 2 - "TIMMY-2000"
+--If it would reach an obstacle, turns direction
+function CPU_Level2(p)
+    
+
+    local dir = p.dir
+    local next_x, next_y --Position that the CPU will go if move forward
+    local left_x, left_y --Position that the CPU will go if turn left
+    local right_x, right_y --Position that the CPU will go if turn right
+
+            
+    next_x, next_y = nextPosition(p.x, p.y, dir)
+    left_x, left_y = nextPosition(p.x, p.y, (dir + 2)%4 + 1)
+    right_x, right_y = nextPosition(p.x, p.y, dir%4 + 1)
+
+    --Found obstacle
+    if  not validPosition(next_x, next_y) or map[next_x][next_y] ~= 0 then
+        --Randomly tries to go right or left when reaching
+        if math.random() < 0.5 then
+            if  validPosition(left_x, left_y) and map[left_x][left_y] == 0 then
+                dir = (dir + 2)%4 + 1 --turn left
+            else
+                dir = dir%4 + 1       --turn right
+            end
+        else
+            if  validPosition(right_x, right_y) and map[right_x][right_y] == 0 then
+                dir = dir%4 + 1       --turn right
+            else
+                dir = (dir + 2)%4 + 1 --turn left
+            end
+        end
+    end
+
+    return dir
+
+end
+
+--CPU LEVEL 3 - "R0B1N"
+--Goes around everything
+function CPU_Level3(p)
+
+    local dir = p.dir
+    local next_x, next_y   --Position that the CPU will go if move forward
+    local left_x, left_y   --Position that the CPU will go if turn left
+    local right_x, right_y --Position that the CPU will go if turn right
+    local side = p.side    --Side CPU is going around
+
+    next_x, next_y   = nextPosition(p.x, p.y, dir)
+    left_x, left_y   = nextPosition(p.x, p.y, (dir + 2)%4 + 1)
+    right_x, right_y = nextPosition(p.x, p.y, dir%4 + 1)
+
+    if side == "left" then
+
+        --Can go left?
+        if validPosition(left_x, left_y) and map[left_x][left_y] == 0 then
+            dir = (dir + 2)%4 + 1 --turn left
+        --Can't go forward?
+        elseif not validPosition(next_x, next_y) or map[next_x][next_y] ~= 0 then
+            dir = dir%4 + 1       --turn right
+        end
+
+    elseif side == "right" then
+
+        --Can go right?
+        if validPosition(right_x, right_y) and map[right_x][right_y] == 0 then
+            dir = dir%4 + 1       --turn right
+        --Can't go forward?
+        elseif not validPosition(next_x, next_y) or map[next_x][next_y] ~= 0 then
+            dir = (dir + 2)%4 + 1 --turn left
+        end
+
+    elseif side == nil then
+
+        --Found obstacle
+        if  not validPosition(next_x, next_y) or map[next_x][next_y] ~= 0 then
+            if math.random() < 0.5 then
+                if  validPosition(left_x, left_y) and map[left_x][left_y] == 0 then
+                    dir = (dir + 2)%4 + 1 --turn left
+                else
+                    dir = dir%4 + 1       --turn right
+                end
+            else
+                if  validPosition(right_x, right_y) and map[right_x][right_y] == 0 then
+                    dir = dir%4 + 1       --turn right
+                else
+                    dir = (dir + 2)%4 + 1 --turn left
+                end
+            end
+       
+        end
+    end
+
+    return dir
+
+end
+
+---------------------
+--COUNTDOWN FUNCTIONS
+---------------------
+
+--Start the countdown to start a game
+function StartCountdown()
+    
+    time = 0
+    local cd = countdown
+    Game_Timer.during(MAX_COUNTDOWN, 
+        
+        --Decreases countdown
+        function(dt)
+            local t = time+dt
+            cd = cd - t
+            countdown = math.floor(cd)+1
+        end,
+
+        --After countdown, start game and fixes players positions
+        function()
+
+            RemovePlayerIndicator()
+
+            game_begin = true
+
+            --Players go at a random direction at the start if they dont chose any
+            for i, p in ipairs(P_T) do
+                local rand = math.random(4)
+                if p.dir     == nil then p.dir     = rand end
+                if p.nextdir == nil then p.nextdir = rand end
+            end
+        end)
+end
+
+
+-------------------------
+--PLAYER BUTTON FUNCTIONS
+-------------------------
 
 --Update players buttons on setup
 --TODO: improve so it doesnt delete all buttons and creates new ones
@@ -500,86 +581,80 @@ function util.updatePlayersB()
     end
 end
 
+--Remove all player indicator text
+function RemovePlayerIndicator()
 
---Checks collision between players and walls/another player
-function CheckCollision()
-	
-    local color = COLOR(255,0,0)
-
-	for i, p1 in ipairs(P_T) do
-		
-		if not p1.dead then
-			
-			--Check collision with wall
-			if map[p1.x][p1.y] ~= 0 then
-				p1.dead = true
-                Particle.explosion(p1.x, p1.y, color)
-			end
-
-			--Check collision with other players
-			for j=i+1, #P_T do
-				if p1.x == P_T[j].x and p1.y == P_T[j].y then
-					p1.dead = true
-
-					P_T[j].dead = true
-
-                    Particle.explosion(p1.x, p1.y, color)
-				end
-			end
-
-		end
-
-	end
-end
-
---Count how many players are alive and declare a winner
-function util.countPlayers()
-	
-    cont = 0
-    winner = 0
     for i, p in ipairs(P_T) do
-        if p.dead == false then
-            cont = cont+1
-            winner = p.number
+        TXT_T["player"..p.number.."txt"] = nil
+        if  p.control == "WASD" then
+            TXT_T["WASD"] = nil
+        elseif p.control == "ARROWS" then
+            TXT_T["ARROWS"] = nil
+        else
+            TXT_T["CPU"..i] = nil
         end
     end
-    return cont 
+
 end
 
---Setup all players
-function setupPlayers()
+---------------------
+--UTILITIES FUNCTIONS
+---------------------
+
+--Clears all elements in a table
+function util.clearTable(T)
     
-    local p_x
-    local p_y
-    players = {}
-    
-    for i, p in ipairs(P_T) do
-
-        --Get random positions for all players
-        local is_rand = false
-        while is_rand == false do
-            p_x = math.random(map_x-2*MARGIN)+MARGIN
-            p_y = math.random(map_y-2*MARGIN)+MARGIN
-            is_rand = true
-            --Iterate in all other players and checks for a valid position
-            for j=1,i-1 do
-                if(p_x == P_T[j].x and p_y == P_T[j].y) then
-                    is_rand = false
-                end
-            end
-        end
-
-        p.x = p_x  --Player x position
-        p.y = p_y  --Player y position
-
-        p.dir     = nil --Player current direction
-        p.nextdir = nil --Player next direction
-
-        p.dead = false
-
-        p.side = nil
-
+    if not T then return end --If table is empty
+    --Clear T table
+    for k in pairs (T) do
+        T[k] = nil
     end
+
+end
+
+--Clear all buttons and textboxes tables
+function util.clearAllTables(mode)
+    
+    util.clearTable(TB_T)
+
+    util.clearTable(B_T)
+
+    util.clearTable(TXT_T)
+
+    util.clearTable(F_T)
+
+    util.clearTable(PB_T)
+
+    if mode ~= "notPart" then
+        util.clearTable(PART_T)
+    end
+
+end
+
+--Checks if position (x,y) is inside map
+function validPosition(x, y)
+    if x < 1 or x > map_x or y < 1 or y > map_y then
+        return false
+    end
+    return true 
+
+end
+
+--Returns next position starting in (x,y) and going direction dir
+function nextPosition(x, y, dir)
+
+    if dir == 1 then     --Left
+        x = x - 1
+    elseif dir == 2 then --Up
+        y = y - 1      
+    elseif dir == 3 then --Right
+        x = x + 1
+    elseif dir == 4 then --Down
+        y = y + 1
+    end
+
+    return x, y
+
 end
 
 --Reset map, puttting 0 in all positions
@@ -593,21 +668,9 @@ function resetMap()
     end
 end
 
---Handles winner of every game, and checks if match is over
-function util.setupWinner()
-    
-    if winner ~= 0 then
-        p = P_T[winner]
-        --Increses player score
-        p.score = p.score + 1
-
-        if p.score >= BESTOF then
-            MATCH_BEGIN = false
-        end
-
-    end
-
-end
+--------------------
+--ZOEIRAZOEIRAZOEIRA 
+--------------------
 
 function util.mayts()
     for i, v in pairs(TXT_T) do
@@ -628,7 +691,6 @@ function util.mayts()
     end
 
 end
-
 
 --Return functions
 return util

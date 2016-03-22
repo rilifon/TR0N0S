@@ -137,26 +137,36 @@ function game:keypressed(key)
     
     --MOVEMENT (doesn't allow the player to move backwards)
     
-    local i = WASD_PLAYER   
-    if     key == 'w' and P_T[i].dir ~= 4 then --move up
-        P_T[i].nextdir = 2
-    elseif key == 'a' and P_T[i].dir ~= 3 then --move left
-        P_T[i].nextdir = 1
-    elseif key == 's' and P_T[i].dir ~= 2 then --move down
-        P_T[i].nextdir = 4
-    elseif key == 'd' and P_T[i].dir ~= 1 then --move right
-        P_T[i].nextdir = 3
+    local i = WASD_PLAYER
+    
+    if i ~= 0 then  
+
+        if     key == 'w' and P_T[i].dir ~= 4 then --move up
+            P_T[i].nextdir = 2
+        elseif key == 'a' and P_T[i].dir ~= 3 then --move left
+            P_T[i].nextdir = 1
+        elseif key == 's' and P_T[i].dir ~= 2 then --move down
+            P_T[i].nextdir = 4
+        elseif key == 'd' and P_T[i].dir ~= 1 then --move right
+            P_T[i].nextdir = 3
+        end
+
     end
 
     local i = ARROWS_PLAYER 
-    if     key == 'up'    and P_T[i].dir ~= 4 then --move up
-        P_T[i].nextdir = 2
-    elseif key == 'left'  and P_T[i].dir ~= 3 then --move left
-        P_T[i].nextdir = 1
-    elseif key == 'down'  and P_T[i].dir ~= 2 then --move down
-        P_T[i].nextdir = 4
-    elseif key == 'right' and P_T[i].dir ~= 1 then --move right
-        P_T[i].nextdir = 3
+
+    if i ~= 0 then
+
+        if     key == 'up'    and P_T[i].dir ~= 4 then --move up
+            P_T[i].nextdir = 2
+        elseif key == 'left'  and P_T[i].dir ~= 3 then --move left
+            P_T[i].nextdir = 1
+        elseif key == 'down'  and P_T[i].dir ~= 2 then --move down
+            P_T[i].nextdir = 4
+        elseif key == 'right' and P_T[i].dir ~= 1 then --move right
+            P_T[i].nextdir = 3
+        end
+
     end
 
 end
@@ -202,7 +212,7 @@ end
 
 function gameover:enter()
 
-    Util.setupWinner()
+    Util.checkWinner()
 
     Draw.gameover_setup()
 

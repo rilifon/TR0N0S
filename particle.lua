@@ -25,17 +25,18 @@ PARTICLE = Class{
 
 --Creates a colored article explosion starting position (x,y)
 function particle.explosion(x, y, color)
-    local duration = 1    --Duration particles will stay on screen
+    local duration = 2    --Duration particles will stay on screen
     local max_part = 30   --Number of particles created in a explosion
-    local speed    = 50   --Particles speed
+    local speed    = 15   --Particles speed
     local part
     local signal_x, signal_y --signal (positive or negative) for dir_x and dir_y
+    
     --Creates all particles of explosion
     for i=1, max_part do
         if math.random() < 0.5 then signal_x = 1 else signal_x = -1 end
         if math.random() < 0.5 then signal_y = 1 else signal_y = -1 end
         --Creates a random particle
-        part = PARTICLE(x + math.random(), y + math.random(), math.random()*signal_x, math.random()*signal_y, speed, color)
+        part = PARTICLE(x, y, math.random()*signal_x, math.random()*signal_y, speed, color)
 
         PART_T["px"..x.."y"..y.."i"..i] = part
     end
@@ -54,8 +55,11 @@ end
 function particle.update(dt)
     
     for i, p in pairs(PART_T) do
+        --Moves particles
         p.x = p.x + p.dir_x * p.speed * dt
         p.y = p.y + p.dir_y * p.speed * dt
+        --Fade-out effect
+        p.color.a = p.color.a * 0.99
     end
 
 end
