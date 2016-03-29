@@ -76,13 +76,13 @@ function util.configGame()
 
     --Player 1
     rgb_b = RGB.randomColor()
-    rgb_h = COLOR((rgb_b.r+127)%255, (rgb_b.g+127)%255, (rgb_b.b+127)%255)
+    rgb_h = RGB.randomComplementaryColor(rgb_b)
     local P_1   = PLAYER(1, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "WASD")
     table.insert(P_T, P_1)
 
     --Player 2
     rgb_b = RGB.randomColor()
-    rgb_h = COLOR((rgb_b.r+127)%255, (rgb_b.g+127)%255, (rgb_b.b+127)%255)
+    rgb_h = RGB.randomComplementaryColor(rgb_b)
     local P_2   = PLAYER(2, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "ARROWS")
     table.insert(P_T, P_2)
 

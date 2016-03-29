@@ -45,7 +45,7 @@ function draw.setup_setup()
                 N_PLAYERS = N_PLAYERS + 1
                 --Insert new CPU player
                 local rgb_b = RGB.randomColor()
-                local rgb_h = COLOR((rgb_b.r+127)%255, (rgb_b.g+127)%255, (rgb_b.b+127)%255)
+                local rgb_h = RGB.randomComplementaryColor(rgb_b)
                 local P   = PLAYER(N_PLAYERS, false, nil, nil, nil, nil, rgb_b, rgb_h, true, 1, nil)
                 table.insert(P_T, P)
                 Util.updatePlayersB()

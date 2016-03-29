@@ -43,4 +43,12 @@ function rgb.randomColor()
 
 end 
 
+function rgb.randomComplementaryColor(color)
+
+    local Newcolor = COLOR((color.r+63+math.random(64))%255, (color.g+63+math.random(64))%255, (color.b+63+math.random(64))%255)
+
+    return Newcolor
+
+end 
+
 return rgb
