@@ -33,15 +33,15 @@ function util.configGame()
     --TIME VARS
     MAX_COUNTDOWN = 3  --Countdown in the beggining of each game
     TIMESTEP = 0.04    --Time between each game step
-    TILESIZE = 15      --Size of the game's tile
 
     --MAP VARS
+    TILESIZE = 10      --Size of the game's tile
     HUDSIZE = 100       --Size of window dedicated for HUD
     BORDER = 4*TILESIZE  --Border of the game map
     MARGIN = 12        --Size of margin for players' inicial position
     map = {}           --Game map
-    map_x = 50         --Map x size (in tiles)
-    map_y = 50         --Map y size (in tiles)
+    map_x = 70         --Map x size (in tiles)
+    map_y = 70         --Map y size (in tiles)
 
     --DRAWING TABLES
     TB_T   = {}  --Default TextBox table
@@ -437,14 +437,18 @@ function CPU_Level3(p)
             if math.random() < 0.5 then
                 if  validPosition(left_x, left_y) and map[left_x][left_y] == 0 then
                     dir = (dir + 2)%4 + 1 --turn left
+                    p.side = "right"
                 else
                     dir = dir%4 + 1       --turn right
+                    p.side = "left"
                 end
             else
                 if  validPosition(right_x, right_y) and map[right_x][right_y] == 0 then
                     dir = dir%4 + 1       --turn right
+                    p.side = "left"
                 else
                     dir = (dir + 2)%4 + 1 --turn left
+                    p.side = "right"
                 end
             end
        
