@@ -1,4 +1,6 @@
 local Util  = require "util"
+local RGB   = require "rgb"
+
 
 
 --MODULE FOR DRAWING STUFF--
@@ -42,9 +44,8 @@ function draw.setup_setup()
             if N_PLAYERS < MAX_PLAYERS then
                 N_PLAYERS = N_PLAYERS + 1
                 --Insert new CPU player
-                local r, g, b = math.random(255), math.random(255), math.random(255)
-                local rgb_b = COLOR(r, g, b)
-                local rgb_h = COLOR((r+127)%255, (g+127)%255, (b+127)%255)
+                local rgb_b = RGB.randomColor()
+                local rgb_h = COLOR((rgb_b.r+127)%255, (rgb_b.g+127)%255, (rgb_b.b+127)%255)
                 local P   = PLAYER(N_PLAYERS, false, nil, nil, nil, nil, rgb_b, rgb_h, true, 1, nil)
                 table.insert(P_T, P)
                 Util.updatePlayersB()
@@ -438,13 +439,16 @@ end
 --Draws the map and players bodies
 function DrawGrid()
     
+    --Map background color
+    local map_color = COLOR(199, 113, 113)
+
     --Draw the tiles with the corresponding color
     for i=1,map_x do
         for j=1,map_y do
 
             local number = map[i][j] --Number of that tile (0 for map or else for player number)
             if number == 0 then
-                love.graphics.setColor( 166, 216, 74  )
+                love.graphics.setColor(map_color.r, map_color.g, map_color.b)
             else
                 love.graphics.setColor(P_T[number].b_color.r, P_T[number].b_color.g, P_T[number].b_color.b)
             end
@@ -528,17 +532,17 @@ function SetupHUD_game()
     local color = COLOR(255, 255, 255)
 
     --Score Text
-    txt = TXT(180, 25, "SCORE:", font, color)
+    txt = TXT(180, 20, "SCORE:", font, color)
     TXT_T["SCOREtxt"] = txt
 
     --Best Of Text
-    txt = TXT(200 + #P_T*45 + 80, 25, "BEST OF:", font, color)
+    txt = TXT(200 + #P_T*45 + 80, 20, "BEST OF:", font, color)
     TXT_T["BESTOFtxt"] = txt
 
     --Each player indicator
     for i, p in ipairs(P_T) do
         x = 200 + 45*p.number
-        y = 10
+        y = 5
         text = "P"..p.number
         label = text.."score"
         txt = TXT(x, y, text, font, color)
@@ -560,19 +564,19 @@ function SetupPlayerIndicator()
     for i, p in ipairs(P_T) do
         --Creates player indicator text
         local label = "player"..p.number.."txt"
-        local txt = TXT((p.x-1)*TILESIZE + BORDER, (p.y-3)*TILESIZE + BORDER, "P" .. p.number, font, color)
+        local txt = TXT((p.x-1)*TILESIZE + BORDER, (p.y-4)*TILESIZE + BORDER, "P" .. p.number, font, color)
         TXT_T[label] = txt
 
         --Creates players control/CPU text
         if  p.control == "WASD" then
             label = "WASD"
-            txt = TXT((p.x-2)*TILESIZE + 1 + BORDER, (p.y-2)*TILESIZE + BORDER, "WASD", font, color)
+            txt = TXT((p.x-2)*TILESIZE + 1 + BORDER, (p.y-3)*TILESIZE + BORDER, "WASD", font, color)
         elseif p.control == "ARROWS" then
             label = "ARROWS"
-            txt = TXT((p.x-2)*TILESIZE - 1 + BORDER, (p.y-2)*TILESIZE + BORDER, "ARROWS", font, color)
+            txt = TXT((p.x-2)*TILESIZE - 1 + BORDER, (p.y-3)*TILESIZE + BORDER, "ARROWS", font, color)
         else
             label = "CPU"..i
-            txt = TXT((p.x-1)*TILESIZE - 4 + BORDER, (p.y-2)*TILESIZE + BORDER, "CPU", font, color)
+            txt = TXT((p.x-1)*TILESIZE - 4 + BORDER, (p.y-3)*TILESIZE + BORDER, "CPU", font, color)
         end
         TXT_T[label] = txt
     end
@@ -596,11 +600,11 @@ function DrawScore()
     
     --Draw players score
     for i, p in ipairs(P_T) do
-        love.graphics.print(p.score, 200 + 45*p.number, 25, 0, 1.2, 1.2)
+        love.graphics.print(p.score, 200 + 45*p.number, 20, 0, 1.2, 1.2)
     end
 
     --Draw Best of
-    love.graphics.print(BESTOF, 200 + #P_T*45 + 140, 24, 0, 1.2, 1.2)
+    love.graphics.print(BESTOF, 200 + #P_T*45 + 140, 19, 0, 1.2, 1.2)
 end
 
 --Return functions

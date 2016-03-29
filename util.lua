@@ -1,4 +1,5 @@
 local Particle = require "particle"
+local RGB      = require "rgb"
 
 --MODULE WITH USEFUL LOGICAL, MATHEMATICAL AND USEFUL STUFF--
 
@@ -50,6 +51,13 @@ function util.configGame()
     F_T    = {}  --Filter table
     PB_T   = {}  --Players Button table
     PART_T = {}  --Particles table
+        
+    --COLOR TABLE
+    
+    --Has all base colors players can have
+    C_T    = {COLOR(220,20,60),  COLOR(72,118,255),  COLOR(255,52,179),
+              COLOR(173,255,47), COLOR(255,246,143), COLOR(255,165,0),
+              COLOR(255,99,71),  COLOR(224,102,255), COLOR(0,206,209)}
 
     --OTHER TABLES
     P_T   = {}  --Players table
@@ -64,19 +72,17 @@ function util.configGame()
     love.graphics.setFont(font_reg_m)
 
     --Creates first two players with random colors
-    local r, g, b, rgb_b, rgb_h  --Color for body and head
+    local rgb_b, rgb_h  --Color for body and head
 
     --Player 1
-    r, g, b = math.random(255), math.random(255), math.random(255)
-    rgb_b = COLOR(r, g, b)
-    rgb_h = COLOR((r+127)%255, (g+127)%255, (b+127)%255)
+    rgb_b = RGB.randomColor()
+    rgb_h = COLOR((rgb_b.r+127)%255, (rgb_b.g+127)%255, (rgb_b.b+127)%255)
     local P_1   = PLAYER(1, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "WASD")
     table.insert(P_T, P_1)
 
     --Player 2
-    r, g, b = math.random(255), math.random(255), math.random(255)
-    rgb_b = COLOR(r, g, b)
-    rgb_h = COLOR((r+127)%255, (g+127)%255, (b+127)%255)
+    rgb_b = RGB.randomColor()
+    rgb_h = COLOR((rgb_b.r+127)%255, (rgb_b.g+127)%255, (rgb_b.b+127)%255)
     local P_2   = PLAYER(2, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "ARROWS")
     table.insert(P_T, P_2)
 
