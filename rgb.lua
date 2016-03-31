@@ -65,7 +65,7 @@ function rgb.backgroundTransition()
     end
 
     --Starts a timer that gradually increse
-    Game_Timer.during(duration,
+    Color_Timer.during(duration,
 
         --Gradually change actual color until target color
         function(dt)

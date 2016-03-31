@@ -12,7 +12,7 @@ THE HISTORY OF TR0N0S
 
 -Colors
 	~Improved color generation for players and head
-	~New color for grid background
+	~Grid background now transitates between colors
 
 -CPU changes
 	~New CPU Level 3 - R0B1N, goes around everything

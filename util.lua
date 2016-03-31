@@ -108,6 +108,14 @@ function util.setupGame()
     if not game_setup then
         countdown = MAX_COUNTDOWN --Setup countdown
         
+
+        if not Color_Timer then
+            Color_Timer = Timer.new()  --Timer for all color-related timing stuff
+        end
+        
+        --Clear all timers related to color    
+        Color_Timer.clear()
+
         if not Game_Timer then
             Game_Timer = Timer.new()  --Timer for all game-related timing stuff
         end

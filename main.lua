@@ -98,6 +98,7 @@ function game:update(dt)
 
     --Handles timers
     Game_Timer.update(dt)
+    Color_Timer.update(dt)
     
 
     if game_begin then
