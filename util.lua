@@ -36,13 +36,13 @@ function util.configGame()
     TIMESTEP = 0.04    --Time between each game step
 
     --MAP VARS
-    TILESIZE = 10      --Size of the game's tile
+    TILESIZE = 10       --Size of the game's tile
     HUDSIZE = 100       --Size of window dedicated for HUD
-    BORDER = 4*TILESIZE  --Border of the game map
-    MARGIN = 12        --Size of margin for players' inicial position
-    map = {}           --Game map
-    map_x = 70         --Map x size (in tiles)
-    map_y = 70         --Map y size (in tiles)
+    BORDER = 4*TILESIZE --Border of the game map
+    MARGIN = 12         --Size of margin for players' inicial position
+    map = {}            --Game map
+    map_x = 70          --Map x size (in tiles)
+    map_y = 70          --Map y size (in tiles)
 
     --DRAWING TABLES
     TB_T   = {}  --Default TextBox table
@@ -52,12 +52,17 @@ function util.configGame()
     PB_T   = {}  --Players Button table
     PART_T = {}  --Particles table
         
-    --COLOR TABLE
+    --COLOR TABLES
     
-    --Has all base colors players can have
+    --All base colors players can have
     C_T    = {COLOR(220,20,60),  COLOR(72,118,255),  COLOR(255,52,179),
               COLOR(173,255,47), COLOR(255,246,143), COLOR(255,165,0),
-              COLOR(255,99,71),  COLOR(224,102,255), COLOR(0,206,209)}
+              COLOR(255,99,71),  COLOR(224,102,255), COLOR(0,206,209),
+              COLOR(0,148,149),  COLOR(45,0,95)}
+    --Color for the map
+    map_color = COLOR(0, 0, 0)
+    --All base colors map background can have
+    MC_T   = {COLOR(229, 153, 153), COLOR(255,255,77), COLOR(204,255,255)}
 
     --OTHER TABLES
     P_T   = {}  --Players table
@@ -670,12 +675,18 @@ end
 --Reset map, puttting 0 in all positions
 function resetMap()
     
+    --Resets map background color with a random possible color
+    map_color = MC_T[math.random(#MC_T)]
+
+    RGB.backgroundTransition()
+    
     for i=1,map_x do
         map[i] = {}
         for j=1,map_y do
             map[i][j] = 0
         end
     end
+
 end
 
 --------------------

@@ -93,7 +93,9 @@ function draw.setup_setup()
             end
         end)
     B_T["bestof_down"] = bestof_down
-    
+
+
+
     -----------------------------
     --Creates setup textbox
     -----------------------------
@@ -117,6 +119,18 @@ function draw.setup_setup()
     h = 60
     bestof_tb = TB(x, y, w, h, "BEST OF", font, color_b, color_t)
     TB_T["bestof_tb"] = bestof_tb
+
+    -----------------------------
+    --Creates setup text
+    -----------------------------
+
+    font = font_reg_m
+    x = 400
+    y = 700
+    color = COLOR(255, 255, 255)
+    txt = TXT(x, y, "Press ENTER to start match", font, color)
+    TXT_T["start"] = txt
+    
 
 end
 
@@ -183,9 +197,9 @@ function draw.gameover_setup()
         --Creates a textbox for the champion, right next to the player
         font = font_reg_s
         b_color = COLOR(255, 255, 255, 20) --Box color
-        t_color = COLOR(0, 0, 0)           --Text color 
+        t_color = COLOR(255, 255, 255)     --Text color 
         p = P_T[winner]
-        tb = TB((p.x-2)*TILESIZE + BORDER, (p.y-2)*TILESIZE + BORDER, 5*TILESIZE, TILESIZE, ">>CHAMPION<<",font, b_color, t_color)
+        tb = TB((p.x-2)*TILESIZE + BORDER, (p.y-2)*TILESIZE + BORDER, 5*TILESIZE, TILESIZE, ">>CHAMP1ON<<",font, b_color, t_color)
         TB_T["CHAMPION"] = tb
 
     --Case of a draw
@@ -203,7 +217,7 @@ function draw.gameover_setup()
         --Creates a textbox for the winner, right next to the player
         font = font_reg_s
         b_color = COLOR(255, 255, 255, 20) --Box color
-        t_color = COLOR(0, 0, 0)           --Text color 
+        t_color = COLOR(255, 255, 255)     --Text color 
         p = P_T[winner]
         tb = TB((p.x-2)*TILESIZE + BORDER, (p.y-2)*TILESIZE + BORDER, 5*TILESIZE, TILESIZE, ">>WINNER<<",font, b_color, t_color)
         TB_T["winner"] = tb
@@ -219,7 +233,7 @@ function draw.gameover_setup()
     txt = TXT(x, y, text, font, color)
     TXT_T["winnertxt"] = txt
 
-    local cont_txt = TXT((map_x-30)*TILESIZE + BORDER, (map_y-5)*TILESIZE + BORDER, continue_text, font, color)
+    local cont_txt = TXT((map_x-40)*TILESIZE + BORDER, (map_y-5)*TILESIZE + BORDER, continue_text, font, color)
     TXT_T["continue"] = cont_txt
 
 end
@@ -438,9 +452,6 @@ end
 
 --Draws the map and players bodies
 function DrawGrid()
-    
-    --Map background color
-    local map_color = COLOR(199, 113, 113)
 
     --Draw the tiles with the corresponding color
     for i=1,map_x do
@@ -532,16 +543,16 @@ function SetupHUD_game()
     local color = COLOR(255, 255, 255)
 
     --Score Text
-    txt = TXT(180, 20, "SCORE:", font, color)
+    txt = TXT(80, 20, "SCORE:", font, color)
     TXT_T["SCOREtxt"] = txt
 
     --Best Of Text
-    txt = TXT(200 + #P_T*45 + 80, 20, "BEST OF:", font, color)
+    txt = TXT(100 + #P_T*45 + 80, 20, "BEST OF:", font, color)
     TXT_T["BESTOFtxt"] = txt
 
     --Each player indicator
     for i, p in ipairs(P_T) do
-        x = 200 + 45*p.number
+        x = 100 + 45*p.number
         y = 5
         text = "P"..p.number
         label = text.."score"
@@ -564,7 +575,7 @@ function SetupPlayerIndicator()
     for i, p in ipairs(P_T) do
         --Creates player indicator text
         local label = "player"..p.number.."txt"
-        local txt = TXT((p.x-1)*TILESIZE + BORDER, (p.y-4)*TILESIZE + BORDER, "P" .. p.number, font, color)
+        local txt = TXT((p.x-1)*TILESIZE + BORDER, (p.y-5)*TILESIZE + BORDER, "P" .. p.number, font, color)
         TXT_T[label] = txt
 
         --Creates players control/CPU text
@@ -600,11 +611,11 @@ function DrawScore()
     
     --Draw players score
     for i, p in ipairs(P_T) do
-        love.graphics.print(p.score, 200 + 45*p.number, 20, 0, 1.2, 1.2)
+        love.graphics.print(p.score, 100 + 45*p.number, 20, 0, 1.2, 1.2)
     end
 
     --Draw Best of
-    love.graphics.print(BESTOF, 200 + #P_T*45 + 140, 19, 0, 1.2, 1.2)
+    love.graphics.print(BESTOF, 100 + #P_T*45 + 140, 19, 0, 1.2, 1.2)
 end
 
 --Return functions

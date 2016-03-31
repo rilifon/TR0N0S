@@ -10,11 +10,13 @@ THE HISTORY OF TR0N0S
 -EXPLOSIONS!!
 	~particles explosions when players collide
 
--New CPU!
-	CPU Level 3 - R0B1N, goes around everything
+-Colors
+	~Improved color generation for players and head
+	~New color for grid background
 
--CPU Level 2 improved!
-	More random decisions
+-CPU changes
+	~New CPU Level 3 - R0B1N, goes around everything
+	~CPU Level 2 improved, with more random decisions
 
 -Tweaking and balance
 	-Changed tilesize and window size
