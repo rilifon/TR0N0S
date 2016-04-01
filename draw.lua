@@ -45,7 +45,7 @@ function draw.setup_setup()
                 N_PLAYERS = N_PLAYERS + 1
                 --Insert new CPU player
                 local rgb_b = RGB.randomColor()
-                local rgb_h = RGB.randomComplementaryColor(rgb_b)
+                local rgb_h = RGB.randomDarkColor(rgb_b)
                 local P   = PLAYER(N_PLAYERS, false, nil, nil, nil, nil, rgb_b, rgb_h, true, 1, nil)
                 table.insert(P_T, P)
                 Util.updatePlayersB()
@@ -157,7 +157,7 @@ function draw.pause_setup()
     SetupPlayerIndicator()
 
     --Creates filter
-    local color = COLOR(255, 255, 255, 90)
+    local color = COLOR(255, 25, 156, 90)
     local filter = FILTER(color)
     F_T["filter"] = filter
 
@@ -180,7 +180,7 @@ function draw.gameover_setup()
     SetupHUD_game()
 
     local font
-    local color, text, x, y, b_color, t_color, txt
+    local color, text, x, y, b_color, t_color, filter_color,txt
     local continue_text --text to conitnue match or go back to setup
     local p, tb, filter, winnertext
     y = map_y/2 * TILESIZE + BORDER
@@ -189,7 +189,7 @@ function draw.gameover_setup()
 
     --End of match
     if MATCH_BEGIN == false then
-        color = COLOR(12, 69, 203, 90)
+        filter_color = COLOR(12, 69, 203, 90)
         text = "THE ULTIMATE CHAMPION IS PLAYER ".. winner .."!!"
         x = (map_x/2-15) * TILESIZE + BORDER
         continue_text = "Press ENTER to go back to setup"
@@ -204,19 +204,19 @@ function draw.gameover_setup()
 
     --Case of a draw
     elseif winner == 0 then
-        color = COLOR(255, 0, 0, 90)
+        filter_color = COLOR(255, 0, 0, 90)
         text = "DRAW!"
         x = (map_x/2-3) * TILESIZE + BORDER
     
     --Case of a single winner
     else
-        color = COLOR(12, 69, 203, 90)
+        filter_color = COLOR(12, 69, 203, 90)
         text = "WINNER IS PLAYER " .. winner
         x = (map_x/2-6) * TILESIZE + BORDER
 
         --Creates a textbox for the winner, right next to the player
         font = font_reg_s
-        b_color = COLOR(255, 255, 255, 20) --Box color
+        b_color = COLOR(0, 0, 0, 20) --Box color
         t_color = COLOR(255, 255, 255)     --Text color 
         p = P_T[winner]
         tb = TB((p.x-2)*TILESIZE + BORDER, (p.y-2)*TILESIZE + BORDER, 5*TILESIZE, TILESIZE, ">>WINNER<<",font, b_color, t_color)
@@ -225,15 +225,15 @@ function draw.gameover_setup()
     end
     
     --Creates setup filter and textbox
-    filter = FILTER(color)
+    filter = FILTER(filter_color)
     F_T["filter"] = filter
 
     font = font_reg_m
-    color = COLOR(0, 0, 0)
+    color = COLOR(255, 255, 255)
     txt = TXT(x, y, text, font, color)
     TXT_T["winnertxt"] = txt
 
-    local cont_txt = TXT((map_x-40)*TILESIZE + BORDER, (map_y-5)*TILESIZE + BORDER, continue_text, font, color)
+    local cont_txt = TXT((map_x-42)*TILESIZE - BORDER, (map_y-5)*TILESIZE + BORDER, continue_text, font, color)
     TXT_T["continue"] = cont_txt
 
 end
@@ -305,17 +305,18 @@ end
 --Draws every drawable from tables
 function DrawAll()
     
-    DrawTB()
 
     DrawB()
-
-    DrawTXT()
 
     DrawPB()
 
     DrawPART()
 
     DrawF()
+
+    DrawTXT()
+
+    DrawTB()
 
 end
 
@@ -570,7 +571,7 @@ end
 --Draw players indicator
 function SetupPlayerIndicator()
     local font = font_reg_s
-    local color = COLOR(0, 0, 0)
+    local color = COLOR(255, 255, 255)
     
     for i, p in ipairs(P_T) do
         --Creates player indicator text
@@ -599,9 +600,9 @@ end
 
 --Draw countdown in the beggining of every match
 function DrawCountdown()
-    love.graphics.setColor(0, 0, 0)
+    love.graphics.setColor(184, 184, 234)
     love.graphics.setFont(font_reg_m)
-    love.graphics.print(countdown, map_x/2 * TILESIZE + BORDER, map_y/2 * TILESIZE + BORDER, 0, 2, 2)
+    love.graphics.print(countdown, map_x/2 * TILESIZE + BORDER, (map_y/2-5) * TILESIZE + BORDER, 0, 2, 2)
 end
 
 --Draw all players score

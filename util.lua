@@ -55,14 +55,17 @@ function util.configGame()
     --COLOR TABLES
     
     --All base colors players can have
-    C_T    = {COLOR(220,20,60),  COLOR(72,118,255),  COLOR(255,52,179),
-              COLOR(173,255,47), COLOR(255,246,143), COLOR(255,165,0),
-              COLOR(255,99,71),  COLOR(224,102,255), COLOR(0,206,209),
-              COLOR(0,148,149),  COLOR(45,0,95)}
+    C_T    = {COLOR(75,209,109), COLOR(174,252,91),  COLOR(220,252,91),
+              COLOR(91,252,91),  COLOR(91,252,177),  COLOR(91,226,252),
+              COLOR(91,134,252), COLOR(112,91,252),  COLOR(180,91,252),
+              COLOR(52,68,191),  COLOR(52,149,191),  COLOR(52,191,159),
+              COLOR(73,196,89),  COLOR(109,209,46),  COLOR(210,227,61),
+              COLOR(227,192,39), COLOR(111,230,32),  COLOR(134,227,20),
+              COLOR(10,209,17),  COLOR(118,199,101), COLOR(0,194,74)}
     --Color for the map
     map_color = COLOR(0, 0, 0)
     --All base colors map background can have
-    MC_T   = {COLOR(229, 153, 153), COLOR(255,255,77), COLOR(204,255,255)}
+    MC_T   = {COLOR(250,107,12), COLOR(250,81,62), COLOR(240,60,177), COLOR(180,18,201)}
 
     --OTHER TABLES
     P_T   = {}  --Players table
@@ -81,13 +84,13 @@ function util.configGame()
 
     --Player 1
     rgb_b = RGB.randomColor()
-    rgb_h = RGB.randomComplementaryColor(rgb_b)
+    rgb_h = RGB.randomDarkColor(rgb_b)
     local P_1   = PLAYER(1, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "WASD")
     table.insert(P_T, P_1)
 
     --Player 2
     rgb_b = RGB.randomColor()
-    rgb_h = RGB.randomComplementaryColor(rgb_b)
+    rgb_h = RGB.randomDarkColor(rgb_b)
     local P_2   = PLAYER(2, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "ARROWS")
     table.insert(P_T, P_2)
 
@@ -296,7 +299,7 @@ end
 --Checks collision between players and walls/another player
 function CheckCollision()
     
-    local color = COLOR(255,0,0)
+    local color = COLOR(65,17,180)
 
     for i, p1 in ipairs(P_T) do
         

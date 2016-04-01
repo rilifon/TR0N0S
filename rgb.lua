@@ -27,7 +27,7 @@ end
 
 --Return a random color based on a default color with some slight variation
 function rgb.randomColor()
-    local offset = 30
+    local offset = 40
     local value, newValue, valueRatio
     local color = randomBaseColor()
 
@@ -43,9 +43,13 @@ function rgb.randomColor()
 
 end 
 
---Return a random complementary color based on a receiving color with some slight variation
-function rgb.randomComplementaryColor(color)
-    local Newcolor = COLOR((color.r+63+math.random(64))%255, (color.g+63+math.random(64))%255, (color.b+63+math.random(64))%255)
+--Return a random darker color based on a receiving color with some slight variation
+function rgb.randomDarkColor(color)
+    local Newcolor, rand
+
+    --Generates a random number between 0.4 nd 0.7
+    rand = math.random()*0.3 + 0.4
+    Newcolor = COLOR(color.r*rand, color.g*rand, color.b*rand)
 
     return Newcolor
 

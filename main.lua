@@ -225,6 +225,10 @@ function gameover:leave()
     
 end
 
+function gameover:update()
+
+end
+
 function gameover:draw()
     
     Draw.gameover_state()
