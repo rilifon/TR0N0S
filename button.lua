@@ -34,41 +34,47 @@ But = Class{
         end
 
 		self.func  = func  --function to call when pressed
-
 	end
 }
 
 
 --Check if a mouse click collides with any button
 function button.checkCollision(x,y)
+	local but = nil
+	local p_but = nil
+
 	--Iterate on default buttons table
-	for i,v in pairs(B_T) do
-		if 	v.x <= x
+	for i,b in pairs(B_T) do
+		if 	b.x <= x
 			and
-			x <= v.x + v.w
+			x <= b.x + b.w
 			and
-			v.y <= y
+			b.y <= y
 			and
-			y <= v.y + v.h then
+			y <= b.y + b.h then
 
-			v.func()
+			but = b.func
 		end
-
 	end
+
 	--Iterate on players buttons table
-	for i,v in pairs(PB_T) do
-		if 	v.x <= x
+	for i,b in pairs(PB_T) do
+		if 	b.x <= x
 			and
-			x <= v.x + v.w
+			x <= b.x + b.w
 			and
-			v.y <= y
+			b.y <= y
 			and
-			y <= v.y + v.h then
+			y <= b.y + b.h then
 
-			v.func()
+			p_but = b.func
 		end
-
 	end
+
+	--Do respective functions
+	if but then but() end
+	if p_but then p_but() end
+
 end
 
 

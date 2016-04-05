@@ -33,7 +33,9 @@ function draw.setup_setup()
     -----------------------------
 
     gap = 5
+    color_b   = COLOR(233, 131, 0)
     color_t   = COLOR(0, 0, 0)
+    exp_color = COLOR(163,48,201)   --Color of particle explosion
     duration = 3.5                  --Duration of particles
     max_part = 30                   --Max number of particles
     speed = 250                     --Speed of particles
@@ -45,7 +47,7 @@ function draw.setup_setup()
 
     --Up button
     x = 300
-    y = PB_T[#PB_T].y + PB_T[#PB_T].h + 5
+    y = 300 + 5
     color_b  = COLOR(23, 233, 0)
 
     n_player_up = But(x, y, w, h, "+", font, color_b, color_t,
@@ -55,29 +57,27 @@ function draw.setup_setup()
             local y = this.y
             local w = this.w
             local h = this.h
-            local pbh = PB_T[1].h + 5 --Height of players button
-            local color = COLOR(255, 0, 247)
+            local pbh = 40
 
             if N_PLAYERS < MAX_PLAYERS then
                
-                --Increases players
-                N_PLAYERS = N_PLAYERS + 1
+                --Adjust positions of buttons
+                n_player_up.y     = n_player_up.y + pbh
+                n_player_down.y   = n_player_down.y + pbh
 
                 --Particles
-                Particle.explosion(x+w/2, y+h/2 + pbh, color, duration, max_part, speed)
+                Particle.explosion(x+w/2, y+h/2, exp_color, duration, max_part, speed)
                 
                 --Insert new CPU player
                 rgb_b = RGB.randomColor()
                 rgb_h = RGB.randomDarkColor(rgb_b)
                 P   = PLAYER(N_PLAYERS, false, nil, nil, nil, nil, rgb_b, rgb_h, true, 1, nil)
                 table.insert(P_T, P)
-
-                --Adjust positions of buttons
-                n_player_up.y   = y + pbh
-                n_player_down.y = y + pbh
                 
-                Util.updatePlayersB()
+                --Increases players
+                N_PLAYERS = N_PLAYERS + 1
 
+                Util.updatePlayersB()
             end
         end
     )
@@ -94,47 +94,42 @@ function draw.setup_setup()
             local y = this.y
             local w = this.w
             local h = this.h
-            local pbh = PB_T[1].h + 5 --Height of players button
-            local color = COLOR(255,128,0) 
+            local pbh = 40
 
             if N_PLAYERS > 1 then
                 
+                --Adjust positions of buttons
+                n_player_down.y = n_player_down.y - pbh
+                
                 --Particles
-                Particle.explosion(x+w/2, y+h/2 - pbh, color, duration, max_part, speed)
+                Particle.explosion(x+w/2, y+h/2, exp_color, duration, max_part, speed)
 
                 p = P_T[N_PLAYERS]
                 if p.control == "WASD" then WASD_PLAYER = 0
                 elseif p.control == "ARROWS" then ARROWS_PLAYER = 0 end
                 
+                --Removes last player
+                table.remove(P_T, N_PLAYERS)
 
                 --Removes player "head box"
                 TB_T["P"..p.number.."tb"] = nil
                 
-                --Removes last player
-                table.remove(P_T, N_PLAYERS)
-                
-                --Adjust positions of buttons
-                n_player_up.y   = n_player_up.y - pbh
-                n_player_down.y = y - pbh
-                
-                --Decreases players
+                --Increases players
                 N_PLAYERS = N_PLAYERS - 1
-
+                
                 Util.updatePlayersB()
-
             end
         end
     )
     B_T["n_player_down"] = n_player_down
 
     --GOAL BUTTON
+    color_b   = COLOR(233, 131, 0)
     x = 600
     y = 20
     w = 60
     h = 60
     font = font_but_m
-    color_b   = COLOR(233, 131, 0)  --Color of button background
-    exp_color = COLOR(163,48,201)   --Color of particle explosion
 
     --Up button
     goal_up = But(x, y, w, h, "+", font, color_b, color_t,

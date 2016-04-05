@@ -45,6 +45,15 @@ function util.configGame()
     map = {}            --Game map
     map_x = 80          --Map x size (in tiles)
     map_y = 80          --Map y size (in tiles)
+        
+    --TIMERS
+    if not Game_Timer then
+        Game_Timer = Timer.new()  --Timer for all game-related timing stuff
+    end
+
+    if not Color_Timer then
+        Color_Timer = Timer.new()  --Timer for all color-related timing stuff
+    end
 
     --DRAWING TABLES
     TB_T   = {}  --Default TextBox table
@@ -111,18 +120,9 @@ function util.setupGame()
     
     if not game_setup then
         countdown = MAX_COUNTDOWN --Setup countdown
-        
-
-        if not Color_Timer then
-            Color_Timer = Timer.new()  --Timer for all color-related timing stuff
-        end
-        
+             
         --Clear all timers related to color    
         Color_Timer.clear()
-
-        if not Game_Timer then
-            Game_Timer = Timer.new()  --Timer for all game-related timing stuff
-        end
 
         game_begin = false
         step = 0
@@ -519,7 +519,7 @@ end
 function util.updatePlayersB()
     local font = font_reg_m
     local color_b, color_t, cputext, controltext, pl
-    local pb, ptb
+    local pb, ptb, x, y
 
     util.clearTable(PB_T)
 
@@ -544,7 +544,11 @@ function util.updatePlayersB()
         color_b = COLOR(p.b_color.r, p.b_color.g, p.b_color.b)
 
         --Creates player button
-        pb = But(40, 200 + 45*i, 500, 40,
+        x = 40
+        y = 150 + 45*i
+        w = 500
+        h = 40
+        pb = But(x, y, w, h,
                         "PLAYER " .. i .. " " .. cputext .. " (" .. controltext .. ")",
                         font, color_b, color_t, 
                         --Change players from CPU to HUMAN witha controller
@@ -593,8 +597,12 @@ function util.updatePlayersB()
                             util.updatePlayersB()
                         end)
         table.insert(PB_T, pb)
+
         --Creates players head color box
-        ptb = TB(540, 200 + 45*i, 40, 40, "", font, p.h_color, COLOR(0,0,0))
+        x = x + w
+        w = 40
+        h = 40
+        ptb = TB(x, y, w, h, "", font, p.h_color, COLOR(0,0,0))
         TB_T["P"..p.number.."tb"] = ptb
     end
 

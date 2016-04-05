@@ -57,6 +57,16 @@ function setup:draw()
 
 end
 
+function setup:update(dt)
+
+    --Handles timers
+    Game_Timer.update(dt)
+
+    --Update "real-time" stuff
+    Particle.update(dt)
+
+end
+
 function setup:keypressed(key)
 
     --CHANGE STATES

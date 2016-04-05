@@ -18,18 +18,18 @@ PARTICLE = Class{
         	self.color.a = color.a   --Alpha
         else
         	self.color.a = 255
-        end
-        
+        end  
     end
 }
 
 --Creates a colored article explosion starting position (x,y)
-function particle.explosion(x, y, color)
-    local duration = 2.0  --Duration particles will stay on screen
-    local max_part = 25   --Number of particles created in a explosion
-    local speed    = 100  --Particles speed
+function particle.explosion(x, y, color, duration, max_part, speed)
+    local duration = duration or 2    --Duration particles will stay on screen
+    local max_part = max_part or 25   --Number of particles created in a explosion
+    local speed    = speed    or 100  --Particles speed
     local part, rand
     local signal_x, signal_y --signal (positive or negative) for dir_x and dir_y
+    local id = math.random() --Creates an id for this explosion
 
     --Creates all particles of explosion
     for i=1, max_part do
@@ -39,7 +39,7 @@ function particle.explosion(x, y, color)
         local max = 70
         rand = math.random()*max*2 - max --Varies between -max and max
         part = PARTICLE(x, y, math.random()*signal_x, math.random()*signal_y, speed, COLOR(color.r+rand, color.g+rand, color.b+rand))
-        PART_T["px"..x.."y"..y.."i"..i] = part
+        PART_T["px"..x.."y"..y.."i"..i.."id"..id] = part
     end
 
     --Timer for removing particles
@@ -47,11 +47,11 @@ function particle.explosion(x, y, color)
         function()
             
             for i=1, max_part do
-                PART_T["px"..x.."y"..y.."i"..i] = nil
+                PART_T["px"..x.."y"..y.."i"..i.."id"..id] = nil
             end
 
-        end)
-
+        end
+    )
 end
 
 --Updates all particles positions
