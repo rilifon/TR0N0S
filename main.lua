@@ -68,12 +68,15 @@ function setup:keypressed(key)
     elseif key == 'b' then
         Draw.toggleDebug()
     end
+
 end
 
 function setup:mousepressed(x, y, button, istouch)
+    
     if button == 1 then
         Button.checkCollision(x,y)
     end
+
 end
 
 ---------------
@@ -112,7 +115,6 @@ function game:update(dt)
         end  
     end
 
-
 end
 
 function game:draw()
@@ -122,6 +124,7 @@ function game:draw()
 end
 
 function game:keypressed(key)
+    local i
 
     --CHANGE STATES
     if key == 'q' then
@@ -138,10 +141,9 @@ function game:keypressed(key)
     
     --MOVEMENT (doesn't allow the player to move backwards)
     
-    local i = WASD_PLAYER
+    i = WASD_PLAYER
     
     if i ~= 0 then  
-
         if     key == 'w' and P_T[i].dir ~= 4 then --move up
             P_T[i].nextdir = 2
         elseif key == 'a' and P_T[i].dir ~= 3 then --move left
@@ -151,13 +153,11 @@ function game:keypressed(key)
         elseif key == 'd' and P_T[i].dir ~= 1 then --move right
             P_T[i].nextdir = 3
         end
-
     end
 
-    local i = ARROWS_PLAYER 
+    i = ARROWS_PLAYER 
 
     if i ~= 0 then
-
         if     key == 'up'    and P_T[i].dir ~= 4 then --move up
             P_T[i].nextdir = 2
         elseif key == 'left'  and P_T[i].dir ~= 3 then --move left
@@ -167,7 +167,6 @@ function game:keypressed(key)
         elseif key == 'right' and P_T[i].dir ~= 1 then --move right
             P_T[i].nextdir = 3
         end
-
     end
 
 end
@@ -225,7 +224,13 @@ function gameover:leave()
     
 end
 
-function gameover:update()
+function gameover:update(dt)
+
+    --Handles timers
+    Game_Timer.update(dt)
+
+    --Update "real-time" stuff
+    Particle.update(dt*0.5)
 
 end
 
@@ -257,12 +262,23 @@ end
 --DEBUG
 --------------------
 
+function game:mousepressed(x, y, button, istouch)
+    local color
+
+    color = COLOR(0,25,255)
+
+    Particle.explosion(x, y, color)
+
+end
+
 --------------------
 --ZOEIRAZOEIRAZOEIRA
 --------------------
 
 function love.keypressed(key)
+   
     if key == "0" then
         Util.mayts()
     end
+
 end

@@ -11,7 +11,9 @@ local util = {}
 
 --Set game's global variables, random seed and window configuration
 function util.configGame()
-    
+    local P_1, P_2      --Player 1 and 2
+    local rgb_b, rgb_h  --Color for body and head
+
     --RANDOM SEED
     math.randomseed( os.time() )
     math.random(); math.random(); --Improves random
@@ -22,27 +24,27 @@ function util.configGame()
     
     --MATCH/GAME SETUP VARS
     game_setup = false  --Inicial setup for each game
-    BESTOF = 3          --Best of X games that will be played in the match
+    GOAL = 3          --Best of X games that will be played in the match
     MATCH_BEGIN = false --If is in a current match
     MAX_PLAYERS = 10    --Max number of players in a game
     N_PLAYERS = 2       --Number of players playing
     
     --CONTROL VARS
-    WASD_PLAYER = 1    --Player using wasd keys
-    ARROWS_PLAYER = 2  --Player using arrow keys
+    WASD_PLAYER = 1     --Player using wasd keys
+    ARROWS_PLAYER = 2   --Player using arrow keys
     
     --TIME VARS
-    MAX_COUNTDOWN = 3  --Countdown in the beggining of each game
-    TIMESTEP = 0.04    --Time between each game step
+    MAX_COUNTDOWN = 3   --Countdown in the beggining of each game
+    TIMESTEP = 0.03     --Time between each game step
 
     --MAP VARS
-    TILESIZE = 10       --Size of the game's tile
+    TILESIZE = 8        --Size of the game's tile
     HUDSIZE = 100       --Size of window dedicated for HUD
-    BORDER = 4*TILESIZE --Border of the game map
+    BORDER = 8*TILESIZE --Border of the game map
     MARGIN = 12         --Size of margin for players' inicial position
     map = {}            --Game map
-    map_x = 70          --Map x size (in tiles)
-    map_y = 70          --Map y size (in tiles)
+    map_x = 80          --Map x size (in tiles)
+    map_y = 80          --Map y size (in tiles)
 
     --DRAWING TABLES
     TB_T   = {}  --Default TextBox table
@@ -80,18 +82,17 @@ function util.configGame()
     love.graphics.setFont(font_reg_m)
 
     --Creates first two players with random colors
-    local rgb_b, rgb_h  --Color for body and head
 
     --Player 1
     rgb_b = RGB.randomColor()
     rgb_h = RGB.randomDarkColor(rgb_b)
-    local P_1   = PLAYER(1, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "WASD")
+    P_1   = PLAYER(1, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "WASD")
     table.insert(P_T, P_1)
 
     --Player 2
     rgb_b = RGB.randomColor()
     rgb_h = RGB.randomDarkColor(rgb_b)
-    local P_2   = PLAYER(2, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "ARROWS")
+    P_2   = PLAYER(2, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "ARROWS")
     table.insert(P_T, P_2)
 
 end
@@ -133,22 +134,19 @@ function util.setupGame()
 
         game_setup = true
         StartCountdown()
-
     end
+
 end
 
 
 --Setup all players
 function setupPlayers()
-    
-    local p_x
-    local p_y
-    players = {}
+    local p_x, p_y, is_rand
     
     for i, p in ipairs(P_T) do
 
         --Get random positions for all players
-        local is_rand = false
+        is_rand = false
         while is_rand == false do
             p_x = math.random(map_x-2*MARGIN)+MARGIN
             p_y = math.random(map_y-2*MARGIN)+MARGIN
@@ -170,15 +168,13 @@ function setupPlayers()
         p.dead = false
 
         p.side = nil
-
     end
-end
 
+end
 
 ------------------
 --UPDATE FUNCTIONS
 ------------------
-
 
 --Update step and all players position
 function util.tick(dt)
@@ -199,6 +195,7 @@ function util.tick(dt)
         --Reset step counter
         step = 0
     end
+
 end
 
 --Updates cpu players position
@@ -250,22 +247,22 @@ function UpdateCPU()
             --Update player position
             p.x = x
             p.y = y
-
         end
-
     end
+
 end
 
 
 
 --Updates non-cpu players positions
 function UpdateHuman()
-    
+    local x, y, dir
+
     for i, p in ipairs(P_T) do
         if not p.dead and not p.cpu then
-            local dir = p.nextdir
-            local x = p.x
-            local y = p.y
+            dir = p.nextdir
+            x = p.x
+            y = p.y
             
             --Draw player "trail" before moving
             map[x][y] = p.number
@@ -287,9 +284,9 @@ function UpdateHuman()
             --Update player position
             p.x = x
             p.y = y
-            
         end
     end
+
 end
 
 -----------------------
@@ -298,7 +295,6 @@ end
 
 --Checks collision between players and walls/another player
 function CheckCollision()
-    
     local color = COLOR(65,17,180)
 
     for i, p1 in ipairs(P_T) do
@@ -308,7 +304,7 @@ function CheckCollision()
             --Check collision with wall
             if map[p1.x][p1.y] ~= 0 then
                 p1.dead = true
-                Particle.explosion(p1.x, p1.y, color)
+                Particle.explosion(p1.x*TILESIZE + BORDER, p1.y*TILESIZE + BORDER, color)
             end
 
             --Check collision with other players
@@ -318,13 +314,13 @@ function CheckCollision()
 
                     P_T[j].dead = true
 
-                    Particle.explosion(p1.x, p1.y, color)
+                    Particle.explosion(p1.x*TILESIZE + BORDER, p1.y*TILESIZE + BORDER, color)
                 end
             end
 
         end
+  end
 
-    end
 end
 
 --Count how many players are alive and declare a winner
@@ -332,12 +328,14 @@ function util.countPlayers()
     
     cont = 0
     winner = 0
+
     for i, p in ipairs(P_T) do
         if p.dead == false then
             cont = cont+1
             winner = p.number
         end
     end
+
     return cont 
 end
 
@@ -350,10 +348,9 @@ function util.checkWinner()
         --Increses player score
         p.score = p.score + 1
 
-        if p.score >= BESTOF then
+        if p.score >= GOAL then
             MATCH_BEGIN = false    --End of match, a player has reached target score
         end
-
     end
 
 end
@@ -384,8 +381,6 @@ end
 --CPU LEVEL 2 - "TIMMY-2000"
 --If it would reach an obstacle, turns direction
 function CPU_Level2(p)
-    
-
     local dir = p.dir
     local next_x, next_y --Position that the CPU will go if move forward
     local left_x, left_y --Position that the CPU will go if turn left
@@ -415,13 +410,11 @@ function CPU_Level2(p)
     end
 
     return dir
-
 end
 
 --CPU LEVEL 3 - "R0B1N"
 --Goes around everything
 function CPU_Level3(p)
-
     local dir = p.dir
     local next_x, next_y   --Position that the CPU will go if move forward
     local left_x, left_y   --Position that the CPU will go if turn left
@@ -473,12 +466,10 @@ function CPU_Level3(p)
                     p.side = "right"
                 end
             end
-       
         end
     end
 
     return dir
-
 end
 
 ---------------------
@@ -487,14 +478,15 @@ end
 
 --Start the countdown to start a game
 function StartCountdown()
+    local cd = countdown
+    local t, rand
     
     time = 0
-    local cd = countdown
     Game_Timer.during(MAX_COUNTDOWN, 
         
         --Decreases countdown
         function(dt)
-            local t = time+dt
+            t = time+dt
             cd = cd - t
             countdown = math.floor(cd)+1
         end,
@@ -508,11 +500,13 @@ function StartCountdown()
 
             --Players go at a random direction at the start if they dont chose any
             for i, p in ipairs(P_T) do
-                local rand = math.random(4)
+                rand = math.random(4)
                 if p.dir     == nil then p.dir     = rand end
                 if p.nextdir == nil then p.nextdir = rand end
             end
-        end)
+        end
+    )
+
 end
 
 
@@ -523,15 +517,13 @@ end
 --Update players buttons on setup
 --TODO: improve so it doesnt delete all buttons and creates new ones
 function util.updatePlayersB()
-    
     local font = font_reg_m
-    local color_b
-    local color_t  
+    local color_b, color_t, cputext, controltext, pl
+    local pb, ptb
 
     util.clearTable(PB_T)
 
     for i, p in ipairs(P_T) do
-        local cputext, controltext
         if p.cpu then
             cputext = "CPU"
             controltext = "Level " .. p.level
@@ -541,7 +533,7 @@ function util.updatePlayersB()
         end
 
         --Counting the perceptive luminance - human eye favors green color... 
-        local pl = 1 - ( 0.299 * p.b_color.r + 0.587 * p.b_color.g + 0.114 * p.b_color.b)/255;
+        pl = 1 - ( 0.299 * p.b_color.r + 0.587 * p.b_color.g + 0.114 * p.b_color.b)/255;
 
         if pl < 0.5 then
             color_t = COLOR(0, 0, 0)       --bright colors - using black font
@@ -552,7 +544,7 @@ function util.updatePlayersB()
         color_b = COLOR(p.b_color.r, p.b_color.g, p.b_color.b)
 
         --Creates player button
-        local pb = But(40, 200 + 45*i, 500, 40,
+        pb = But(40, 200 + 45*i, 500, 40,
                         "PLAYER " .. i .. " " .. cputext .. " (" .. controltext .. ")",
                         font, color_b, color_t, 
                         --Change players from CPU to HUMAN witha controller
@@ -602,9 +594,10 @@ function util.updatePlayersB()
                         end)
         table.insert(PB_T, pb)
         --Creates players head color box
-        local ptb = TB(540, 200 + 45*i, 40, 40, "", font, p.h_color, COLOR(0,0,0))
+        ptb = TB(540, 200 + 45*i, 40, 40, "", font, p.h_color, COLOR(0,0,0))
         TB_T["P"..p.number.."tb"] = ptb
     end
+
 end
 
 --Remove all player indicator text
@@ -659,11 +652,12 @@ end
 
 --Checks if position (x,y) is inside map
 function validPosition(x, y)
+    
     if x < 1 or x > map_x or y < 1 or y > map_y then
         return false
     end
-    return true 
 
+    return true 
 end
 
 --Returns next position starting in (x,y) and going direction dir
@@ -680,7 +674,6 @@ function nextPosition(x, y, dir)
     end
 
     return x, y
-
 end
 
 --Reset map, puttting 0 in all positions
@@ -700,11 +693,32 @@ function resetMap()
 
 end
 
+--Makes a smooth transition in object 'o' position
+--from point (x0,y0) to point (xf,yf)
+function smoothMove(o, x0, y0, xf, yf, duration)
+    local diff = 0
+
+    --Starts a timer that gradually increse
+    Game_Timer.during(duration,
+
+        --Gradually change actual color until target color
+        function(dt)
+            ratio = diff/duration
+            diff = diff + dt
+            o.x = math.abs(ratio * xf + (1 - ratio) * x0)
+            o.y = math.abs(ratio * yf + (1 - ratio) * y0)
+
+        end
+    )
+
+end
+
 --------------------
 --ZOEIRAZOEIRAZOEIRA 
 --------------------
 
 function util.mayts()
+    
     for i, v in pairs(TXT_T) do
         v.text = "mayts"
     end

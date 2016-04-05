@@ -85,7 +85,8 @@ function rgb.backgroundTransition()
         function()
             map_color = targetColor
             rgb.backgroundTransition()
-        end)
+        end
+    )
 
 end 
 
