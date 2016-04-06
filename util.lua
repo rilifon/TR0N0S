@@ -703,7 +703,7 @@ end
 
 --Makes a smooth transition in object 'o' position
 --from point (x0,y0) to point (xf,yf)
-function smoothMove(o, x0, y0, xf, yf, duration)
+function util.smoothMove(o, x0, y0, xf, yf, duration)
     local diff = 0
 
     --Starts a timer that gradually increse

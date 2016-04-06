@@ -55,8 +55,9 @@ function draw.setup_setup()
             local y = this.y
             local w = this.w
             local h = this.h
-            local pbh = PB_T[1].h + 5 --Height of players button
+            local pbh = PB_T[1].h + 6 --Height of players button
             local color = COLOR(255, 0, 247)
+            local x_nil = 0
 
             if N_PLAYERS < MAX_PLAYERS then
                
@@ -73,8 +74,8 @@ function draw.setup_setup()
                 table.insert(P_T, P)
 
                 --Adjust positions of buttons
-                n_player_up.y   = y + pbh
-                n_player_down.y = y + pbh
+                Util.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y + pbh, .1)
+                Util.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y + pbh, .1)
                 
                 Util.updatePlayersB()
 
@@ -94,7 +95,7 @@ function draw.setup_setup()
             local y = this.y
             local w = this.w
             local h = this.h
-            local pbh = PB_T[1].h + 5 --Height of players button
+            local pbh = PB_T[1].h + 6 --Height of players button
             local color = COLOR(255,128,0) 
 
             if N_PLAYERS > 1 then
@@ -114,8 +115,8 @@ function draw.setup_setup()
                 table.remove(P_T, N_PLAYERS)
                 
                 --Adjust positions of buttons
-                n_player_up.y   = n_player_up.y - pbh
-                n_player_down.y = y - pbh
+                Util.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y - pbh, .1)
+                Util.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y - pbh, .1)
                 
                 --Decreases players
                 N_PLAYERS = N_PLAYERS - 1
