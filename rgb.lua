@@ -55,39 +55,4 @@ function rgb.randomDarkColor(color)
 
 end
 
---Choses a random color from a table and transitions the map background to it 
-function rgb.backgroundTransition()
-    local r, g, b, ratio
-    local duration = 5
-    local diff = 0
-    local ori_color = map_color 
-
-    --Get a random different color for map background
-    targetColor = MC_T[math.random(#MC_T)]
-    while (targetColor == map_color) do
-        targetColor = MC_T[math.random(#MC_T)]
-    end
-
-    --Starts a timer that gradually increse
-    Color_Timer.during(duration,
-
-        --Gradually change actual color until target color
-        function(dt)
-            ratio = diff/duration
-            diff = diff + dt
-            r = math.abs(ratio * targetColor.r + (1 - ratio) * ori_color.r)
-            g = math.abs(ratio * targetColor.g + (1 - ratio) * ori_color.g)
-            b = math.abs(ratio * targetColor.b + (1 - ratio) * ori_color.b)
-            map_color = COLOR(r,g,b)
-        end,
-
-        --Calls parent function so that the transition is continuous
-        function()
-            map_color = targetColor
-            rgb.backgroundTransition()
-        end
-    )
-
-end 
-
 return rgb

@@ -544,7 +544,7 @@ function util.updatePlayersB()
         color_b = COLOR(p.b_color.r, p.b_color.g, p.b_color.b)
 
         --Creates player button
-        x = 40
+        x = 110
         y = 150 + 45*i
         w = 500
         h = 40
@@ -689,8 +689,6 @@ function resetMap()
     
     --Resets map background color with a random possible color
     map_color = MC_T[math.random(#MC_T)]
-
-    RGB.backgroundTransition()
     
     for i=1,map_x do
         map[i] = {}
@@ -704,6 +702,29 @@ end
 ----------------------
 --TRANSITION FUNCTIONS
 ----------------------
+
+--Makes a smooth transition in object 0 from i to f in "duration" time
+function util.smoothTransition(o, i, f, duration)
+    local diff = 0
+
+    --Starts a timer that gradually increse
+    Game_Timer.during(duration,
+
+        --Gradually change actual color until target color
+        function(dt)
+            ratio = diff/duration
+            diff = diff + dt
+            o = math.abs(ratio * f + (1 - ratio) * i)
+        end,
+        
+        function()
+
+        o = f
+        
+        end
+    )
+
+end
 
 --Makes a smooth transition in object 'o' position
 --from point (x0,y0) to point (xf,yf)
@@ -726,6 +747,43 @@ function util.smoothMove(o, x0, y0, xf, yf, duration)
 
             o.x = xf
             o.y = yf
+
+        end
+    )
+
+end
+
+--Makes a smooth transition in color 'c'
+--from COLOR(r0,g0,b0) to COLOR(rf,gf,bf)
+function util.smoothColor(c, color0, colorf, duration)
+    local diff = 0
+    local r0,g0,b0,rf,gf,bf
+
+    r0 = color0.r
+    g0 = color0.g
+    b0 = color0.b
+    rf = colorf.r
+    gf = colorf.g
+    bf = colorf.b
+
+    --Starts a timer that gradually increse
+    Game_Timer.during(duration,
+
+        --Gradually change actual color until target color
+        function(dt)
+            ratio = diff/duration
+            diff = diff + dt
+            c.r = math.abs(ratio * rf + (1 - ratio) * r0)
+            c.g = math.abs(ratio * gf + (1 - ratio) * g0)
+            c.b = math.abs(ratio * bf + (1 - ratio) * b0)
+
+        end,
+        
+        function()
+
+            c.r = rf
+            c.g = gf
+            c.b = bf
 
         end
     )

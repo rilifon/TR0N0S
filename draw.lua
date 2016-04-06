@@ -45,7 +45,7 @@ function draw.setup_setup()
     font = font_but_m
 
     --Up button
-    x = 300
+    x = 370
     y = PB_T[#PB_T].y + PB_T[#PB_T].h + 5
     color_b  = COLOR(23, 233, 0)
 
@@ -86,7 +86,7 @@ function draw.setup_setup()
     B_T["n_player_up"] = n_player_up
 
     --Down button
-    x = 220
+    x = 290
     color_b  = COLOR(233, 10, 0)
 
     n_player_down = But(x, y, w, h, "-", font, color_b, color_t,
@@ -222,6 +222,8 @@ function draw.game_setup()
     SetupHUD_default("complete")
 
     SetupHUD_game()
+
+    BackgroundTransition()
 
     if not game_begin then
         SetupPlayerIndicator()
@@ -591,6 +593,31 @@ function DrawHeads()
     end
 
 end
+
+--Choses a random color from a table and transitions the map background to it 
+function BackgroundTransition()
+    local r, g, b, ratio
+    local duration = 5
+    local diff = 0
+    local ori_color = map_color 
+
+    --Get a random different color for map background
+    targetColor = MC_T[math.random(#MC_T)]
+    while (targetColor == map_color) do
+        targetColor = MC_T[math.random(#MC_T)]
+    end
+
+    Util.smoothColor(map_color, ori_color, targetColor, duration)
+
+    --Starts a timer that gradually increse
+    Color_Timer.after(duration,
+        --Calls parent function so that the transition is continuous
+        function()
+            BackgroundTransition()
+        end
+    )
+
+end 
 
 --------------------
 --HUD DRAW FUNCTIONS
