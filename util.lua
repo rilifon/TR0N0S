@@ -701,6 +701,10 @@ function resetMap()
 
 end
 
+----------------------
+--TRANSITION FUNCTIONS
+----------------------
+
 --Makes a smooth transition in object 'o' position
 --from point (x0,y0) to point (xf,yf)
 function util.smoothMove(o, x0, y0, xf, yf, duration)
@@ -716,32 +720,64 @@ function util.smoothMove(o, x0, y0, xf, yf, duration)
             o.x = math.abs(ratio * xf + (1 - ratio) * x0)
             o.y = math.abs(ratio * yf + (1 - ratio) * y0)
 
+        end,
+        
+        function()
+
+            o.x = xf
+            o.y = yf
+
         end
     )
 
 end
 
+--Makes a smooth transition in object 'o' alpha
+--from i to f
+function util.smoothAlpha(o, i, f, duration)
+    local diff = 0
+
+    --Starts a timer that gradually increse
+    Game_Timer.during(duration,
+
+        --Gradually change actual color until target color
+        function(dt)
+            ratio = diff/duration
+            diff = diff + dt
+            o.a = math.abs(ratio * f + (1 - ratio) * i)
+        end,
+        
+        function()
+
+        o.a = f
+        
+        end
+    )
+
+end
+
+
 --------------------
 --ZOEIRAZOEIRAZOEIRA 
 --------------------
 
-function util.mayts()
-    
+function util.zoera()
+    local text = "omar"
     for i, v in pairs(TXT_T) do
-        v.text = "mayts"
+        v.text = text
     end
 
     for i, v in pairs(TB_T) do
-        v.text = "mayts"
+        v.text = text
     end
 
     for i, v in pairs(B_T) do
-        v.text = "mayts"
+        v.text = text
     end
 
 
     for i, v in pairs(PB_T) do
-        v.text = "mayts"
+        v.text = text
     end
 
 end

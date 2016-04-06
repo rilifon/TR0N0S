@@ -288,7 +288,7 @@ end
 function love.keypressed(key)
    
     if key == "0" then
-        Util.mayts()
+        Util.zoera()
     end
 
 end

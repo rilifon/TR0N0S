@@ -20,7 +20,7 @@ function draw.setup_setup()
     local rgb_b, rgb_h, P, p 
     local gap --Gap between two buttons
     local color_b, color_t, exp_color
-    local duration, max_part, speed
+    local duration, max_part, speed, decaying
 
     
     SetupHUD_default("simple")
@@ -36,7 +36,8 @@ function draw.setup_setup()
     color_t   = COLOR(0, 0, 0)
     duration = 3.5                  --Duration of particles
     max_part = 30                   --Max number of particles
-    speed = 250                     --Speed of particles
+    speed    = 250                  --Speed of particles
+    decaying = .99                  --Decaying speed of particles
 
     --N_PLAYERS BUTTON
     w = 60
@@ -55,7 +56,7 @@ function draw.setup_setup()
             local y = this.y
             local w = this.w
             local h = this.h
-            local pbh = PB_T[1].h + 6 --Height of players button
+            local pbh = PB_T[#PB_T].h + 5 --Height of players button
             local color = COLOR(255, 0, 247)
             local x_nil = 0
 
@@ -65,7 +66,7 @@ function draw.setup_setup()
                 N_PLAYERS = N_PLAYERS + 1
 
                 --Particles
-                Particle.explosion(x+w/2, y+h/2 + pbh, color, duration, max_part, speed)
+                Particle.explosion(x+w/2, y+h/2 + pbh, color, duration, max_part, speed, decaying)
                 
                 --Insert new CPU player
                 rgb_b = RGB.randomColor()
@@ -74,8 +75,8 @@ function draw.setup_setup()
                 table.insert(P_T, P)
 
                 --Adjust positions of buttons
-                Util.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y + pbh, .1)
-                Util.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y + pbh, .1)
+                Util.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y + pbh, .08)
+                Util.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y + pbh, .08)
                 
                 Util.updatePlayersB()
 
@@ -95,13 +96,13 @@ function draw.setup_setup()
             local y = this.y
             local w = this.w
             local h = this.h
-            local pbh = PB_T[1].h + 6 --Height of players button
+            local pbh = PB_T[#PB_T].h + 5 --Height of players button
             local color = COLOR(255,128,0) 
 
             if N_PLAYERS > 1 then
                 
                 --Particles
-                Particle.explosion(x+w/2, y+h/2 - pbh, color, duration, max_part, speed)
+                Particle.explosion(x+w/2, y+h/2 - pbh, color, duration, max_part, speed, decaying)
 
                 p = P_T[N_PLAYERS]
                 if p.control == "WASD" then WASD_PLAYER = 0
@@ -115,8 +116,8 @@ function draw.setup_setup()
                 table.remove(P_T, N_PLAYERS)
                 
                 --Adjust positions of buttons
-                Util.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y - pbh, .1)
-                Util.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y - pbh, .1)
+                Util.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y - pbh, .08)
+                Util.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y - pbh, .08)
                 
                 --Decreases players
                 N_PLAYERS = N_PLAYERS - 1
@@ -147,7 +148,7 @@ function draw.setup_setup()
             local h = this.h
 
             --Particles
-            Particle.explosion(x+w/2, y+h/2, exp_color, duration, max_part, speed) 
+            Particle.explosion(x+w/2, y+h/2, exp_color, duration, max_part, speed, decaying) 
 
             GOAL = GOAL + 1
         end
@@ -166,7 +167,7 @@ function draw.setup_setup()
             if GOAL > 1 then
                 
                 --Particles
-                Particle.explosion(x+w/2, y+h/2, exp_color, duration, max_part, speed)
+                Particle.explosion(x+w/2, y+h/2, exp_color, duration, max_part, speed, decaying)
 
                 GOAL = GOAL - 1
             end

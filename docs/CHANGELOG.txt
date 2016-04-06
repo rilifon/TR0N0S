@@ -19,6 +19,10 @@ THE HISTORY OF TR0N0S
 	~New CPU Level 3 - R0B1N, goes around everything
 	~CPU Level 2 improved, with more random decisions
 
+-Improved Setup
+	~Visually better
+	~more explosions
+
 -Tweaking and balance
 	~Changed tilesize and window size
 	~Changed text positions
