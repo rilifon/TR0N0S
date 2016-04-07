@@ -1,6 +1,7 @@
-local Util  = require "util"
+local Util     = require "util"
 local Particle = require "particle"
-local RGB   = require "rgb"
+local RGB      = require "rgb"
+local FX       = require "fx"
 
 
 
@@ -66,7 +67,7 @@ function draw.setup_setup()
                 N_PLAYERS = N_PLAYERS + 1
 
                 --Particles
-                Particle.explosion(x+w/2, y+h/2 + pbh, color, duration, max_part, speed, decaying)
+                FX.particle_explosion(x+w/2, y+h/2 + pbh, color, duration, max_part, speed, decaying)
                 
                 --Insert new CPU player
                 rgb_b = RGB.randomColor()
@@ -75,8 +76,8 @@ function draw.setup_setup()
                 table.insert(P_T, P)
 
                 --Adjust positions of buttons
-                Util.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y + pbh, .08)
-                Util.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y + pbh, .08)
+                FX.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y + pbh, .08)
+                FX.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y + pbh, .08)
                 
                 Util.updatePlayersB()
 
@@ -102,7 +103,7 @@ function draw.setup_setup()
             if N_PLAYERS > 1 then
                 
                 --Particles
-                Particle.explosion(x+w/2, y+h/2 - pbh, color, duration, max_part, speed, decaying)
+                FX.particle_explosion(x+w/2, y+h/2 - pbh, color, duration, max_part, speed, decaying)
 
                 p = P_T[N_PLAYERS]
                 if p.control == "WASD" then WASD_PLAYER = 0
@@ -116,8 +117,8 @@ function draw.setup_setup()
                 table.remove(P_T, N_PLAYERS)
                 
                 --Adjust positions of buttons
-                Util.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y - pbh, .08)
-                Util.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y - pbh, .08)
+                FX.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y - pbh, .08)
+                FX.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y - pbh, .08)
                 
                 --Decreases players
                 N_PLAYERS = N_PLAYERS - 1
@@ -148,7 +149,7 @@ function draw.setup_setup()
             local h = this.h
 
             --Particles
-            Particle.explosion(x+w/2, y+h/2, exp_color, duration, max_part, speed, decaying) 
+            FX.particle_explosion(x+w/2, y+h/2, exp_color, duration, max_part, speed, decaying) 
 
             GOAL = GOAL + 1
         end
@@ -167,7 +168,7 @@ function draw.setup_setup()
             if GOAL > 1 then
                 
                 --Particles
-                Particle.explosion(x+w/2, y+h/2, exp_color, duration, max_part, speed, decaying)
+                FX.particle_explosion(x+w/2, y+h/2, exp_color, duration, max_part, speed, decaying)
 
                 GOAL = GOAL - 1
             end
@@ -599,21 +600,33 @@ function BackgroundTransition()
     local r, g, b, ratio
     local duration = 5
     local diff = 0
-    local ori_color = map_color 
+    local ori_color = map_color
+
+    --Fixing imprecisions
+    ori_color.r = math.floor(ori_color.r + .5)
+    ori_color.g = math.floor(ori_color.g + .5)
+    ori_color.b = math.floor(ori_color.b + .5)
 
     --Get a random different color for map background
     targetColor = MC_T[math.random(#MC_T)]
-    while (targetColor == map_color) do
+
+    while ((targetColor.r == ori_color.r) and
+           (targetColor.g == ori_color.g) and
+           (targetColor.b == ori_color.b)) do
+
         targetColor = MC_T[math.random(#MC_T)]
     end
 
-    Util.smoothColor(map_color, ori_color, targetColor, duration)
+    FX.smoothColor(map_color, ori_color, targetColor, duration)
 
     --Starts a timer that gradually increse
     Color_Timer.after(duration,
+        
         --Calls parent function so that the transition is continuous
         function()
+
             BackgroundTransition()
+
         end
     )
 

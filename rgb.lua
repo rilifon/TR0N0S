@@ -55,4 +55,5 @@ function rgb.randomDarkColor(color)
 
 end
 
+--Return functions
 return rgb

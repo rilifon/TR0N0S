@@ -14,6 +14,7 @@ local Player   = require "player"
 local Rgb      = require "rgb"
 local Filter   = require "filter"
 local Particle = require "particle"
+local FX       = require "fx"
 
 
 --GAMESTATES
@@ -77,6 +78,10 @@ function setup:keypressed(key)
         Gamestate.switch(game)
     elseif key == 'b' then
         Draw.toggleDebug()
+    elseif key == 'right' then
+        B_T["n_player_up"].func()
+    elseif key == 'left' then
+        B_T["n_player_down"].func()
     end
 
 end
@@ -122,7 +127,8 @@ function game:update(dt)
         local cont = Util.countPlayers()
         if cont == 0 or (cont == 1 and not DEBUG) then
             Gamestate.switch(gameover)
-        end  
+        end
+        
     end
 
 end
@@ -277,7 +283,7 @@ function game:mousepressed(x, y, button, istouch)
 
     color = COLOR(0,25,255)
 
-    Particle.explosion(x, y, color)
+    FX.particle_explosion(x, y, color)
 
 end
 
