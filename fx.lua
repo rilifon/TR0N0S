@@ -176,7 +176,7 @@ function fx.smoothAlpha(o, i, f, duration)
     local a_a  = 0       --Acumulation of a
 
     --Starts a timer that gradually increse
-    Game_Timer.during(duration,
+    o.h = Game_Timer.during(duration,
 
         --Gradually change actual color until target color
         function(dt)

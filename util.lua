@@ -16,6 +16,7 @@ function util.configGame()
     local rgb_b, rgb_h  --Color for body and head
 
     --RANDOM SEED
+
     math.randomseed( os.time() )
     math.random(); math.random(); --Improves random
 
@@ -24,6 +25,7 @@ function util.configGame()
     DEBUG = false      --DEBUG mode status
     
     --MATCH/GAME SETUP VARS
+
     game_setup = false  --Inicial setup for each game
     GOAL = 3          --Best of X games that will be played in the match
     MATCH_BEGIN = false --If is in a current match
@@ -31,14 +33,17 @@ function util.configGame()
     N_PLAYERS = 2       --Number of players playing
     
     --CONTROL VARS
+
     WASD_PLAYER = 1     --Player using wasd keys
     ARROWS_PLAYER = 2   --Player using arrow keys
     
     --TIME VARS
+
     MAX_COUNTDOWN = 3   --Countdown in the beggining of each game
     TIMESTEP = 0.03     --Time between each game step
 
     --MAP VARS
+
     TILESIZE = 8        --Size of the game's tile
     HUDSIZE = 100       --Size of window dedicated for HUD
     BORDER = 8*TILESIZE --Border of the game map
@@ -48,6 +53,7 @@ function util.configGame()
     map_y = 80          --Map y size (in tiles)
         
     --TIMERS
+
     if not Game_Timer then
         Game_Timer = Timer.new()  --Timer for all game-related timing stuff
     end
@@ -57,15 +63,16 @@ function util.configGame()
     end
 
     --DRAWING TABLES
+
     TB_T   = {}  --Default TextBox table
     B_T    = {}  --Default Button table
     TXT_T  = {}  --Default Text table
     F_T    = {}  --Filter table
     PB_T   = {}  --Players Button table
     PART_T = {}  --Particles table
-        
+     
     --COLOR TABLES
-    
+
     --All base colors players can have
     C_T    = {COLOR(75,209,109), COLOR(174,252,91),  COLOR(220,252,91),
               COLOR(91,252,91),  COLOR(91,252,177),  COLOR(91,226,252),
@@ -74,13 +81,18 @@ function util.configGame()
               COLOR(73,196,89),  COLOR(109,209,46),  COLOR(210,227,61),
               COLOR(227,192,39), COLOR(111,230,32),  COLOR(134,227,20),
               COLOR(10,209,17),  COLOR(118,199,101), COLOR(0,194,74)}
+    
     --Color for the map
     map_color = COLOR(0, 0, 0)
+    
     --All base colors map background can have
     MC_T   = {COLOR(250,107,12), COLOR(250,81,62), COLOR(240,60,177), COLOR(180,18,201)}
 
     --OTHER TABLES
+
     P_T   = {}  --Players table
+
+    H_T = {}    --Timer's handle table
 
     --WINDOW CONFIG
     success = love.window.setMode(TILESIZE*map_x + 2*BORDER, TILESIZE*map_y + 2*BORDER, {borderless = not DEBUG})
@@ -90,6 +102,8 @@ function util.configGame()
     font_reg_m = love.graphics.newFont( "assets/FUTUVA.ttf", 30) --Font for regular text, medium size
     font_reg_s = love.graphics.newFont( "assets/FUTUVA.ttf", 16) --Font for regular text, small size
     love.graphics.setFont(font_reg_m)
+
+    
 
     --Creates first two players with random colors
 
@@ -522,6 +536,26 @@ function util.createPlayerButton(p)
     local color_b, color_t, cputext, controltext, pl
     local pb, ptb, x, y
 
+    --Fix case where a timer is rolling to remove the button and active
+    -- the button and active transitions
+    if H_T["h"..p.number] then
+
+        --Remove timer related to removing player button
+        Game_Timer.cancel(H_T["h"..p.number])
+        H_T["h"..p.number] = nil
+
+        --Remove timer related to changing playeer button alpha
+        if PB_T["P"..p.number.."pb"] then
+            Game_Timer.cancel(PB_T["P"..p.number.."pb"].h)
+        end
+
+        --Remove timer related to changing player head box alpha
+        if TB_T["P"..p.number.."tb"] then
+            Game_Timer.cancel(TB_T["P"..p.number.."tb"].h)
+        end
+        
+    end
+
      if p.cpu then
             cputext = "CPU"
             controltext = "Level " .. p.level
@@ -618,6 +652,27 @@ function util.createPlayerButton(p)
     FX.smoothAlpha(ptb.b_color, 0, 255, .5)
 
 end
+
+function util.removePlayerButton(p)
+    local duration = .2
+
+    pb  = PB_T["P"..p.number.."pb"]
+    ptb = TB_T["P"..p.number.."tb"]
+    
+    --Fades out
+    FX.smoothAlpha(pb.b_color, 255, 0, duration)
+    FX.smoothAlpha(pb.t_color, 255, 0, duration)
+    FX.smoothAlpha(ptb.b_color, 255, 0, duration)
+    
+    H_T["h"..p.number] = Game_Timer.after(duration, 
+        function()
+            --Removes player button on setup screen
+            PB_T["P"..p.number.."pb"] = nil
+            TB_T["P"..p.number.."tb"] = nil
+        end
+    )
+end
+
 
 --Update players buttons on setup
 function util.updatePlayersB()

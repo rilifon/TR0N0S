@@ -75,8 +75,8 @@ function draw.setup_setup()
                 table.insert(P_T, p)
 
                 --Adjust positions of buttons
-                FX.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y + pbh, .08)
-                FX.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y + pbh, .08)
+                FX.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y + pbh, .04)
+                FX.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y + pbh, .04)
                 
                 --Creates a player button on setup screen
                 Util.createPlayerButton(p)
@@ -109,23 +109,17 @@ function draw.setup_setup()
                 if p.control == "WASD" then WASD_PLAYER = 0
                 elseif p.control == "ARROWS" then ARROWS_PLAYER = 0 end
                 
-
-                --Removes player "head box"
-                TB_T["P"..p.number.."tb"] = nil
-                
                 --Removes last player
                 table.remove(P_T, N_PLAYERS)
                 
                 --Adjust positions of buttons
-                FX.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y - pbh, .08)
-                FX.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y - pbh, .08)
+                FX.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y - pbh, .04)
+                FX.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y - pbh, .04)
                 
                 --Decreases players
                 N_PLAYERS = N_PLAYERS - 1
 
-                --Creates a player button on setup screen
-                PB_T["P"..p.number.."pb"] = nil
-                TB_T["P"..p.number.."tb"] = nil
+                Util.removePlayerButton(p)
 
             end
         end
@@ -766,7 +760,7 @@ end
 function DrawCountdown()
     local color, font, x, y
 
-    color = COLOR(184, 184, 234)
+    color = COLOR(255, 255, 255)
     font = font_reg_m
     x = map_x/2 * TILESIZE + BORDER
     y = (map_y/2 - 5) * TILESIZE + BORDER
