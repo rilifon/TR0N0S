@@ -297,6 +297,7 @@ end
 --Checks collision between players and walls/another player
 function CheckCollision()
     local color = COLOR(65,17,180)
+    local p2
 
     for i, p1 in ipairs(P_T) do
         
@@ -305,16 +306,17 @@ function CheckCollision()
             --Check collision with wall
             if map[p1.x][p1.y] ~= 0 then
                 p1.dead = true
+                map[p1.x][p1.y] = p1.number
                 FX.particle_explosion(p1.x*TILESIZE + BORDER, p1.y*TILESIZE + BORDER, color)
             end
 
             --Check collision with other players
             for j=i+1, #P_T do
-                if p1.x == P_T[j].x and p1.y == P_T[j].y then
+                p2 = P_T[j]
+                if p1.x == p2.x and p1.y == p2.y then
                     p1.dead = true
-
-                    P_T[j].dead = true
-
+                    p2.dead = true
+                    map[p1.x][p1.y] = p1.number
                     FX.particle_explosion(p1.x*TILESIZE + BORDER, p1.y*TILESIZE + BORDER, color)
                 end
             end
@@ -511,100 +513,119 @@ function StartCountdown()
 end
 
 
--------------------------
---PLAYER BUTTON FUNCTIONS
--------------------------
+-----------------------------------
+--PLAYER BUTTON/INDICATOR FUNCTIONS
+-----------------------------------
 
---Update players buttons on setup
---TODO: improve so it doesnt delete all buttons and creates new ones
-function util.updatePlayersB()
+function util.createPlayerButton(p)
     local font = font_reg_m
     local color_b, color_t, cputext, controltext, pl
     local pb, ptb, x, y
 
-    util.clearTable(PB_T)
-
-    for i, p in ipairs(P_T) do
-        if p.cpu then
+     if p.cpu then
             cputext = "CPU"
             controltext = "Level " .. p.level
         else
             cputext = "HUMAN"
             controltext = p.control
-        end
+    end
 
-        --Counting the perceptive luminance - human eye favors green color... 
-        pl = 1 - ( 0.299 * p.b_color.r + 0.587 * p.b_color.g + 0.114 * p.b_color.b)/255;
+    --Counting the perceptive luminance - human eye favors green color... 
+    pl = 1 - ( 0.299 * p.b_color.r + 0.587 * p.b_color.g + 0.114 * p.b_color.b)/255;
 
-        if pl < 0.5 then
-            color_t = COLOR(0, 0, 0)       --bright colors - using black font
-        else
-            color_t = COLOR(255, 255, 255) --dark colors - using white font
-        end
+    if pl < 0.5 then
+        color_t = COLOR(0, 0, 0, 0)       --bright colors - using black font
+    else
+        color_t = COLOR(255, 255, 255, 0) --dark colors - using white font
+    end
 
-        color_b = COLOR(p.b_color.r, p.b_color.g, p.b_color.b)
+    color_b = COLOR(p.b_color.r, p.b_color.g, p.b_color.b, 0)
 
-        --Creates player button
-        x = 110
-        y = 150 + 45*i
-        w = 500
-        h = 40
-        pb = But(x, y, w, h,
-                        "PLAYER " .. i .. " " .. cputext .. " (" .. controltext .. ")",
-                        font, color_b, color_t, 
-                        --Change players from CPU to HUMAN witha controller
-                        function()
-                            --Human with WASD controls, on click, becomes ARROWS if possible, else becomes CPU
-                            if not p.cpu and p.control == "WASD" then
-                                if ARROWS_PLAYER == 0 then
-                                    p.control = "ARROWS"
-                                    ARROWS_PLAYER = p.number
-                                    WASD_PLAYER = 0
-                                else
-                                    p.cpu = true
-                                    p.level = 1
-                                    p.control = nil
-                                    WASD_PLAYER = 0
-                                end
-
-                            --Human with ARROWS controls, on click, becomes CPU Level1
-                            elseif not p.cpu and p.control == "ARROWS" then
+    --Creates player button
+    x = 110
+    y = 150 + 45*p.number
+    w = 500
+    h = 40
+    pb = But(x, y, w, h,
+                    "PLAYER " .. p.number .. " " .. cputext .. " (" .. controltext .. ")",
+                    font, color_b, color_t, 
+                    --Change players from CPU to HUMAN with a controller
+                    function()
+                        --Human with WASD controls, on click, becomes ARROWS if possible, else becomes CPU
+                        if not p.cpu and p.control == "WASD" then
+                            if ARROWS_PLAYER == 0 then
+                                p.control = "ARROWS"
+                                ARROWS_PLAYER = p.number
+                                WASD_PLAYER = 0
+                            else
                                 p.cpu = true
                                 p.level = 1
                                 p.control = nil
-                                ARROWS_PLAYER = 0
-
-                            --CPU Level different from 3, on click, becomes next level CPU
-                            elseif p.cpu and p.level ~= 3 then
-                                p.level = p.level + 1
-
-                            --CPU Level3, on click, becomes WASD or ARROWS if possible. Else becomes CPU Level1
-                            elseif p.cpu and p.level == 3 then
-                                if WASD_PLAYER == 0 then
-                                    p.control = "WASD"
-                                    WASD_PLAYER = p.number
-                                    p.cpu = false
-                                    p.level = nil
-                                elseif ARROWS_PLAYER == 0 then
-                                    p.control = "ARROWS"
-                                    ARROWS_PLAYER = p.number
-                                    p.cpu = false
-                                    p.level = nil
-                                else
-                                    p.level = 1
-                                end
+                                WASD_PLAYER = 0
                             end
 
-                            util.updatePlayersB()
-                        end)
-        table.insert(PB_T, pb)
+                        --Human with ARROWS controls, on click, becomes CPU Level1
+                        elseif not p.cpu and p.control == "ARROWS" then
+                            p.cpu = true
+                            p.level = 1
+                            p.control = nil
+                            ARROWS_PLAYER = 0
 
-        --Creates players head color box
-        x = x + w
-        w = 40
-        h = 40
-        ptb = TB(x, y, w, h, "", font, p.h_color, COLOR(0,0,0))
-        TB_T["P"..p.number.."tb"] = ptb
+                        --CPU Level different from 3, on click, becomes next level CPU
+                        elseif p.cpu and p.level ~= 3 then
+                            p.level = p.level + 1
+
+                        --CPU Level3, on click, becomes WASD or ARROWS if possible. Else becomes CPU Level1
+                        elseif p.cpu and p.level == 3 then
+                            if WASD_PLAYER == 0 then
+                                p.control = "WASD"
+                                WASD_PLAYER = p.number
+                                p.cpu = false
+                                p.level = nil
+                            elseif ARROWS_PLAYER == 0 then
+                                p.control = "ARROWS"
+                                ARROWS_PLAYER = p.number
+                                p.cpu = false
+                                p.level = nil
+                            else
+                                p.level = 1
+                            end
+                        end
+
+                        --Update player text
+                        if p.cpu then
+                            cputext = "CPU"
+                            controltext = "Level " .. p.level
+                        else
+                            cputext = "HUMAN"
+                            controltext = p.control
+                        end
+                        PB_T["P"..p.number.."pb"].text =  "PLAYER " .. p.number .. " " .. cputext .. " (" .. controltext .. ")"
+
+                    end)
+    PB_T["P"..p.number.."pb"] =  pb
+
+    --Creates players head color box
+    x = x + w
+    w = 40
+    h = 40
+    ptb = TB(x, y, w, h, "", font, p.h_color, COLOR(0,0,0))
+    TB_T["P"..p.number.."tb"] = ptb
+
+    --Transitions
+    FX.smoothAlpha(pb.b_color, 0, 255, .5)
+    FX.smoothAlpha(pb.t_color, 0, 255, .5)
+    FX.smoothAlpha(ptb.b_color, 0, 255, .5)
+
+end
+
+--Update players buttons on setup
+function util.updatePlayersB()
+
+    for i, p in ipairs(P_T) do
+
+        util.createPlayerButton(p)
+
     end
 
 end

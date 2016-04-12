@@ -89,7 +89,7 @@ Check the useful links on the bottom of this document
 -SPECIAL THANKS
 
 -Fernando Omar Aluani-
--Wilson Kazuo-
+-Wilson Kazuo Mizutani-
 
 for helping in the majority of the beta testing
 

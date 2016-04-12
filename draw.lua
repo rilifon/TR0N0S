@@ -23,11 +23,10 @@ function draw.setup_setup()
     local color_b, color_t, exp_color
     local duration, max_part, speed, decaying
 
-    
+    Util.updatePlayersB()
+
     SetupHUD_default("simple")
     
-    --Creates textboxes for current players
-    Util.updatePlayersB()
 
     -----------------------------
     --Creates setup buttons
@@ -47,7 +46,7 @@ function draw.setup_setup()
 
     --Up button
     x = 370
-    y = PB_T[#PB_T].y + PB_T[#PB_T].h + 5
+    y = PB_T["P"..N_PLAYERS.."pb"].y + PB_T["P"..N_PLAYERS.."pb"].h + 5
     color_b  = COLOR(23, 233, 0)
 
     n_player_up = But(x, y, w, h, "+", font, color_b, color_t,
@@ -57,7 +56,7 @@ function draw.setup_setup()
             local y = this.y
             local w = this.w
             local h = this.h
-            local pbh = PB_T[#PB_T].h + 5 --Height of players button
+            local pbh = PB_T["P"..N_PLAYERS.."pb"].h + 5 --Height of players button
             local color = COLOR(255, 0, 247)
             local x_nil = 0
 
@@ -72,14 +71,15 @@ function draw.setup_setup()
                 --Insert new CPU player
                 rgb_b = RGB.randomColor()
                 rgb_h = RGB.randomDarkColor(rgb_b)
-                P   = PLAYER(N_PLAYERS, false, nil, nil, nil, nil, rgb_b, rgb_h, true, 1, nil)
-                table.insert(P_T, P)
+                p = PLAYER(N_PLAYERS, false, nil, nil, nil, nil, rgb_b, rgb_h, true, 1, nil)
+                table.insert(P_T, p)
 
                 --Adjust positions of buttons
                 FX.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y + pbh, .08)
                 FX.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y + pbh, .08)
                 
-                Util.updatePlayersB()
+                --Creates a player button on setup screen
+                Util.createPlayerButton(p)
 
             end
         end
@@ -97,7 +97,7 @@ function draw.setup_setup()
             local y = this.y
             local w = this.w
             local h = this.h
-            local pbh = PB_T[#PB_T].h + 5 --Height of players button
+            local pbh = PB_T["P"..N_PLAYERS.."pb"].h + 5 --Height of players button
             local color = COLOR(255,128,0) 
 
             if N_PLAYERS > 1 then
@@ -123,7 +123,9 @@ function draw.setup_setup()
                 --Decreases players
                 N_PLAYERS = N_PLAYERS - 1
 
-                Util.updatePlayersB()
+                --Creates a player button on setup screen
+                PB_T["P"..p.number.."pb"] = nil
+                TB_T["P"..p.number.."tb"] = nil
 
             end
         end
