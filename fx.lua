@@ -2,6 +2,47 @@
 
 local fx = {}
 
+--Color object
+CIRCLE = Class{
+    init = function(self, x, y, r, color, mode)
+        self.x       = x        --X position
+        self.y       = y        --Y position
+        self.r       = r        --Radius
+
+        self.color = {}
+        self.color.r = color.r        --Red
+        self.color.g = color.g        --Green
+        self.color.b = color.b        --Blue
+        self.color.a = color.a or 255 --Alpha
+
+        self.mode    = mode or "line" --Mode
+        
+    end
+}
+
+----------------
+--GLOW FUNCTIONS
+----------------
+
+--Creates a "glow" effect on position (x,y) with radius r and color c
+function fx.glowCircle(x, y, r, c)
+    local color, a, ratio
+    local step = 1
+
+
+    for i=0,r,step do
+        ratio = i/r
+        a = math.abs((1 - ratio) * 255)
+        color = COLOR(c.r, c.g, c.b, a) 
+        FX_T["fx-glow"..x..y..i] = CIRCLE(x, y, i, color, "line")
+    end
+
+end
+
+--------------------
+--PARTICLE FUNCTIONS
+--------------------
+
 --Creates a colored article explosion starting position (x,y)
 function fx.particle_explosion(x, y, color, duration, max_part, speed, decaying)
     local duration = duration or 2    --Duration particles will stay on screen

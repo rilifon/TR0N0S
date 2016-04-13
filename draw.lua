@@ -23,8 +23,10 @@ function draw.setup_setup()
     local color_b, color_t, exp_color
     local duration, max_part, speed, decaying
 
+    --Create buttons for all already existing players
     Util.updatePlayersB()
 
+    --Chooses a simple HUD
     SetupHUD_default("simple")
     
 
@@ -215,12 +217,24 @@ end
 
 --Draw game countdown and text
 function draw.game_setup()
-    
+    local b
+
     SetupHUD_default("complete")
 
     SetupHUD_game()
 
     BackgroundTransition()
+
+    --Update map color with players head
+    for i, p in ipairs(P_T) do
+        b = MAP_T["mapx"..p.x.."y"..p.y]
+
+        b.color.r = p.h_color.r
+        b.color.g = p.h_color.g
+        b.color.b = p.h_color.b
+        b.color.a = p.h_color.a
+    end
+
 
     if not game_begin then
         SetupPlayerIndicator()
@@ -351,8 +365,6 @@ end
 
 --Draw all stuff from game
 function draw.game_state()
-
-    DrawMap()
     
     DrawScore()
     
@@ -366,9 +378,7 @@ end
 
 --Draw all stuff from pause
 function draw.pause_state()
-    
-    DrawMap()
-    
+
     DrawScore()
     
     DrawAll()
@@ -377,8 +387,6 @@ end
 
 --Draw all stuff from gameover
 function draw.gameover_state()
-    
-    DrawMap()
 
     DrawScore()
     
@@ -394,20 +402,34 @@ end
 --Draws every drawable from tables
 function DrawAll()
 
-    DrawB()
+    DrawFX()   --Draws all default effects
 
-    DrawPB()
+    DrawB()    --Draws all default buttons
 
-    DrawPART()
+    DrawPB()   --Draws all default player buttons
 
-    DrawF()
+    DrawBOX()  --Draws all default boxes
 
-    DrawTXT()
+    DrawMAP()  --Updates all map tiles
 
-    DrawTB()
+    DrawPART() --Draws all default particles
+
+    DrawF()    --Draws all default filters
+
+    DrawTXT()  --Draws all default texts
+
+    DrawTB()   --Draws all default textboxes
 
 end
 
+--Draws all default effects
+function DrawFX()
+    
+    for i, v in pairs(FX_T) do
+        drawEffect(v)
+    end
+
+end
 
 --Draws all default textboxes
 function DrawTB()
@@ -418,7 +440,7 @@ function DrawTB()
 
 end
 
---Draw all default buttons
+--Draws all default buttons
 function DrawB()
 
     for i, v in pairs(B_T) do
@@ -427,7 +449,7 @@ function DrawB()
 
 end
 
---Draw all default texts
+--Draws all default texts
 function DrawTXT()
 
     for i, v in pairs(TXT_T) do
@@ -436,7 +458,7 @@ function DrawTXT()
 
 end
 
---Draw all filters
+--Draws all filters
 function DrawF()
 
     for i, v in pairs(F_T) do
@@ -445,7 +467,7 @@ function DrawF()
 
 end
 
---Draw all players buttons
+--Draws all players buttons
 function DrawPB()
    
     for i, v in pairs(PB_T) do
@@ -454,7 +476,7 @@ function DrawPB()
 
 end
 
---Draw all particles
+--Draws all particles
 function DrawPART()
    
     for i, v in pairs(PART_T) do
@@ -463,7 +485,36 @@ function DrawPART()
 
 end
 
---Draw a given button
+--Draws all particles
+function DrawBOX()
+   
+    for i, v in pairs(BOX_T) do
+        drawBox(v)
+    end
+
+end
+
+--Updates all background tiles
+function DrawMAP()
+   
+    for i, tile in pairs(MAP_T) do
+        drawTile(tile)
+    end
+
+end
+
+-----------
+
+--Draws a given effect
+function drawEffect(fx)
+    local seg = 10
+
+    love.graphics.setColor(fx.color.r, fx.color.g, fx.color.b, fx.color.a)
+    love.graphics.circle(fx.mode, fx.x, fx.y, fx.r, seg)
+
+end
+
+--Draws a given button
 function drawButton(button)
     local fwidth, fheight, tx, ty, font
 
@@ -484,7 +535,7 @@ function drawButton(button)
 
 end
 
---Draw a given textbox
+--Draws a given textbox
 function drawTextBox(textbox)
     local fwidth, fheight, tx, ty, font
 
@@ -505,7 +556,7 @@ function drawTextBox(textbox)
 
 end
 
---Draw a given text
+--Draws a given text
 function drawText(text)
     local font = text.font
 
@@ -515,7 +566,7 @@ function drawText(text)
 
 end
 
---Draw a given filter
+--Draws a given filter
 function drawFilter(filter)
 
     love.graphics.setColor(filter.color.r, filter.color.g, filter.color.b, filter.color.a)
@@ -523,7 +574,7 @@ function drawFilter(filter)
 
 end
 
---Draw a given particle
+--Draws a given particle
 function drawParticle(particle)
     local r = 3 --Particle radiius
 
@@ -532,64 +583,38 @@ function drawParticle(particle)
 
 end
 
+--Draws a given box
+function drawBox(box)
+
+    --Draws box
+    love.graphics.setColor(box.color.r, box.color.g, box.color.b, box.color.a)
+    love.graphics.rectangle("fill", box.x, box.y, box.w, box.h)
+
+end
+
+--Draws a given box
+function drawTile(tile)
+    local x, y, w, h
+    
+    w = TILESIZE
+    h = TILESIZE
+    x = BORDER + (tile.x - 1)*TILESIZE
+    y = BORDER + (tile.y - 1)*TILESIZE
+
+    --Draws tile
+    if map[tile.x][tile.y] == 0 then
+        love.graphics.setColor(map_color.r, map_color.g, map_color.b, map_color.a)
+    else
+        love.graphics.setColor(tile.color.r, tile.color.g, tile.color.b, tile.color.a)
+    end
+
+    love.graphics.rectangle("fill", x, y, w, h)
+
+end
+
 --------------------
 --MAP DRAW FUNCTIONS
 --------------------
-
---Draws the game map
-function DrawMap()
-
-    DrawGrid()
-
-    DrawHeads()
-
-end
-
---Draws the map and players bodies
-function DrawGrid()
-    local number, x, y, color
-
-    --Draw the tiles with the corresponding color
-    for i=1,map_x do
-        for j=1,map_y do
-
-            number = map[i][j] --Number of that tile (0 for map or else for player number)
-            if number == 0 then
-                color = COLOR(map_color.r, map_color.g, map_color.b)
-                love.graphics.setColor(color.r, color.g, color.b)
-            else
-                color = COLOR(P_T[number].b_color.r, P_T[number].b_color.g, P_T[number].b_color.b)
-                love.graphics.setColor(color.r, color.g, color.b)
-            end
-
-            x = (i-1)*TILESIZE + BORDER
-            y = (j-1)*TILESIZE + BORDER
-            love.graphics.rectangle("fill", x, y, TILESIZE, TILESIZE) --Draw tile            
-        end
-    end
-
-end
-
---Draws players heads
-function DrawHeads()
-    local dead, x, y, color
-
-    --Draw players heads
-    for i, p in ipairs(P_T) do
-        
-        --Checks if head is dead
-        dead = 1
-        if p.dead then dead = 0 end
-
-        --Draws heads
-        color = COLOR(p.h_color.r * dead, p.h_color.g * dead , p.h_color.b * dead)
-        x = (p.x-1)*TILESIZE + BORDER
-        y = (p.y-1)*TILESIZE + BORDER
-        love.graphics.setColor(color.r, color.g, color.b)
-        love.graphics.rectangle("fill", x, y, TILESIZE, TILESIZE) --Draw tile     
-    end
-
-end
 
 --Choses a random color from a table and transitions the map background to it 
 function BackgroundTransition()

@@ -15,6 +15,7 @@ local Rgb      = require "rgb"
 local Filter   = require "filter"
 local Particle = require "particle"
 local FX       = require "fx"
+local BOX      = require "box"
 
 
 --GAMESTATES
@@ -108,7 +109,7 @@ end
 
 function game:leave()
 
-    Util.clearAllTables("notPart")
+    Util.clearAllTables("inGame")
 
 end
 
@@ -199,7 +200,7 @@ end
 
 function pause:leave()
 
-    Util.clearAllTables("notPart")
+    Util.clearAllTables("inGame")
     
 end
 
@@ -295,6 +296,13 @@ function love.keypressed(key)
    
     if key == "0" then
         Util.zoera()
-    end
+    elseif key == "9" then
+        for i = 1, map_x do
+            for j = 1, map_y do
+                io.write(map[i][j])
+            end
+            print("-")
+        end
+    end 
 
 end

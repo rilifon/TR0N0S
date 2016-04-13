@@ -51,6 +51,14 @@ function util.configGame()
     map = {}            --Game map
     map_x = 80          --Map x size (in tiles)
     map_y = 80          --Map y size (in tiles)
+
+    --Creates the map
+    for i=1,map_x do
+        map[i] = {}
+        for j=1,map_y do
+            map[i][j] = 0
+        end
+    end
         
     --TIMERS
 
@@ -70,6 +78,9 @@ function util.configGame()
     F_T    = {}  --Filter table
     PB_T   = {}  --Players Button table
     PART_T = {}  --Particles table
+    FX_T   = {}  --Effects Table
+    BOX_T  = {}  --Box Table
+    MAP_T  = {}  --Map Table (contain all tiles)
      
     --COLOR TABLES
 
@@ -118,6 +129,7 @@ function util.configGame()
     rgb_h = RGB.randomDarkColor(rgb_b)
     P_2   = PLAYER(2, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "ARROWS")
     table.insert(P_T, P_2)
+    
 
 end
 
@@ -180,9 +192,11 @@ function setupPlayers()
         p.dir     = nil --Player current direction
         p.nextdir = nil --Player next direction
 
-        p.dead = false
+        p.dead = false --ITS ALIVE!
 
-        p.side = nil
+        p.side = nil --For cpu level 3
+
+        map[p_x][p_y] = 2 --Update first position
     end
 
 end
@@ -205,8 +219,6 @@ function util.tick(dt)
 
         UpdateHuman()
 
-        CheckCollision()
-
         --Reset step counter
         step = 0
     end
@@ -222,8 +234,8 @@ function UpdateCPU()
             local x = p.x
             local y = p.y
             
-            --Draw player "trail" before moving
-            map[x][y] = p.number
+            --Update map before moving
+            map[x][y] = 1
 
 
             --CPU LEVEL 1
@@ -245,7 +257,7 @@ function UpdateCPU()
             end
 
 
-            --Move CPU
+            --Get CPU next position
             if dir == 1 then
                 x = math.max(1, x - 1)         --Left
             elseif dir == 2 then
@@ -258,10 +270,10 @@ function UpdateCPU()
 
             --Updates player direction
             p.dir = dir
-            
-            --Update player position
-            p.x = x
-            p.y = y
+
+            movePlayer(x,y,p)
+
+
         end
     end
 
@@ -279,8 +291,8 @@ function UpdateHuman()
             x = p.x
             y = p.y
             
-            --Draw player "trail" before moving
-            map[x][y] = p.number
+            --Update map before moving
+            map[x][y] = 1
 
             --Move players 
             if dir == 1 then
@@ -295,10 +307,9 @@ function UpdateHuman()
 
             --Updates player direction
             p.dir = dir
-            
-            --Update player position
-            p.x = x
-            p.y = y
+
+            movePlayer(x,y,p)
+
         end
     end
 
@@ -308,35 +319,71 @@ end
 --USEFUL GAME FUNCTIONS
 -----------------------
 
+function movePlayer(x,y,p)
+    local b
+
+    --Update map color
+    b = MAP_T["mapx"..p.x.."y"..p.y]
+
+    b.color.r = p.b_color.r
+    b.color.g = p.b_color.g
+    b.color.b = p.b_color.b
+    b.color.a = p.b_color.a
+
+    --Update player position
+    p.x = x
+    p.y = y
+
+    CheckCollision(p)
+
+    --Update map with player head
+    map[p.x][p.y] = 2
+
+    if not p.dead then
+        --Update map color with head
+        b = MAP_T["mapx"..p.x.."y"..p.y]
+
+        b.color.r = p.h_color.r
+        b.color.g = p.h_color.g
+        b.color.b = p.h_color.b
+        b.color.a = p.h_color.a
+    end
+
+end
+
 --Checks collision between players and walls/another player
-function CheckCollision()
+function CheckCollision(p)
     local color = COLOR(65,17,180)
-    local p2
-
-    for i, p1 in ipairs(P_T) do
+    local x, y
+    
+    --Check collision with wall
+    if map[p.x][p.y] == 1 then
+        p.dead = true --Makes player dead
         
-        if not p1.dead then
-            
-            --Check collision with wall
-            if map[p1.x][p1.y] ~= 0 then
-                p1.dead = true
-                map[p1.x][p1.y] = p1.number
-                FX.particle_explosion(p1.x*TILESIZE + BORDER, p1.y*TILESIZE + BORDER, color)
-            end
+        x = p.x*TILESIZE + BORDER
+        y = p.y*TILESIZE + BORDER
+        FX.particle_explosion(x, y, color) --Create effect
 
-            --Check collision with other players
-            for j=i+1, #P_T do
-                p2 = P_T[j]
-                if p1.x == p2.x and p1.y == p2.y then
-                    p1.dead = true
-                    p2.dead = true
-                    map[p1.x][p1.y] = p1.number
-                    FX.particle_explosion(p1.x*TILESIZE + BORDER, p1.y*TILESIZE + BORDER, color)
-                end
+        MAP_T["mapx"..p.x.."y"..p.y].color = COLOR(0,0,0) --Paint tile black
+    end
+
+    --Check collision with other players
+    for i, p2 in ipairs(P_T) do
+        if p.number ~= p2.number then --Compare with different players
+            
+            if p.x == p2.x and p.y == p2.y then
+                p.dead = true  --Makes inicial player dead
+                p2.dead = true --Makes player2 dead
+
+                x = p.x*TILESIZE + BORDER
+                y = p.y*TILESIZE + BORDER
+                FX.particle_explosion(x, y, color) --Create effect
+
+                MAP_T["mapx"..p.x.."y"..p.y].color = COLOR(0,0,0) --Paint tile black
             end
 
         end
-  end
+    end
 
 end
 
@@ -729,8 +776,12 @@ function util.clearAllTables(mode)
 
     util.clearTable(PB_T)
 
-    if mode ~= "notPart" then
+    util.clearTable(FX_T)
+
+
+    if mode ~= "inGame" then
         util.clearTable(PART_T)
+        util.clearTable(MAP_T)
     end
 
 end
@@ -763,18 +814,20 @@ end
 
 --Reset map, puttting 0 in all positions
 function resetMap()
-    
+
     --Resets map background color with a random possible color
     map_color = MC_T[math.random(#MC_T)]
     
+    --Reset all map positions to 0 and create a tile
     for i=1,map_x do
-        map[i] = {}
         for j=1,map_y do
-            map[i][j] = 0
+            map[i][j] = 0 --Reset map
+
+            MAP_T["mapx"..i.."y"..j] = TILE(i, j, map_color) --Creates a tile
         end
     end
-
 end
+
 
 --------------------
 --ZOEIRAZOEIRAZOEIRA 

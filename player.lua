@@ -19,11 +19,13 @@ PLAYER = Class{
         self.b_color.r = b_color.r
         self.b_color.g = b_color.g
         self.b_color.b = b_color.b
+        self.b_color.a = b_color.a or 255
         --Color of player's head
         self.h_color ={}
         self.h_color.r = h_color.r
         self.h_color.g = h_color.g
-        self.h_color.b = h_color.b        
+        self.h_color.b = h_color.b 
+        self.h_color.a = h_color.a or 255        
 
         self.cpu = cpu   --boolean that indicates if player is cpu
         if self.cpu then
