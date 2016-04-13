@@ -30,7 +30,7 @@ TILE = Class{
         self.h     = h     --height
         
         --Color of tile
-        
+
         self.color = {}
         self.color.r = color.r
         self.color.g = color.g

@@ -70,6 +70,21 @@ function util.configGame()
         Color_Timer = Timer.new()  --Timer for all color-related timing stuff
     end
 
+    --SHADERS
+    SHADER = nil
+    --Shader for drawing map background
+    Map_Shader = love.graphics.newShader[[
+        extern number r,g,b,a;
+        vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
+          vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
+          pixel.r = r;
+          pixel.g = g;
+          pixel.b = b;
+          pixel.a = a;
+          return pixel;
+        }
+    ]]
+
     --DRAWING TABLES
 
     TB_T   = {}  --Default TextBox table
@@ -823,7 +838,7 @@ function resetMap()
         for j=1,map_y do
             map[i][j] = 0 --Reset map
 
-            MAP_T["mapx"..i.."y"..j] = TILE(i, j, map_color) --Creates a tile
+            MAP_T["mapx"..i.."y"..j] = TILE(i, j, COLOR(255,255,255)) --Creates a tile
         end
     end
 end

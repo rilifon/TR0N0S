@@ -497,8 +497,24 @@ end
 --Updates all background tiles
 function DrawMAP()
    
+    Map_Shader:send("r",map_color.r/255)
+    Map_Shader:send("g",map_color.g/255)
+    Map_Shader:send("b",map_color.b/255)
+    Map_Shader:send("a",map_color.a/255)  
+
+    --Draw all the background
+
+    love.graphics.setShader(Map_Shader)
+    SHADER = "map"
     for i, tile in pairs(MAP_T) do
-        drawTile(tile)
+        drawTileBack(tile)
+    end
+    love.graphics.setShader()
+    SHADER = nil
+
+    --Draw players body and heads
+    for i, tile in pairs(MAP_T) do
+        drawTileTrue(tile)
     end
 
 end
@@ -592,8 +608,20 @@ function drawBox(box)
 
 end
 
---Draws a given box
-function drawTile(tile)
+--Draws a tile with background color
+function drawTileBack(tile)
+    local x, y, w, h
+    
+    w = TILESIZE
+    h = TILESIZE
+    x = BORDER + (tile.x - 1)*TILESIZE
+    y = BORDER + (tile.y - 1)*TILESIZE
+
+    love.graphics.rectangle("fill", x, y, w, h)
+end
+
+--Draws a tile with his real color
+function drawTileTrue(tile)
     local x, y, w, h
     
     w = TILESIZE
@@ -602,13 +630,10 @@ function drawTile(tile)
     y = BORDER + (tile.y - 1)*TILESIZE
 
     --Draws tile
-    if map[tile.x][tile.y] == 0 then
-        love.graphics.setColor(map_color.r, map_color.g, map_color.b, map_color.a)
-    else
+    if map[tile.x][tile.y] ~= 0 then 
         love.graphics.setColor(tile.color.r, tile.color.g, tile.color.b, tile.color.a)
+        love.graphics.rectangle("fill", x, y, w, h)
     end
-
-    love.graphics.rectangle("fill", x, y, w, h)
 
 end
 
