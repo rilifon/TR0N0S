@@ -15,6 +15,10 @@ function util.configGame()
     local P_1, P_2      --Player 1 and 2
     local rgb_b, rgb_h  --Color for body and head
 
+    --THE PIXEL
+
+    PIXEL = love.graphics.newImage("assets/pixel.png")
+
     --RANDOM SEED
 
     math.randomseed( os.time() )
@@ -72,18 +76,36 @@ function util.configGame()
 
     --SHADERS
     SHADER = nil
-    --Shader for drawing map background
-    Map_Shader = love.graphics.newShader[[
-        extern number r,g,b,a;
+
+    --Shader for drawing glow effect on circles
+    Glow_Shader = love.graphics.newShader[[
+        extern vec2 offset; //Coordenates of image center
+        extern number radius;   //"Radius" of image
         vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
-          vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
-          pixel.r = r;
-          pixel.g = g;
-          pixel.b = b;
-          pixel.a = a;
-          return pixel;
+            vec4 pixel = color;
+            number dist = distance(screen_coords, offset);
+            pixel.a = 1-(dist/radius);
+            return pixel;
         }
     ]]
+
+    --[[Shader for outline effect (to examine)
+    Outline_Shader = love.graphics.newShader[[
+        extern vec2 stepSize;
+        vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
+            
+            number alpha = 4*Texel( texture, texture_coords ).a;
+            alpha -= Texel( texture, texture_coords + vec2( stepSize.x, 0.0f ) ).a;
+            alpha -= Texel( texture, texture_coords + vec2( -stepSize.x, 0.0f ) ).a;
+            alpha -= Texel( texture, texture_coords + vec2( 0.0f, stepSize.y ) ).a;
+            alpha -= Texel( texture, texture_coords + vec2( 0.0f, -stepSize.y ) ).a;
+            
+            // calculate resulting color
+            vec4 resultCol = vec4( 1.0f, 1.0f, 1.0f, alpha );
+            // return color for current pixel
+            return resultCol;
+        }
+    ]]--
 
     --DRAWING TABLES
 
@@ -183,7 +205,7 @@ end
 
 --Setup all players
 function setupPlayers()
-    local p_x, p_y, is_rand
+    local p_x, p_y, is_rand, c, r, grad, color, tile
     
     for i, p in ipairs(P_T) do
 
@@ -212,6 +234,23 @@ function setupPlayers()
         p.side = nil --For cpu level 3
 
         map[p_x][p_y] = 2 --Update first position
+
+        
+        --Update map with players head
+        color = COLOR(p.h_color.r, p.h_color.g, p.h_color.b, p.h_color.a)
+        tile = TILE(p.x, p.y, color) --Creates a tile
+        MAP_T["mapx"..p.x.."y"..p.y] = tile
+
+
+        --Create glow effect for first position
+        grad = 1.3
+        color = COLOR(p.h_color.r*grad, p.h_color.g*grad, p.h_color.b*grad)
+        p_x = BORDER + (p_x-1)*TILESIZE + TILESIZE/2
+        p_y = BORDER + (p_y-1)*TILESIZE + TILESIZE/2
+        r = TILESIZE + 3
+        c = CIRCLE(p_x, p_y, r, color, "fill")
+        FX_T["glowx"..p_x.."y"..p_y] = c
+
     end
 
 end
@@ -335,7 +374,7 @@ end
 -----------------------
 
 function movePlayer(x,y,p)
-    local b
+    local b, c, x_,y_,r_, color, grad, tile
 
     --Update map color
     b = MAP_T["mapx"..p.x.."y"..p.y]
@@ -349,19 +388,29 @@ function movePlayer(x,y,p)
     p.x = x
     p.y = y
 
+    grad = 1.3
+    color = COLOR(p.h_color.r*grad, p.h_color.g*grad, p.h_color.b*grad)
+
+    --Create glow effect
+    x_ = BORDER + (x-1)*TILESIZE + TILESIZE/2
+    y_ = BORDER + (y-1)*TILESIZE + TILESIZE/2
+    r_ = TILESIZE + 3
+    c = CIRCLE(x_, y_, r_, color, "fill")
+    FX_T["glowx"..x.."y"..y] = c
+
     CheckCollision(p)
 
     --Update map with player head
     map[p.x][p.y] = 2
 
     if not p.dead then
-        --Update map color with head
-        b = MAP_T["mapx"..p.x.."y"..p.y]
 
-        b.color.r = p.h_color.r
-        b.color.g = p.h_color.g
-        b.color.b = p.h_color.b
-        b.color.a = p.h_color.a
+        --Creates a box with players head
+        color = COLOR(p.h_color.r, p.h_color.g, p.h_color.b, p.h_color.a)
+        tile = TILE(p.x, p.y, color) --Creates a tile
+
+        MAP_T["mapx"..p.x.."y"..p.y] = tile
+
     end
 
 end
@@ -787,16 +836,15 @@ function util.clearAllTables(mode)
 
     util.clearTable(TXT_T)
 
-    util.clearTable(F_T)
-
     util.clearTable(PB_T)
 
-    util.clearTable(FX_T)
+    util.clearTable(F_T)
 
 
     if mode ~= "inGame" then
         util.clearTable(PART_T)
         util.clearTable(MAP_T)
+        util.clearTable(FX_T)
     end
 
 end
@@ -837,8 +885,6 @@ function resetMap()
     for i=1,map_x do
         for j=1,map_y do
             map[i][j] = 0 --Reset map
-
-            MAP_T["mapx"..i.."y"..j] = TILE(i, j, COLOR(255,255,255)) --Creates a tile
         end
     end
 end

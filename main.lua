@@ -15,7 +15,7 @@ local Rgb      = require "rgb"
 local Filter   = require "filter"
 local Particle = require "particle"
 local FX       = require "fx"
-local BOX      = require "box"
+local Shapes   = require "shapes"
 
 
 --GAMESTATES
@@ -31,6 +31,7 @@ function love.load()
 
     Gamestate.registerEvents()
     Gamestate.switch(setup)
+
 end
 
 
@@ -280,12 +281,15 @@ end
 --------------------
 
 function game:mousepressed(x, y, button, istouch)
-    local color
 
-    color = COLOR(0,25,255)
+end
 
-    FX.particle_explosion(x, y, color)
+function love.update(dt)
 
+end
+
+function love.draw()
+   
 end
 
 --------------------

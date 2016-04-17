@@ -28,7 +28,6 @@ function draw.setup_setup()
 
     --Chooses a simple HUD
     SetupHUD_default("simple")
-    
 
     -----------------------------
     --Creates setup buttons
@@ -115,8 +114,8 @@ function draw.setup_setup()
                 table.remove(P_T, N_PLAYERS)
                 
                 --Adjust positions of buttons
-                FX.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y - pbh, .04)
-                FX.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y - pbh, .04)
+                FX.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y - pbh, .1)
+                FX.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y - pbh, .1)
                 
                 --Decreases players
                 N_PLAYERS = N_PLAYERS - 1
@@ -217,24 +216,12 @@ end
 
 --Draw game countdown and text
 function draw.game_setup()
-    local b
 
     SetupHUD_default("complete")
 
     SetupHUD_game()
 
     BackgroundTransition()
-
-    --Update map color with players head
-    for i, p in ipairs(P_T) do
-        b = MAP_T["mapx"..p.x.."y"..p.y]
-
-        b.color.r = p.h_color.r
-        b.color.g = p.h_color.g
-        b.color.b = p.h_color.b
-        b.color.a = p.h_color.a
-    end
-
 
     if not game_begin then
         SetupPlayerIndicator()
@@ -368,7 +355,7 @@ function draw.game_state()
     
     DrawScore()
     
-    DrawAll()
+    DrawAll("inGame")
 
     if not game_begin then
         DrawCountdown()
@@ -381,7 +368,7 @@ function draw.pause_state()
 
     DrawScore()
     
-    DrawAll()
+    DrawAll("inGame")
 
 end
 
@@ -390,7 +377,7 @@ function draw.gameover_state()
 
     DrawScore()
     
-    DrawAll()
+    DrawAll("inGame")
 
 end
 
@@ -400,34 +387,47 @@ end
 ----------------------
 
 --Draws every drawable from tables
-function DrawAll()
+function DrawAll(mode)
 
-    DrawFX()   --Draws all default effects
+    if mode == "inGame" then
+        DrawMAP()     --Updates all map tiles
+    end
 
-    DrawB()    --Draws all default buttons
+    DrawFX()      --Draws all default effects
 
-    DrawPB()   --Draws all default player buttons
+    if mode == "inGame" then
+        DrawPlayers() --Draws all players on screen
+    end
 
-    DrawBOX()  --Draws all default boxes
+    DrawB()       --Draws all default buttons
 
-    DrawMAP()  --Updates all map tiles
+    DrawPB()      --Draws all default player buttons
 
-    DrawPART() --Draws all default particles
+    DrawBOX()     --Draws all default boxes
 
-    DrawF()    --Draws all default filters
+    DrawPART()    --Draws all default particles
 
-    DrawTXT()  --Draws all default texts
+    DrawF()       --Draws all default filters
 
-    DrawTB()   --Draws all default textboxes
+    DrawTXT()     --Draws all default texts
+
+    DrawTB()      --Draws all default textboxes
 
 end
 
 --Draws all default effects
 function DrawFX()
     
+
+    love.graphics.setShader(Glow_Shader)
+    SHADER = "glow"
+
     for i, v in pairs(FX_T) do
-        drawEffect(v)
+        drawCircleGlow(v)
     end
+
+    love.graphics.setShader()
+    SHADER = nil
 
 end
 
@@ -496,39 +496,21 @@ end
 
 --Updates all background tiles
 function DrawMAP()
-   
-    Map_Shader:send("r",map_color.r/255)
-    Map_Shader:send("g",map_color.g/255)
-    Map_Shader:send("b",map_color.b/255)
-    Map_Shader:send("a",map_color.a/255)  
+    
+    drawBackground()
 
-    --Draw all the background
+end
 
-    love.graphics.setShader(Map_Shader)
-    SHADER = "map"
+ --Draw players body and heads
+function DrawPlayers()
+
     for i, tile in pairs(MAP_T) do
-        drawTileBack(tile)
-    end
-    love.graphics.setShader()
-    SHADER = nil
-
-    --Draw players body and heads
-    for i, tile in pairs(MAP_T) do
-        drawTileTrue(tile)
+        drawTile(tile)
     end
 
 end
 
 -----------
-
---Draws a given effect
-function drawEffect(fx)
-    local seg = 10
-
-    love.graphics.setColor(fx.color.r, fx.color.g, fx.color.b, fx.color.a)
-    love.graphics.circle(fx.mode, fx.x, fx.y, fx.r, seg)
-
-end
 
 --Draws a given button
 function drawButton(button)
@@ -592,7 +574,7 @@ end
 
 --Draws a given particle
 function drawParticle(particle)
-    local r = 3 --Particle radiius
+    local r = 3 --Particle radius
 
     love.graphics.setColor(particle.color.r, particle.color.g, particle.color.b, particle.color.a)
     love.graphics.circle("fill", particle.x, particle.y, r)
@@ -609,19 +591,21 @@ function drawBox(box)
 end
 
 --Draws a tile with background color
-function drawTileBack(tile)
+function drawBackground(tile)
     local x, y, w, h
     
-    w = TILESIZE
-    h = TILESIZE
-    x = BORDER + (tile.x - 1)*TILESIZE
-    y = BORDER + (tile.y - 1)*TILESIZE
+    w = map_x*TILESIZE
+    h = map_y*TILESIZE
+    x = BORDER
+    y = BORDER
 
+    love.graphics.setColor(map_color.r, map_color.g, map_color.b, map_color.a)
     love.graphics.rectangle("fill", x, y, w, h)
+
 end
 
 --Draws a tile with his real color
-function drawTileTrue(tile)
+function drawTile(tile)
     local x, y, w, h
     
     w = TILESIZE
@@ -630,12 +614,20 @@ function drawTileTrue(tile)
     y = BORDER + (tile.y - 1)*TILESIZE
 
     --Draws tile
-    if map[tile.x][tile.y] ~= 0 then 
-        love.graphics.setColor(tile.color.r, tile.color.g, tile.color.b, tile.color.a)
-        love.graphics.rectangle("fill", x, y, w, h)
-    end
+    love.graphics.setColor(tile.color.r, tile.color.g, tile.color.b, tile.color.a)
+    love.graphics.rectangle("fill", x, y, w, h)
 
 end
+
+function drawCircleGlow(circle)
+
+    Glow_Shader:send("offset",{circle.x,circle.y})
+    Glow_Shader:send("radius", circle.r)
+    love.graphics.setColor(circle.color.r, circle.color.g, circle.color.b, circle.color.a)
+    love.graphics.circle("fill", circle.x, circle.y, circle.r)
+
+end
+
 
 --------------------
 --MAP DRAW FUNCTIONS

@@ -1,8 +1,6 @@
---MODULE FOR BOX AND STUFF--
+--MODULE FOR SHAPES AND STUFF--
 
-box = {}
-
-local box = {}
+local shape = {}
 
 --Box object
 BOX = Class{
@@ -39,5 +37,24 @@ TILE = Class{
     end
 }
 
+--Color object
+CIRCLE = Class{
+    init = function(self, x, y, r, color, mode)
+        self.x       = x        --X position
+        self.y       = y        --Y position
+        self.r       = r        --Radius
+
+        self.color = {}
+        self.color.r = color.r        --Red
+        self.color.g = color.g        --Green
+        self.color.b = color.b        --Blue
+        self.color.a = color.a or 255 --Alpha
+
+        self.mode    = mode or "line" --Mode
+        
+    end
+}
+
+
 --Return functions
-return box
+return shape
