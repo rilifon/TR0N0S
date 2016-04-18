@@ -390,12 +390,8 @@ end
 function DrawAll(mode)
 
     if mode == "inGame" then
-        DrawMAP()     --Updates all map tiles
-    end
+        DrawMAP()     --Draws the background
 
-    DrawFX()      --Draws all default effects
-
-    if mode == "inGame" then
         DrawPlayers() --Draws all players on screen
     end
 
@@ -412,22 +408,6 @@ function DrawAll(mode)
     DrawTXT()     --Draws all default texts
 
     DrawTB()      --Draws all default textboxes
-
-end
-
---Draws all default effects
-function DrawFX()
-    
-
-    love.graphics.setShader(Glow_Shader)
-    SHADER = "glow"
-
-    for i, v in pairs(FX_T) do
-        drawCircleGlow(v)
-    end
-
-    love.graphics.setShader()
-    SHADER = nil
 
 end
 
@@ -501,9 +481,19 @@ function DrawMAP()
 
 end
 
- --Draw players body and heads
+ --Draw players glow effect, body and heads
 function DrawPlayers()
 
+    --Draws the glow effect
+    love.graphics.setShader(Glow_Shader)
+    SHADER = "Glow"
+    for i, tile in pairs(MAP_T) do
+        drawGlow(tile)
+    end
+    love.graphics.setShader()
+    SHADER = nil
+    
+    --Draws the players
     for i, tile in pairs(MAP_T) do
         drawTile(tile)
     end
@@ -590,7 +580,7 @@ function drawBox(box)
 
 end
 
---Draws a tile with background color
+--Draws the background
 function drawBackground(tile)
     local x, y, w, h
     
@@ -600,11 +590,11 @@ function drawBackground(tile)
     y = BORDER
 
     love.graphics.setColor(map_color.r, map_color.g, map_color.b, map_color.a)
-    love.graphics.rectangle("fill", x, y, w, h)
+    love.graphics.draw(PIXEL, x, y, 0, w, h)
 
 end
 
---Draws a tile with his real color
+--Draws a tile 
 function drawTile(tile)
     local x, y, w, h
     
@@ -615,19 +605,25 @@ function drawTile(tile)
 
     --Draws tile
     love.graphics.setColor(tile.color.r, tile.color.g, tile.color.b, tile.color.a)
-    love.graphics.rectangle("fill", x, y, w, h)
+    love.graphics.draw(PIXEL, x, y, 0, w, h)
 
 end
 
-function drawCircleGlow(circle)
+--Draws a glow effect for every tile
+function drawGlow(tile)
+    local x, y, w, h
+    
+    e = EPS   --Epsilon, range the glow effect will achieve
+    w = TILESIZE
+    h = TILESIZE
+    x = BORDER + (tile.x - 1)*TILESIZE - e
+    y = BORDER + (tile.y - 1)*TILESIZE - e
 
-    Glow_Shader:send("offset",{circle.x,circle.y})
-    Glow_Shader:send("radius", circle.r)
-    love.graphics.setColor(circle.color.r, circle.color.g, circle.color.b, circle.color.a)
-    love.graphics.circle("fill", circle.x, circle.y, circle.r)
+    --Draws tile
+    love.graphics.setColor(tile.color.r, tile.color.g, tile.color.b, tile.color.a)
+    love.graphics.draw(PIXEL, x, y, 0, w+2*e, h+2*e)
 
 end
-
 
 --------------------
 --MAP DRAW FUNCTIONS

@@ -14,12 +14,14 @@ local util = {}
 function util.configGame()
     local P_1, P_2      --Player 1 and 2
     local rgb_b, rgb_h  --Color for body and head
+    local ratio
 
     --THE PIXEL
 
     PIXEL = love.graphics.newImage("assets/pixel.png")
 
     --RANDOM SEED
+
 
     math.randomseed( os.time() )
     math.random(); math.random(); --Improves random
@@ -49,6 +51,7 @@ function util.configGame()
     --MAP VARS
 
     TILESIZE = 8        --Size of the game's tile
+    EPS      = 8        --Range of players glow effect
     HUDSIZE = 100       --Size of window dedicated for HUD
     BORDER = 8*TILESIZE --Border of the game map
     MARGIN = 12         --Size of margin for players' inicial position
@@ -77,18 +80,25 @@ function util.configGame()
     --SHADERS
     SHADER = nil
 
-    --Shader for drawing glow effect on circles
+    --Shader for drawing glow effect
     Glow_Shader = love.graphics.newShader[[
-        extern vec2 offset; //Coordenates of image center
-        extern number radius;   //"Radius" of image
         vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
-            vec4 pixel = color;
-            number dist = distance(screen_coords, offset);
-            pixel.a = 1-(dist/radius);
-            return pixel;
+            vec4 pixel = Texel(texture, texture_coords );
+            vec2 center = vec2(0.5,0.5);
+            number grad = 0.7;
+            number dist = distance(center, texture_coords);
+            if(dist <= 0.5){
+                color.a = 1-(dist/0.5);
+                color.r = color.r * grad;
+                color.g = color.g * grad;
+                color.b = color.b * grad;
+                return pixel*color;
+            }
         }
     ]]
 
+
+    
     --[[Shader for outline effect (to examine)
     Outline_Shader = love.graphics.newShader[[
         extern vec2 stepSize;
@@ -150,9 +160,7 @@ function util.configGame()
     font_reg_m = love.graphics.newFont( "assets/FUTUVA.ttf", 30) --Font for regular text, medium size
     font_reg_s = love.graphics.newFont( "assets/FUTUVA.ttf", 16) --Font for regular text, small size
     love.graphics.setFont(font_reg_m)
-
     
-
     --Creates first two players with random colors
 
     --Player 1
@@ -240,16 +248,6 @@ function setupPlayers()
         color = COLOR(p.h_color.r, p.h_color.g, p.h_color.b, p.h_color.a)
         tile = TILE(p.x, p.y, color) --Creates a tile
         MAP_T["mapx"..p.x.."y"..p.y] = tile
-
-
-        --Create glow effect for first position
-        grad = 1.3
-        color = COLOR(p.h_color.r*grad, p.h_color.g*grad, p.h_color.b*grad)
-        p_x = BORDER + (p_x-1)*TILESIZE + TILESIZE/2
-        p_y = BORDER + (p_y-1)*TILESIZE + TILESIZE/2
-        r = TILESIZE + 3
-        c = CIRCLE(p_x, p_y, r, color, "fill")
-        FX_T["glowx"..p_x.."y"..p_y] = c
 
     end
 
@@ -374,29 +372,20 @@ end
 -----------------------
 
 function movePlayer(x,y,p)
-    local b, c, x_,y_,r_, color, grad, tile
+    local c, x_,y_,r_, color, grad, tile
 
     --Update map color
-    b = MAP_T["mapx"..p.x.."y"..p.y]
+    tile = MAP_T["mapx"..p.x.."y"..p.y]
 
-    b.color.r = p.b_color.r
-    b.color.g = p.b_color.g
-    b.color.b = p.b_color.b
-    b.color.a = p.b_color.a
+    tile.color.r = p.b_color.r
+    tile.color.g = p.b_color.g
+    tile.color.b = p.b_color.b
+    tile.color.a = p.b_color.a
 
     --Update player position
     p.x = x
     p.y = y
 
-    grad = 1.3
-    color = COLOR(p.h_color.r*grad, p.h_color.g*grad, p.h_color.b*grad)
-
-    --Create glow effect
-    x_ = BORDER + (x-1)*TILESIZE + TILESIZE/2
-    y_ = BORDER + (y-1)*TILESIZE + TILESIZE/2
-    r_ = TILESIZE + 3
-    c = CIRCLE(x_, y_, r_, color, "fill")
-    FX_T["glowx"..x.."y"..y] = c
 
     CheckCollision(p)
 
