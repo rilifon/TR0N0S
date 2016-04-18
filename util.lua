@@ -46,19 +46,17 @@ function util.configGame()
     --TIME VARS
 
     MAX_COUNTDOWN = 3   --Countdown in the beggining of each game
-    TIMESTEP = 0.03     --Time between each game step
+    TIMESTEP = 0.04     --Time between each game step
 
     --MAP VARS
 
-    TILESIZE = 8        --Size of the game's tile
-    EPS      = 8        --Range of players glow effect
+    TILESIZE = 10       --Size of the game's tile
     HUDSIZE = 100       --Size of window dedicated for HUD
-    BORDER = 8*TILESIZE --Border of the game map
+    BORDER = 60         --Border of the game map
     MARGIN = 12         --Size of margin for players' inicial position
     map = {}            --Game map
-    map_x = 80          --Map x size (in tiles)
-    map_y = 80          --Map y size (in tiles)
-
+    map_x = 65          --Map x size (in tiles)
+    map_y = 65          --Map y size (in tiles)
     --Creates the map
     for i=1,map_x do
         map[i] = {}
@@ -66,6 +64,14 @@ function util.configGame()
             map[i][j] = 0
         end
     end
+
+    --GLOW EFFECT
+
+    EPS      = 8      --Range of players glow effect
+    GROWING  = false  --If eps will be growing or not 
+    MAX_EPS  = 12     --Max value for eps
+    MIN_EPS  = 6      --Min value for eps
+
         
     --TIMERS
 
@@ -180,7 +186,10 @@ end
 
 --Setup a new match, setting all scores to zero
 function util.setupMatch()
-   
+
+    GROWING = true
+    EPS  = MIN_EPS
+
     for i, p in ipairs(P_T) do
         p.score = 0
     end
@@ -259,9 +268,26 @@ end
 
 --Update step and all players position
 function util.tick(dt)
-    
+    local t
+
     --Update "real-time" stuff
+
+    --Particle effect
     Particle.update(dt)
+    
+    --Grow effect
+    t = 3
+    if GROWING then
+        EPS = EPS + t*dt
+        if EPS >= MAX_EPS then
+            GROWING = false
+        end
+    else
+        EPS = EPS - t*dt
+        if EPS <= MIN_EPS then
+            GROWING = true
+        end
+    end
     
     --Update "timestep" stuff
     step = math.min(TIMESTEP, step + dt)
@@ -634,7 +660,10 @@ end
 function util.createPlayerButton(p)
     local font = font_reg_m
     local color_b, color_t, cputext, controltext, pl
-    local pb, ptb, x, y
+    local pb, ptb, x, y, w, h, w_cb, h_cb
+
+    w_cb = 40 --Width of head color box
+    h_cb = 40 --Height of head color box
 
     --Fix case where a timer is rolling to remove the button and active
     -- the button and active transitions
@@ -676,10 +705,10 @@ function util.createPlayerButton(p)
     color_b = COLOR(p.b_color.r, p.b_color.g, p.b_color.b, 0)
 
     --Creates player button
-    x = 110
-    y = 150 + 45*p.number
     w = 500
     h = 40
+    x = (love.graphics.getWidth() - w - w_cb)/2
+    y = 150 + 45*p.number
     pb = But(x, y, w, h,
                     "PLAYER " .. p.number .. " " .. cputext .. " (" .. controltext .. ")",
                     font, color_b, color_t, 
@@ -741,9 +770,7 @@ function util.createPlayerButton(p)
 
     --Creates players head color box
     x = x + w
-    w = 40
-    h = 40
-    ptb = TB(x, y, w, h, "", font, p.h_color, COLOR(0,0,0))
+    ptb = TB(x, y, w_cb, h_cb, "", font, p.h_color, COLOR(0,0,0))
     TB_T["P"..p.number.."tb"] = ptb
 
     --Transitions
