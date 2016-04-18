@@ -14,19 +14,29 @@ COLOR = Class{
     end
 }
 
---Return a random base color from the Color Table
-function randomBaseColor()
-    local color = math.random(#C_T)
+--Return a random base color id not used from the Color Table
+function rgb.randomBaseColor()
+    local color_id
+
+    color_id = math.random(#C_T)
     
-    return C_T[color]
+    while C_MT[color_id] == 1 do
+        color_id = math.random(#C_T)
+    end
+
+    C_MT[color_id] = 1
+
+    return color_id
 
 end
 
---Return a random color based on a default color with some slight variation
-function rgb.randomColor()
-    local offset = 40
+--Return a random color based on a default color_id with some slight variation
+function rgb.randomColor(color_id)
+    local offset = 30
     local value, newValue, valueRatio
-    local color = randomBaseColor()
+    local color
+
+    color = C_T[color_id]
 
     value = (color.r + color.g + color.b)/3
     newValue = value + 2*math.random()*offset - offset

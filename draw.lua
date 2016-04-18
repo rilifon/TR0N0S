@@ -18,7 +18,7 @@ local FONT_FIX_Y = 8
 
 function draw.setup_setup()
     local x, y, w, h, font, txt, text, transp, color
-    local rgb_b, rgb_h, P, p 
+    local rgb_b, rgb_h, P, p, color_id 
     local gap --Gap between two buttons
     local color_b, color_t, exp_color
     local duration, max_part, speed, decaying
@@ -70,9 +70,11 @@ function draw.setup_setup()
                 FX.particle_explosion(x+w/2, y+h/2 + pbh, color, duration, max_part, speed, decaying)
                 
                 --Insert new CPU player
-                rgb_b = RGB.randomColor()
+                color_id = RGB.randomBaseColor()
+                rgb_b = RGB.randomColor(color_id)
                 rgb_h = RGB.randomDarkColor(rgb_b)
                 p = PLAYER(N_PLAYERS, false, nil, nil, nil, nil, rgb_b, rgb_h, true, 1, nil)
+                p.color_id = color_id
                 table.insert(P_T, p)
 
                 --Adjust positions of buttons
@@ -110,6 +112,9 @@ function draw.setup_setup()
                 if p.control == "WASD" then WASD_PLAYER = 0
                 elseif p.control == "ARROWS" then ARROWS_PLAYER = 0 end
                 
+                --"Free" player color
+                C_MT[p.color_id] = 0
+
                 --Removes last player
                 table.remove(P_T, N_PLAYERS)
                 

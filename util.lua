@@ -13,7 +13,7 @@ local util = {}
 --Set game's global variables, random seed and window configuration
 function util.configGame()
     local P_1, P_2      --Player 1 and 2
-    local rgb_b, rgb_h  --Color for body and head
+    local rgb_b, rgb_h, color_id  --Color for body and head
     local ratio
 
     --THE PIXEL
@@ -138,14 +138,12 @@ function util.configGame()
     --COLOR TABLES
 
     --All base colors players can have
-    C_T    = {COLOR(75,209,109), COLOR(174,252,91),  COLOR(220,252,91),
-              COLOR(91,252,91),  COLOR(91,252,177),  COLOR(91,226,252),
-              COLOR(91,134,252), COLOR(112,91,252),  COLOR(180,91,252),
-              COLOR(52,68,191),  COLOR(52,149,191),  COLOR(52,191,159),
-              COLOR(73,196,89),  COLOR(109,209,46),  COLOR(210,227,61),
-              COLOR(227,192,39), COLOR(111,230,32),  COLOR(134,227,20),
-              COLOR(10,209,17),  COLOR(118,199,101), COLOR(0,194,74)}
-    
+    C_T    = {COLOR(11,175,230),  COLOR(26,83,240),  COLOR(129,26,240),
+              COLOR(22,245,130),  COLOR(112,219,4),  COLOR(223,242,99),
+              COLOR(157,149,186), COLOR(230,25,165), COLOR(7,140,68),
+              COLOR(87,125,156)}
+    --Base colors mapping table
+    C_MT   = {0,0,0,0,0,0,0,0,0,0}  
     --Color for the map
     map_color = COLOR(0, 0, 0)
     
@@ -170,15 +168,19 @@ function util.configGame()
     --Creates first two players with random colors
 
     --Player 1
-    rgb_b = RGB.randomColor()
+    color_id = RGB.randomBaseColor()
+    rgb_b = RGB.randomColor(color_id)
     rgb_h = RGB.randomDarkColor(rgb_b)
     P_1   = PLAYER(1, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "WASD")
+    P_1.color_id = color_id
     table.insert(P_T, P_1)
 
     --Player 2
-    rgb_b = RGB.randomColor()
+    color_id = RGB.randomBaseColor()
+    rgb_b = RGB.randomColor(color_id)
     rgb_h = RGB.randomDarkColor(rgb_b)
     P_2   = PLAYER(2, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "ARROWS")
+    P_2.color_id = color_id
     table.insert(P_T, P_2)
     
 

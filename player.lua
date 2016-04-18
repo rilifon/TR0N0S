@@ -6,14 +6,16 @@ local player = {}
 
 --PLayer object
 PLAYER = Class{
-    init = function(self, number, dead, x, y, dir, nextdir, b_color, h_color, cpu, level, control, score, side)
+    init = function(self, number, dead, x, y, dir, nextdir, b_color, h_color, cpu, level, control)
         self.number = number   --player number
         self.dead = dead       --if player is dead
         self.x = x             --x position
         self.y = y             --y position
         self.dir = dir         --player current direction
         self.nextdir = nextdir --player next direction
-        
+
+        self.color_id = nil
+            
         --Color of player's body
         self.b_color ={}
         self.b_color.r = b_color.r
@@ -35,7 +37,7 @@ PLAYER = Class{
         	self.level = nil
         	self.control = control --indicates this player controls ("WASD" or "ARROWS")
         end
-
+        self.score = 0  --Player score
         self.side = nil --Side of player that he is going around(for cpu's level 3)
     end
 }
