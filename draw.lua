@@ -17,7 +17,7 @@ local FONT_FIX_Y = 8
 -----------------------
 
 function draw.setup_setup()
-    local x, y, w, h, font, txt, text, transp, color
+    local x, y, w, h, font, txt, text, transp, color, img, sx, sy
     local rgb_b, rgb_h, P, p, color_id 
     local gap --Gap between two buttons
     local color_b, color_t, exp_color
@@ -33,7 +33,7 @@ function draw.setup_setup()
     --Creates setup buttons
     -----------------------------
 
-    gap = 5
+    gap = 40
     color_t   = COLOR(0, 0, 0)
     duration = 3.5                  --Duration of particles
     max_part = 30                   --Max number of particles
@@ -41,16 +41,18 @@ function draw.setup_setup()
     decaying = .99                  --Decaying speed of particles
 
     --N_PLAYERS BUTTON
-    w = 60
-    h = 60
-    font = font_but_m
+    font = font_but_l
 
     --Up button
-    x = 370
     y = PB_T["P"..N_PLAYERS.."pb"].y + PB_T["P"..N_PLAYERS.."pb"].h + 5
     color_b  = COLOR(23, 233, 0)
-
-    n_player_up = But(x, y, w, h, "+", font, color_b, color_t,
+    img = bt_img_plus
+    sx = 1
+    sy = 1
+    w = img:getWidth()*sx
+    h = img:getHeight()*sy
+    x = love.graphics.getWidth()/2 --Get half the screen
+    n_player_up = But_Img(img, x, y, w, h, sx, sy, "+", font, color_t,
         function()
             local this = n_player_up
             local x = this.x
@@ -58,7 +60,7 @@ function draw.setup_setup()
             local w = this.w
             local h = this.h
             local pbh = PB_T["P"..N_PLAYERS.."pb"].h + 5 --Height of players button
-            local color = COLOR(255, 0, 247)
+            local color = COLOR(255,0,247)
             local x_nil = 0
 
             if N_PLAYERS < MAX_PLAYERS then
@@ -87,13 +89,17 @@ function draw.setup_setup()
             end
         end
     )
-    B_T["n_player_up"] = n_player_up
+    BI_T["n_player_up"] = n_player_up
 
     --Down button
-    x = 290
     color_b  = COLOR(233, 10, 0)
-
-    n_player_down = But(x, y, w, h, "-", font, color_b, color_t,
+    img = bt_img_minus
+    sx = 1
+    sy = 1
+    w = img:getWidth()*sx
+    h = img:getHeight()*sy
+    x = x - w --Get correct position
+    n_player_down = But_Img(img, x, y, w, h, sx, sy, "-", font, color_t,
         function()
             local this = n_player_down
             local x = this.x
@@ -130,19 +136,21 @@ function draw.setup_setup()
             end
         end
     )
-    B_T["n_player_down"] = n_player_down
+    BI_T["n_player_down"] = n_player_down
 
     --GOAL BUTTON
-    x = 600
-    y = 20
-    w = 60
-    h = 60
-    font = font_but_m
+    x = 450
+    y = 5
+    font = font_but_l
     color_b   = COLOR(233, 131, 0)  --Color of button background
     exp_color = COLOR(163,48,201)   --Color of particle explosion
-
+    img = bt_img_plus
+    sx = 1
+    sy = 1
+    w = img:getWidth()*sx
+    h = img:getHeight()*sy
     --Up button
-    goal_up = But(x, y, w, h, "+", font, color_b, color_t,
+    goal_up = But_Img(img, x, y, w, h, sx, sy, "+", font, color_t,
         function()
             local this = goal_up
             local x = this.x
@@ -156,10 +164,16 @@ function draw.setup_setup()
             GOAL = GOAL + 1
         end
     )
-    B_T["goal_up"] =  goal_up
+    BI_T["goal_up"] =  goal_up
 
     --Down button
-    goal_down = But(x, y + h + gap, w, h, "-", font, color_b, color_t,
+    img = bt_img_minus
+    sx = 1
+    sy = 1
+    w = img:getWidth()*sx
+    h = img:getHeight()*sy
+    y = y + h - 20
+    goal_down = But_Img(img, x, y, w, h, sx, sy, "-", font, color_t,
         function()
             local this = goal_down
             local x = this.x
@@ -176,33 +190,39 @@ function draw.setup_setup()
             end
         end
     )
-    B_T["goal_down"] = goal_down
+    BI_T["goal_down"] = goal_down
 
 
 
     -----------------------------
-    --Creates setup textbox
+    --Creates setup images withtxt
     -----------------------------
     
     color_b = COLOR(233, 131, 0)
     color_t = COLOR(0, 0, 0)
     font = font_but_m
 
-    --N_PLAYERS TEXTBOX
-    x = 40
-    y = 40
-    w = 240
-    h = 60
-    n_player_tb = TB(x, y, w, h, "NUMBER OF PLAYERS", font, color_b, color_t)
-    TB_T["n_player_tb"] = n_player_tb
+    --N_PLAYERS IMAGE
+    img = bt_img
+    x  = 15
+    y  = 10
+    sx = 1
+    sy = .4
+    w = img:getWidth()*sx
+    h = img:getHeight()*sy
+    n_player_i = IMG(img, x, y, w, h, sx, sy, "NUMBER OF PLAYERS", font, color_t)
+    I_T["n_player_i"] = n_player_i
 
     --GOAL TEXTBOX
-    x = 440
-    y = 40
-    w = 140
-    h = 60
-    goal_tb = TB(x, y, w, h, "GOAL", font, color_b, color_t)
-    TB_T["goal_tb"] = goal_tb
+    img = bt_img
+    x = 540
+    y = 10
+    sx = .4
+    sy = .4
+    w = img:getWidth()*sx
+    h = img:getHeight()*sy
+    goal_i = IMG(img, x, y, w, h, sx, sy, "GOAL", font, color_t)
+    I_T["goal_i"] = goal_i
 
     -----------------------------
     --Creates setup text
@@ -347,10 +367,10 @@ function draw.setup_state()
     love.graphics.setColor( 255, 255, 255)
     love.graphics.setFont(font)
     --N_PLAYERS var
-    love.graphics.print(N_PLAYERS, 150, 120, 0, 2, 2)
+    love.graphics.print(N_PLAYERS, 200, 120, 0, 2, 2)
 
     --GOAL var
-    love.graphics.print(GOAL, 500, 120, 0, 2, 2)
+    love.graphics.print(GOAL, 600, 120, 0, 2, 2)
 
 end
 
@@ -402,6 +422,10 @@ function DrawAll(mode)
 
     DrawB()       --Draws all default buttons
 
+    DrawBI()      --Draws all default buttons with images
+
+    DrawI()       --Draws all default images with text
+
     DrawPB()      --Draws all default player buttons
 
     DrawBOX()     --Draws all default boxes
@@ -433,6 +457,25 @@ function DrawB()
     end
 
 end
+
+--Draws all default buttons with images
+function DrawBI()
+
+    for i, v in pairs(BI_T) do
+        drawButtonImg(v)
+    end
+
+end
+
+--Draws all default images with text
+function DrawI()
+
+    for i, v in pairs(I_T) do
+        drawImg(v)
+    end
+
+end
+
 
 --Draws all default texts
 function DrawTXT()
@@ -487,6 +530,7 @@ function DrawMAP()
 end
 
  --Draw players glow effect, body and heads
+ --IS THE CAUSE OF LAG
 function DrawPlayers()
 
     --Draws the glow effect
@@ -497,7 +541,7 @@ function DrawPlayers()
     end
     love.graphics.setShader()
     SHADER = nil
-    
+
     --Draws the players
     for i, tile in pairs(MAP_T) do
         drawTile(tile)
@@ -521,12 +565,62 @@ function drawButton(button)
     ty = (button.h - fheight)/2                  --Relative y position of font on textbox
 
     --Draws button text
-    font = font_but_m
+    font = button.font
     love.graphics.setColor(button.t_color.r, button.t_color.g, button.t_color.b, button.t_color.a)
     love.graphics.setFont(font)
     love.graphics.print(button.text, button.x + tx , button.y + ty)
 
 end
+
+--Draws a given button with image
+function drawButtonImg(but)
+    local fwidth, fheight, tx, ty, font, fix
+
+    fix = 5 --Fix font position on images
+
+    --Draws image
+    love.graphics.setColor(255,255,255)
+    love.graphics.draw(but.img, but.x, but.y, 0, but.sx, but.sy)
+    
+    font = but.font
+    fwidth  = font:getWidth( but.text) --Width of font
+    fheight = font:getHeight(but.text) --Height of font
+    tx = (but.w - fwidth)/2            --Relative x position of font on textbox
+    ty = (but.h - fheight)/2 - fix     --Relative y position of font on textbox
+
+    --Draws button text
+    love.graphics.setColor(but.t_color.r, but.t_color.g, but.t_color.b, but.t_color.a)
+    love.graphics.setFont(font)
+    love.graphics.print(but.text, but.x + tx , but.y + ty)
+
+    if DEBUG then
+        love.graphics.setColor(255,0,0)
+        love.graphics.rectangle("fill", but.x, but.y, but.w, but.h)
+    end
+
+end
+
+--Draws a given image with text
+function drawImg(img)
+    local fwidth, fheight, tx, ty, font
+
+    --Draws image
+    love.graphics.setColor(255,255,255)
+    love.graphics.draw(img.img, img.x, img.y, 0, img.sx, img.sy)
+    
+    font = img.font
+    fwidth  = font:getWidth( img.text) --Width of font
+    fheight = font:getHeight(img.text) --Height of font
+    tx = (img.w - fwidth)/2     --Relative x position of font on textbox
+    ty = (img.h - fheight)/2    --Relative y position of font on textbox
+
+    --Draws image text
+    love.graphics.setColor(img.t_color.r, img.t_color.g, img.t_color.b, img.t_color.a)
+    love.graphics.setFont(font)
+    love.graphics.print(img.text, img.x + tx , img.y + ty)
+
+end
+
 
 --Draws a given textbox
 function drawTextBox(textbox)

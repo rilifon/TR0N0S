@@ -16,9 +16,14 @@ function util.configGame()
     local rgb_b, rgb_h, color_id  --Color for body and head
     local ratio
 
-    --THE PIXEL
-
+    --IMAGES
+    
+    --The Pixel
     PIXEL = love.graphics.newImage("assets/pixel.png")
+    --Button
+    bt_img = love.graphics.newImage("assets/default_img.png")
+    bt_img_plus = love.graphics.newImage("assets/button_plus.png")
+    bt_img_minus = love.graphics.newImage("assets/button_minus.png")
 
     --RANDOM SEED
 
@@ -46,13 +51,13 @@ function util.configGame()
     --TIME VARS
 
     MAX_COUNTDOWN = 3   --Countdown in the beggining of each game
-    TIMESTEP = 0.04     --Time between each game step
+    TIMESTEP = 0.03     --Time between each game step
 
     --MAP VARS
 
     TILESIZE = 10       --Size of the game's tile
     HUDSIZE = 100       --Size of window dedicated for HUD
-    BORDER = 60         --Border of the game map
+    BORDER = 80         --Border of the game map
     MARGIN = 12         --Size of margin for players' inicial position
     map = {}            --Game map
     map_x = 65          --Map x size (in tiles)
@@ -127,6 +132,8 @@ function util.configGame()
 
     TB_T   = {}  --Default TextBox table
     B_T    = {}  --Default Button table
+    BI_T   = {}  --Default Button with Images table
+    I_T    = {}  --Images table
     TXT_T  = {}  --Default Text table
     F_T    = {}  --Filter table
     PB_T   = {}  --Players Button table
@@ -141,9 +148,9 @@ function util.configGame()
     C_T    = {COLOR(11,175,230),  COLOR(26,83,240),  COLOR(129,26,240),
               COLOR(22,245,130),  COLOR(112,219,4),  COLOR(223,242,99),
               COLOR(157,149,186), COLOR(230,25,165), COLOR(7,140,68),
-              COLOR(87,125,156)}
+              COLOR(87,125,156),  COLOR(133,127,60)}
     --Base colors mapping table
-    C_MT   = {0,0,0,0,0,0,0,0,0,0}  
+    C_MT   = {0,0,0,0,0,0,0,0,0,0,0}  
     --Color for the map
     map_color = COLOR(0, 0, 0)
     
@@ -160,6 +167,7 @@ function util.configGame()
     success = love.window.setMode(TILESIZE*map_x + 2*BORDER, TILESIZE*map_y + 2*BORDER, {borderless = not DEBUG})
 
     --FONT STUFF
+    font_but_l = love.graphics.newFont( "assets/FUTUVA.ttf", 50) --Font for buttons, large size
     font_but_m = love.graphics.newFont( "assets/vanadine_bold.ttf", 30) --Font for buttons, medium size
     font_reg_m = love.graphics.newFont( "assets/FUTUVA.ttf", 30) --Font for regular text, medium size
     font_reg_s = love.graphics.newFont( "assets/FUTUVA.ttf", 16) --Font for regular text, small size
@@ -642,7 +650,6 @@ function StartCountdown()
             RemovePlayerIndicator()
 
             game_begin = true
-
             --Players go at a random direction at the start if they dont chose any
             for i, p in ipairs(P_T) do
                 rand = math.random(4)
@@ -660,7 +667,7 @@ end
 -----------------------------------
 
 function util.createPlayerButton(p)
-    local font = font_reg_m
+    local font = font_but_m
     local color_b, color_t, cputext, controltext, pl
     local pb, ptb, x, y, w, h, w_cb, h_cb
 
@@ -710,7 +717,7 @@ function util.createPlayerButton(p)
     w = 500
     h = 40
     x = (love.graphics.getWidth() - w - w_cb)/2
-    y = 150 + 45*p.number
+    y = 170 + 45*p.number
     pb = But(x, y, w, h,
                     "PLAYER " .. p.number .. " " .. cputext .. " (" .. controltext .. ")",
                     font, color_b, color_t, 
@@ -852,6 +859,10 @@ function util.clearAllTables(mode)
 
     util.clearTable(B_T)
 
+    util.clearTable(BI_T)
+
+    util.clearTable(I_T)
+
     util.clearTable(TXT_T)
 
     util.clearTable(PB_T)
@@ -907,7 +918,16 @@ function resetMap()
     end
 end
 
+--------------------
+--GLOBAL FUNCTIONS
+--------------------
 
+--Exit program
+function util.quit()
+
+    love.event.quit()
+
+end
 --------------------
 --ZOEIRAZOEIRAZOEIRA 
 --------------------

@@ -11,7 +11,7 @@ But = Class{
 		self.w     = w     --width
 		self.h     = h     --height
 		self.text  = text  --text on button
-	    self.font  = font  --size of text
+	    self.font  = font  --font of text
 	    --Color of box
         self.b_color = {}
         self.b_color.r = b_color.r

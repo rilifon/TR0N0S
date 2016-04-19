@@ -8,6 +8,7 @@ Class     = require "hump.class"
 local Draw     = require "draw"
 local Util     = require "util"
 local Button   = require "button"
+local Img      = require "img"
 local TextBox  = require "textbox"
 local Text     = require "text"
 local Player   = require "player"
@@ -16,7 +17,6 @@ local Filter   = require "filter"
 local Particle = require "particle"
 local FX       = require "fx"
 local Shapes   = require "shapes"
-
 
 --GAMESTATES
 local menu     = {}
@@ -74,16 +74,16 @@ function setup:keypressed(key)
 
     --CHANGE STATES
     if      key == 'q' then
-        love.event.quit()
+        Util.quit()
     elseif  key == "return" then
         MATCH_BEGIN = true
         Gamestate.switch(game)
     elseif key == 'b' then
         Draw.toggleDebug()
     elseif key == 'right' then
-        B_T["n_player_up"].func()
+        BI_T["n_player_up"].func()
     elseif key == 'left' then
-        B_T["n_player_down"].func()
+        BI_T["n_player_down"].func()
     end
 
 end
@@ -92,6 +92,7 @@ function setup:mousepressed(x, y, button, istouch)
     
     if button == 1 then
         Button.checkCollision(x,y)
+        Img.checkCollision(x,y)
     end
 
 end
@@ -146,7 +147,7 @@ function game:keypressed(key)
 
     --CHANGE STATES
     if key == 'q' then
-        love.event.quit()
+        Util.quit()
     elseif key == 'p' and game_begin then
         Gamestate.switch(pause)
     elseif key == 'r' and DEBUG then
@@ -215,7 +216,7 @@ function pause:keypressed(key)
 
     --CHANGE STATES
     if key == 'q' then
-        love.event.quit()
+        Util.quit()
     elseif key == 'p' then
         Gamestate.switch(game)
     elseif key == 'b' then
@@ -262,7 +263,7 @@ function gameover:keypressed(key)
 
     --CHANGE STATES
     if key == 'q' then
-        love.event.quit()
+        Util.quit()
     elseif key == 'return' then
         game_setup = false
         if MATCH_BEGIN == false then
@@ -289,7 +290,6 @@ function love.update(dt)
 end
 
 function love.draw()
-   
 end
 
 --------------------
