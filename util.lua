@@ -82,10 +82,10 @@ function util.configGame()
 
     --GLOW FOR SETUP EFFECT
 
-    EPS_2      = 8      --Range of players glow effect
-    GROWING_2  = false  --If eps will be growing or not 
-    MAX_EPS_2  = 50     --Max value for eps
-    MIN_EPS_2  = 25     --Min value for eps
+    EPS_2      = 45      --Range of players glow effect
+    GROWING_2  = true  --If eps will be growing or not 
+    MAX_EPS_2  = 70     --Max value for eps
+    MIN_EPS_2  = 30     --Min value for eps
 
         
     --TIMERS

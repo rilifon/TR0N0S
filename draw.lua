@@ -241,7 +241,7 @@ function draw.setup_setup()
 
     --TOP OF PLAYERS BUTTON
     img = border_top_img
-    x  = 55
+    x  = 65
     y  = 150
     sx = 1
     sy = 1
@@ -253,7 +253,7 @@ function draw.setup_setup()
 
     --BOTTOM OF PLAYERS BUTTON
     img = border_bot_img
-    x  = 55
+    x  = 65
     y  = PB_T["P"..N_PLAYERS.."pb"].y - 40
     sx = 1
     sy = 1
