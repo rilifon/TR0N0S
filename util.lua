@@ -51,7 +51,7 @@ function util.configGame()
     --TIME VARS
 
     MAX_COUNTDOWN = 3   --Countdown in the beggining of each game
-    TIMESTEP = 0.03     --Time between each game step
+    TIMESTEP = 0.04     --Time between each game step
 
     --MAP VARS
 
@@ -70,12 +70,19 @@ function util.configGame()
         end
     end
 
-    --GLOW EFFECT
+    --GLOW FOR TILES EFFECT
 
-    EPS      = 8      --Range of players glow effect
+    EPS      = 0      --Range of players glow effect
     GROWING  = false  --If eps will be growing or not 
     MAX_EPS  = 12     --Max value for eps
     MIN_EPS  = 6      --Min value for eps
+
+    --GLOW FOR SETUP EFFECT
+
+    EPS_2      = 8      --Range of players glow effect
+    GROWING_2  = false  --If eps will be growing or not 
+    MAX_EPS_2  = 50     --Max value for eps
+    MIN_EPS_2  = 25     --Min value for eps
 
         
     --TIMERS
@@ -99,7 +106,7 @@ function util.configGame()
             number grad = 0.7;
             number dist = distance(center, texture_coords);
             if(dist <= 0.5){
-                color.a = 1-(dist/0.5);
+                color.a = color.a * 1-(dist/0.5);
                 color.r = color.r * grad;
                 color.g = color.g * grad;
                 color.b = color.b * grad;
@@ -282,22 +289,8 @@ function util.tick(dt)
 
     --Update "real-time" stuff
 
-    --Particle effect
-    Particle.update(dt)
-    
-    --Grow effect
-    t = 3
-    if GROWING then
-        EPS = EPS + t*dt
-        if EPS >= MAX_EPS then
-            GROWING = false
-        end
-    else
-        EPS = EPS - t*dt
-        if EPS <= MIN_EPS then
-            GROWING = true
-        end
-    end
+    Particle.update(dt) --Particle effect
+    glowEPS(dt)         --Make tiles glow
     
     --Update "timestep" stuff
     step = math.min(TIMESTEP, step + dt)
@@ -669,7 +662,7 @@ end
 function util.createPlayerButton(p)
     local font = font_but_m
     local color_b, color_t, cputext, controltext, pl
-    local pb, ptb, x, y, w, h, w_cb, h_cb
+    local pb, box, x, y, w, h, w_cb, h_cb
 
     w_cb = 40 --Width of head color box
     h_cb = 40 --Height of head color box
@@ -779,32 +772,33 @@ function util.createPlayerButton(p)
 
     --Creates players head color box
     x = x + w
-    ptb = TB(x, y, w_cb, h_cb, "", font, p.h_color, COLOR(0,0,0))
-    TB_T["P"..p.number.."tb"] = ptb
+    box = BOX(x, y, w_cb, h_cb, p.h_color)
+    BOX_T["P"..p.number.."box"] = box
 
     --Transitions
     FX.smoothAlpha(pb.b_color, 0, 255, .5)
     FX.smoothAlpha(pb.t_color, 0, 255, .5)
-    FX.smoothAlpha(ptb.b_color, 0, 255, .5)
+    FX.smoothAlpha(box.color, 0, 255, .5)
 
 end
 
 function util.removePlayerButton(p)
     local duration = .2
+    local pb, box
 
     pb  = PB_T["P"..p.number.."pb"]
-    ptb = TB_T["P"..p.number.."tb"]
+    box = BOX_T["P"..p.number.."box"]
     
     --Fades out
     FX.smoothAlpha(pb.b_color, 255, 0, duration)
     FX.smoothAlpha(pb.t_color, 255, 0, duration)
-    FX.smoothAlpha(ptb.b_color, 255, 0, duration)
+    FX.smoothAlpha(box.color, 255, 0, duration)
     
     H_T["h"..p.number] = Game_Timer.after(duration, 
         function()
             --Removes player button on setup screen
             PB_T["P"..p.number.."pb"] = nil
-            TB_T["P"..p.number.."tb"] = nil
+            BOX_T["P"..p.number.."box"] = nil
         end
     )
 end
@@ -856,6 +850,8 @@ end
 function util.clearAllTables(mode)
     
     util.clearTable(TB_T)
+
+    util.clearTable(BOX_T)
 
     util.clearTable(B_T)
 
@@ -916,6 +912,44 @@ function resetMap()
             map[i][j] = 0 --Reset map
         end
     end
+end
+
+--Glow effect
+function glowEPS(dt)
+    local t
+    
+    t = 3
+    if GROWING then
+        EPS = EPS + t*dt
+        if EPS >= MAX_EPS then
+            GROWING = false
+        end
+    else
+        EPS = EPS - t*dt
+        if EPS <= MIN_EPS then
+            GROWING = true
+        end
+    end
+
+end
+
+--Glow effect for setup
+function util.glowEPS_2(dt)
+    local t
+    
+    t = 15
+    if GROWING_2 then
+        EPS_2 = EPS_2 + t*dt
+        if EPS_2 >= MAX_EPS_2 then
+            GROWING_2 = false
+        end
+    else
+        EPS_2 = EPS_2 - t*dt
+        if EPS_2 <= MIN_EPS_2 then
+            GROWING_2 = true
+        end
+    end
+
 end
 
 --------------------

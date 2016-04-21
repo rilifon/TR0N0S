@@ -35,9 +35,9 @@ function draw.setup_setup()
 
     gap = 40
     color_t   = COLOR(0, 0, 0)
-    duration = 3.5                  --Duration of particles
-    max_part = 30                   --Max number of particles
-    speed    = 250                  --Speed of particles
+    duration = .5                   --Duration of particles
+    max_part = 45                   --Max number of particles
+    speed    = 200                  --Speed of particles
     decaying = .99                  --Decaying speed of particles
 
     --N_PLAYERS BUTTON
@@ -60,8 +60,8 @@ function draw.setup_setup()
             local w = this.w
             local h = this.h
             local pbh = PB_T["P"..N_PLAYERS.."pb"].h + 5 --Height of players button
-            local color = COLOR(255,0,247)
             local x_nil = 0
+            local exp_color = COLOR(65,168,17)   --Color of particle explosion
 
             if N_PLAYERS < MAX_PLAYERS then
                
@@ -69,7 +69,7 @@ function draw.setup_setup()
                 N_PLAYERS = N_PLAYERS + 1
 
                 --Particles
-                FX.particle_explosion(x+w/2, y+h/2 + pbh, color, duration, max_part, speed, decaying)
+                FX.particle_explosion(x+w/2, y+h/2 + pbh, exp_color, duration, max_part, speed, decaying)
                 
                 --Insert new CPU player
                 color_id = RGB.randomBaseColor()
@@ -107,12 +107,12 @@ function draw.setup_setup()
             local w = this.w
             local h = this.h
             local pbh = PB_T["P"..N_PLAYERS.."pb"].h + 5 --Height of players button
-            local color = COLOR(255,128,0) 
+            local exp_color = COLOR(217,9,18)   --Color of particle explosion0) 
 
             if N_PLAYERS > 1 then
                 
                 --Particles
-                FX.particle_explosion(x+w/2, y+h/2 - pbh, color, duration, max_part, speed, decaying)
+                FX.particle_explosion(x+w/2, y+h/2 - pbh, exp_color, duration, max_part, speed, decaying)
 
                 p = P_T[N_PLAYERS]
                 if p.control == "WASD" then WASD_PLAYER = 0
@@ -143,7 +143,6 @@ function draw.setup_setup()
     y = 5
     font = font_but_l
     color_b   = COLOR(233, 131, 0)  --Color of button background
-    exp_color = COLOR(163,48,201)   --Color of particle explosion
     img = bt_img_plus
     sx = 1
     sy = 1
@@ -157,6 +156,7 @@ function draw.setup_setup()
             local y = this.y
             local w = this.w
             local h = this.h
+            local exp_color = COLOR(65,168,17)   --Color of particle explosion
 
             --Particles
             FX.particle_explosion(x+w/2, y+h/2, exp_color, duration, max_part, speed, decaying) 
@@ -180,6 +180,7 @@ function draw.setup_setup()
             local y = this.y
             local w = this.w
             local h = this.h
+            local exp_color = COLOR(217,9,18)   --Color of particle explosion
 
             if GOAL > 1 then
                 
@@ -367,10 +368,10 @@ function draw.setup_state()
     love.graphics.setColor( 255, 255, 255)
     love.graphics.setFont(font)
     --N_PLAYERS var
-    love.graphics.print(N_PLAYERS, 200, 120, 0, 2, 2)
+    love.graphics.print(N_PLAYERS, 240, 140, 0, 2, 2)
 
     --GOAL var
-    love.graphics.print(GOAL, 600, 120, 0, 2, 2)
+    love.graphics.print(GOAL, 620, 140, 0, 2, 2)
 
 end
 
@@ -426,9 +427,9 @@ function DrawAll(mode)
 
     DrawI()       --Draws all default images with text
 
-    DrawPB()      --Draws all default player buttons
-
     DrawBOX()     --Draws all default boxes
+
+    DrawPB()      --Draws all default player buttons
 
     DrawPART()    --Draws all default particles
 
@@ -498,6 +499,15 @@ end
 --Draws all players buttons
 function DrawPB()
    
+    --Draws the glow effect
+    love.graphics.setShader(Glow_Shader)
+    SHADER = "Glow"
+    for i, v in pairs(PB_T) do
+        drawGlowButton(v)
+    end
+    love.graphics.setShader()
+    SHADER = nil
+
     for i, v in pairs(PB_T) do
         drawButton(v)
     end
@@ -513,7 +523,7 @@ function DrawPART()
 
 end
 
---Draws all particles
+--Draws all boxes with a glow effect below
 function DrawBOX()
    
     for i, v in pairs(BOX_T) do
@@ -537,7 +547,7 @@ function DrawPlayers()
     love.graphics.setShader(Glow_Shader)
     SHADER = "Glow"
     for i, tile in pairs(MAP_T) do
-        drawGlow(tile)
+        drawGlowTile(tile)
     end
     love.graphics.setShader()
     SHADER = nil
@@ -569,6 +579,17 @@ function drawButton(button)
     love.graphics.setColor(button.t_color.r, button.t_color.g, button.t_color.b, button.t_color.a)
     love.graphics.setFont(font)
     love.graphics.print(button.text, button.x + tx , button.y + ty)
+
+end
+
+--Draws a glow for a given button
+function drawGlowButton(button)
+    local eps = EPS_2
+
+    --Draws button glow
+    love.graphics.setColor(button.b_color.r, button.b_color.g, button.b_color.b, button.b_color.a)
+    love.graphics.draw(PIXEL, button.x-eps, button.y-eps, 0, button.w+2*eps, button.h+2*eps)
+    
 
 end
 
@@ -675,7 +696,17 @@ function drawBox(box)
 
     --Draws box
     love.graphics.setColor(box.color.r, box.color.g, box.color.b, box.color.a)
-    love.graphics.rectangle("fill", box.x, box.y, box.w, box.h)
+    love.graphics.draw(PIXEL, box.x, box.y, 0, box.w, box.h)
+
+end
+
+--Draws a given box with glow
+function drawGlowBox(box)
+    local eps = EPS_2
+
+    --Draws box
+    love.graphics.setColor(box.color.r, box.color.g, box.color.b, box.color.a)
+    love.graphics.draw(PIXEL, box.x-eps, box.y-eps, 0, box.w+2*eps, box.h+2*eps)
 
 end
 
@@ -709,7 +740,7 @@ function drawTile(tile)
 end
 
 --Draws a glow effect for every tile
-function drawGlow(tile)
+function drawGlowTile(tile)
     local x, y, w, h
     
     e = EPS   --Epsilon, range the glow effect will achieve

@@ -27,6 +27,8 @@ local gameover = {}
 
 function love.load()
 
+   -- love.graphics.setBackgroundColor(255,255,255)
+
     Util.configGame()
 
     Gamestate.registerEvents()
@@ -67,6 +69,7 @@ function setup:update(dt)
 
     --Update "real-time" stuff
     Particle.update(dt)
+    Util.glowEPS_2(dt) --Make setup stuff glow
 
 end
 
@@ -84,6 +87,11 @@ function setup:keypressed(key)
         BI_T["n_player_up"].func()
     elseif key == 'left' then
         BI_T["n_player_down"].func()
+    elseif key == 'up' then
+        BI_T["goal_up"].func()
+    elseif key == 'down' then
+        BI_T["goal_down"].func()
+
     end
 
 end
