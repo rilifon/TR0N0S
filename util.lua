@@ -21,9 +21,12 @@ function util.configGame()
     --The Pixel
     PIXEL = love.graphics.newImage("assets/pixel.png")
     --Button
-    bt_img = love.graphics.newImage("assets/default_img.png")
     bt_img_plus = love.graphics.newImage("assets/button_plus.png")
     bt_img_minus = love.graphics.newImage("assets/button_minus.png")
+    --Regular images
+    bt_img = love.graphics.newImage("assets/default_img.png")
+    border_top_img = love.graphics.newImage("assets/border_top.png")
+    border_bot_img = love.graphics.newImage("assets/border_bot.png")
 
     --RANDOM SEED
 
@@ -57,7 +60,7 @@ function util.configGame()
 
     TILESIZE = 10       --Size of the game's tile
     HUDSIZE = 100       --Size of window dedicated for HUD
-    BORDER = 80         --Border of the game map
+    BORDER = 90         --Border of the game map
     MARGIN = 12         --Size of margin for players' inicial position
     map = {}            --Game map
     map_x = 65          --Map x size (in tiles)
@@ -710,7 +713,7 @@ function util.createPlayerButton(p)
     w = 500
     h = 40
     x = (love.graphics.getWidth() - w - w_cb)/2
-    y = 170 + 45*p.number
+    y = 180 + 45*p.number
     pb = But(x, y, w, h,
                     "PLAYER " .. p.number .. " " .. cputext .. " (" .. controltext .. ")",
                     font, color_b, color_t, 

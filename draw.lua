@@ -44,7 +44,7 @@ function draw.setup_setup()
     font = font_but_l
 
     --Up button
-    y = PB_T["P"..N_PLAYERS.."pb"].y + PB_T["P"..N_PLAYERS.."pb"].h + 5
+    y = PB_T["P"..N_PLAYERS.."pb"].y + PB_T["P"..N_PLAYERS.."pb"].h + 25
     color_b  = COLOR(23, 233, 0)
     img = bt_img_plus
     sx = 1
@@ -62,6 +62,7 @@ function draw.setup_setup()
             local pbh = PB_T["P"..N_PLAYERS.."pb"].h + 5 --Height of players button
             local x_nil = 0
             local exp_color = COLOR(65,168,17)   --Color of particle explosion
+            local bot
 
             if N_PLAYERS < MAX_PLAYERS then
                
@@ -83,6 +84,10 @@ function draw.setup_setup()
                 FX.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y + pbh, .04)
                 FX.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y + pbh, .04)
                 
+                bot = I_T["bot_pb_i"]
+
+                FX.smoothMove(bot, bot.x, bot.y, bot.x, bot.y + pbh, .04)
+
                 --Creates a player button on setup screen
                 Util.createPlayerButton(p)
 
@@ -107,7 +112,8 @@ function draw.setup_setup()
             local w = this.w
             local h = this.h
             local pbh = PB_T["P"..N_PLAYERS.."pb"].h + 5 --Height of players button
-            local exp_color = COLOR(217,9,18)   --Color of particle explosion0) 
+            local exp_color = COLOR(217,9,18)   --Color of particle explosion)
+            local bot 
 
             if N_PLAYERS > 1 then
                 
@@ -128,6 +134,10 @@ function draw.setup_setup()
                 FX.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y - pbh, .1)
                 FX.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y - pbh, .1)
                 
+                bot = I_T["bot_pb_i"]
+
+                FX.smoothMove(bot, bot.x, bot.y, bot.x, bot.y - pbh, .1)
+
                 --Decreases players
                 N_PLAYERS = N_PLAYERS - 1
 
@@ -195,9 +205,9 @@ function draw.setup_setup()
 
 
 
-    -----------------------------
-    --Creates setup images withtxt
-    -----------------------------
+    --------------------------------
+    --Creates setup images with text
+    --------------------------------
     
     color_b = COLOR(233, 131, 0)
     color_t = COLOR(0, 0, 0)
@@ -224,6 +234,33 @@ function draw.setup_setup()
     h = img:getHeight()*sy
     goal_i = IMG(img, x, y, w, h, sx, sy, "GOAL", font, color_t)
     I_T["goal_i"] = goal_i
+
+    ----------------------
+    --Creates setup images
+    ----------------------
+
+    --TOP OF PLAYERS BUTTON
+    img = border_top_img
+    x  = 55
+    y  = 150
+    sx = 1
+    sy = 1
+    w = img:getWidth()*sx
+    h = img:getHeight()*sy
+    top_pb_i = IMG(img, x, y, w, h, sx, sy, "", font, color_t)
+    I_T["top_pb_i"] = top_pb_i
+
+
+    --BOTTOM OF PLAYERS BUTTON
+    img = border_bot_img
+    x  = 55
+    y  = PB_T["P"..N_PLAYERS.."pb"].y - 40
+    sx = 1
+    sy = 1
+    w = img:getWidth()*sx
+    h = img:getHeight()*sy
+    bot_pb_i = IMG(img, x, y, w, h, sx, sy, "", font, color_t)
+    I_T["bot_pb_i"] = bot_pb_i
 
     -----------------------------
     --Creates setup text
@@ -368,10 +405,10 @@ function draw.setup_state()
     love.graphics.setColor( 255, 255, 255)
     love.graphics.setFont(font)
     --N_PLAYERS var
-    love.graphics.print(N_PLAYERS, 240, 140, 0, 2, 2)
+    love.graphics.print(N_PLAYERS, 240, 130, 0, 2, 2)
 
     --GOAL var
-    love.graphics.print(GOAL, 620, 140, 0, 2, 2)
+    love.graphics.print(GOAL, 620, 130, 0, 2, 2)
 
 end
 
@@ -425,11 +462,11 @@ function DrawAll(mode)
 
     DrawBI()      --Draws all default buttons with images
 
-    DrawI()       --Draws all default images with text
-
     DrawBOX()     --Draws all default boxes
 
     DrawPB()      --Draws all default player buttons
+
+    DrawI()       --Draws all default images with text
 
     DrawPART()    --Draws all default particles
 
