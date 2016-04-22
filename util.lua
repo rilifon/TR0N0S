@@ -779,9 +779,12 @@ function util.createPlayerButton(p)
     BOX_T["P"..p.number.."box"] = box
 
     --Transitions
-    FX.smoothAlpha(pb.b_color, 0, 255, .5)
-    FX.smoothAlpha(pb.t_color, 0, 255, .5)
-    FX.smoothAlpha(box.color, 0, 255, .5)
+    pb.b_color.a = 0
+    pb.t_color.a = 0
+    box.color.a = 0
+    FX.smoothAlpha(pb.b_color, 255, .5, 'linear')
+    FX.smoothAlpha(pb.t_color, 255, .5, 'linear')
+    FX.smoothAlpha(box.color, 255, .5, 'linear')
 
 end
 
@@ -793,9 +796,12 @@ function util.removePlayerButton(p)
     box = BOX_T["P"..p.number.."box"]
     
     --Fades out
-    FX.smoothAlpha(pb.b_color, 255, 0, duration)
-    FX.smoothAlpha(pb.t_color, 255, 0, duration)
-    FX.smoothAlpha(box.color, 255, 0, duration)
+    pb.b_color.a = 255
+    pb.t_color.a = 255
+    box.color.a  = 255
+    FX.smoothAlpha(pb.b_color, 0, duration, 'linear')
+    FX.smoothAlpha(pb.t_color, 0, duration, 'linear')
+    FX.smoothAlpha(box.color, 0, duration, 'linear')
     
     H_T["h"..p.number] = Game_Timer.after(duration, 
         function()

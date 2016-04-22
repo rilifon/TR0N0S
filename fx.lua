@@ -62,156 +62,44 @@ end
 --TRANSITION FUNCTIONS
 ----------------------
 
---Makes a smooth transition in object 0 from i to f in "duration" time
-function fx.smoothTransition(o, i, f, duration)
-    local diff = 0
-    local a    = 0
+--Makes a smooth transition in object 0.i to f in "duration" time
+function fx.smoothTransition(o, i, f, duration, func)
 
     --Starts a timer that gradually increse
-    Game_Timer.during(duration,
-
-        --Gradually change actual color until target color
-        function(dt)
-        	local temp
-
-            ratio = diff/duration
-            diff = diff + dt
-
-            temp = o
-            o = math.abs(ratio * f + (1 - ratio) * i)
-            a = a + (o - temp)
-        end,
-        
-        function()
-
-        --Adds the remaining to complete the transition
-        o = o + (f - (i + a))
-        
-        end
-    )
+    Game_Timer.tween(duration, o, {i = f}, func)
 
 end
 
 --Makes a smooth transition in object 'o' position
---from point (x0,y0) to point (xf,yf)
-function fx.smoothMove(o, x0, y0, xf, yf, duration)
-    local diff = 0
-    local a_x  = 0       --Acumulation of x
-    local a_y  = 0       --Acumulation of y
+-- to point (xf,yf)
+function fx.smoothMove(o, xf, yf, duration, func)
 
-    --Starts a timer that gradually increse
-    Game_Timer.during(duration,
-
-        --Gradually change actual color until target color
-        function(dt)
-            local temp
-
-            ratio = diff/duration
-            diff = diff + dt
-
-            temp = o.x
-            o.x = math.abs(ratio * xf + (1 - ratio) * x0)
-            a_x = a_x + (o.x - temp)
-
-            temp = o.y
-            o.y = math.abs(ratio * yf + (1 - ratio) * y0)
-            a_y = a_y + (o.y - temp)
-
-
-        end,
-        
-        function()
-
-            --Adds the remaining to complete the transition
-            o.x = o.x + (xf - (x0 + a_x))
-            o.y = o.y + (yf - (y0 + a_y))
-
-        end
-    )
+    --Starts a timer that gradually increase
+    Game_Timer.tween(duration, o, {x = xf}, func)
+    Game_Timer.tween(duration, o, {y = yf}, func)
 
 end
 
 --Makes a smooth transition in color 'c'
---from COLOR(r0,g0,b0) to COLOR(rf,gf,bf)
-function fx.smoothColor(c, color0, colorf, duration)
-    local r0,g0,b0,rf,gf,bf
-    local diff = 0
-    local a_r = 0       --Acumulation of r
-    local a_g = 0       --Acumulation of g
-    local a_b = 0       --Acumulation of b
+--to COLOR(rf,gf,bf)
+function fx.smoothColor(c, color0, colorf, duration, func)
+    local rf,gf,bf
 
-
-    r0 = color0.r
-    g0 = color0.g
-    b0 = color0.b
     rf = colorf.r
     gf = colorf.g
     bf = colorf.b
 
     --Starts a timer that gradually increse
-    Game_Timer.during(duration,
-
-        --Gradually change actual color until target color
-        function(dt)
-        	local temp
-
-            ratio = diff/duration
-            diff = diff + dt
-
-            temp = c.r
-            c.r = math.abs(ratio * rf + (1 - ratio) * r0)
-            a_r = a_r + (c.r - temp)
-
-			temp = c.g
-            c.g = math.abs(ratio * gf + (1 - ratio) * g0)
-            a_g = a_g + (c.g - temp)
-
-            temp = c.b
-            c.b = math.abs(ratio * bf + (1 - ratio) * b0)
-            a_b = a_b + (c.b - temp)
-
-        end,
-        
-        function()
-
-            --Adds the remaining to complete the transition
-            c.r = c.r + (rf - (r0 + a_r))
-            c.g = c.g + (gf - (g0 + a_g))
-            c.b = c.b + (bf - (b0 + a_b))
-
-        end
-    )
+    Game_Timer.tween(duration, c, {r = rf, g = gf, b = bf}, func)
 
 end
 
 --Makes a smooth transition in object 'o' alpha
---from i to f
-function fx.smoothAlpha(o, i, f, duration)
-    local diff = 0
-    local a_a  = 0       --Acumulation of a
+--to f
+function fx.smoothAlpha(o, f, duration, func)
 
-    --Starts a timer that gradually increse
-    o.h = Game_Timer.during(duration,
-
-        --Gradually change actual color until target color
-        function(dt)
-        	local temp
-
-            ratio = diff/duration
-            diff = diff + dt
-
-            temp = o.a
-            o.a = math.abs(ratio * f + (1 - ratio) * i)
-            a_a = a_a + (o.a - temp)
-        end,
-        
-        function()
-
-        --Adds the remaining to complete the transition
-        o.a = o.a + (f - (i + a_a))
-        
-        end
-    )
+    --Starts a timer that gradually increase
+    Game_Timer.tween(duration, o, {a = f}, func)
 
 end
 

@@ -81,12 +81,12 @@ function draw.setup_setup()
                 table.insert(P_T, p)
 
                 --Adjust positions of buttons
-                FX.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y + pbh, .04)
-                FX.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y + pbh, .04)
+                FX.smoothMove(n_player_up, n_player_up.x, n_player_up.y + pbh, .5, 'out-back')
+                FX.smoothMove(n_player_down, n_player_down.x, n_player_down.y + pbh, .5, 'out-back')
                 
                 bot = I_T["bot_pb_i"]
 
-                FX.smoothMove(bot, bot.x, bot.y, bot.x, bot.y + pbh, .04)
+                FX.smoothMove(bot, bot.x, bot.y + pbh, .4, 'out-back')
 
                 --Creates a player button on setup screen
                 Util.createPlayerButton(p)
@@ -131,12 +131,12 @@ function draw.setup_setup()
                 table.remove(P_T, N_PLAYERS)
                 
                 --Adjust positions of buttons
-                FX.smoothMove(n_player_up, n_player_up.x, n_player_up.y, n_player_up.x, n_player_up.y - pbh, .1)
-                FX.smoothMove(n_player_down, n_player_down.x, n_player_down.y, n_player_down.x, n_player_down.y - pbh, .1)
+                FX.smoothMove(n_player_up, n_player_up.x, n_player_up.y - pbh, .2, 'in-quad')
+                FX.smoothMove(n_player_down, n_player_down.x, n_player_down.y - pbh, .2, 'in-quad')
                 
                 bot = I_T["bot_pb_i"]
 
-                FX.smoothMove(bot, bot.x, bot.y, bot.x, bot.y - pbh, .1)
+                FX.smoothMove(bot, bot.x, bot.y - pbh, .2, 'in-quad')
 
                 --Decreases players
                 N_PLAYERS = N_PLAYERS - 1
@@ -818,7 +818,7 @@ function BackgroundTransition()
         targetColor = MC_T[math.random(#MC_T)]
     end
 
-    FX.smoothColor(map_color, ori_color, targetColor, duration)
+    FX.smoothColor(map_color, ori_color, targetColor, duration, 'linear')
 
     --Starts a timer that gradually increse
     Color_Timer.after(duration,
