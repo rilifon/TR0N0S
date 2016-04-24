@@ -946,7 +946,7 @@ end
 function util.glowEPS_2(dt)
     local t
     
-    t = 15
+    t = 20
     if GROWING_2 then
         EPS_2 = EPS_2 + t*dt
         if EPS_2 >= MAX_EPS_2 then
