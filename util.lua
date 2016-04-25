@@ -404,7 +404,7 @@ end
 -----------------------
 
 function movePlayer(x,y,p)
-    local c, x_,y_,r_, color, grad, tile
+    local c, x_,y_, color, grad, tile
 
     --Update map color
     tile = MAP_T["mapx"..p.x.."y"..p.y]
@@ -413,6 +413,11 @@ function movePlayer(x,y,p)
     tile.color.g = p.b_color.g
     tile.color.b = p.b_color.b
     tile.color.a = p.b_color.a
+
+    --Creates a mini-explosion
+    x_ = p.x*TILESIZE + BORDER - TILESIZE/2
+    y_ = p.y*TILESIZE + BORDER - TILESIZE/2
+    FX.particle_explosion(x_, y_, p.b_color, .2, 1) --Create effect
 
     --Update player position
     p.x = x
@@ -429,7 +434,6 @@ function movePlayer(x,y,p)
         --Creates a box with players head
         color = COLOR(p.h_color.r, p.h_color.g, p.h_color.b, p.h_color.a)
         tile = TILE(p.x, p.y, color) --Creates a tile
-
         MAP_T["mapx"..p.x.."y"..p.y] = tile
 
     end

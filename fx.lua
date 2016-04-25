@@ -3,7 +3,7 @@
 local fx = {}
 
 ----------------
---GLOW FUNCTIONS
+--EFFECT FUNCTIONS
 ----------------
 
 --Creates a "glow" effect on position (x,y) with radius r and color c
@@ -11,6 +11,29 @@ function fx.glowCircle(x, y, r, c)
     
     FX_T["fx-glowx"..x.."y"..y] = CIRCLE(x, y, i, color, "fill")
     
+end
+
+--Creates a shrink and grow effect on object o
+function fx.pulse(o)
+    local duration = .4
+    local sx = .98
+    local sy = .98
+
+    fx.smoothScale(o, sx, sy, duration/2, 'linear')
+    
+    fx.smoothMove(o, o.x + o.w*(1-sx), o.y + o.h*(1-sy), duration/2, 'linear')
+    
+    Game_Timer.after(duration/2,
+    
+        function()
+
+            fx.smoothScale(o, 1, 1, duration/2, 'linear')
+    
+            fx.smoothMove(o, o.x - o.w*(1-sx), o.y - o.h*(1-sy), duration/2, 'linear')
+
+        end
+    )
+
 end
 
 --------------------
@@ -69,6 +92,16 @@ function fx.smoothTransition(o, i, f, duration, func)
     Game_Timer.tween(duration, o, {i = f}, func)
 
 end
+
+--Makes a smooth transition in object 0.i to f in "duration" time
+function fx.smoothScale(o, sxf, syf, duration, func)
+
+    --Starts a timer that gradually increse
+    Game_Timer.tween(duration, o, {sx = sxf}, func)
+    Game_Timer.tween(duration, o, {sy = syf}, func)
+
+end
+
 
 --Makes a smooth transition in object 'o' position
 -- to point (xf,yf)

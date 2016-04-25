@@ -49,8 +49,8 @@ function draw.setup_setup()
     img = bt_img_plus
     sx = 1
     sy = 1
-    w = img:getWidth()*sx
-    h = img:getHeight()*sy
+    w = img:getWidth()
+    h = img:getHeight()
     x = love.graphics.getWidth()/2 --Get half the screen
     n_player_up = But_Img(img, x, y, w, h, sx, sy, "+", font, color_t,
         function()
@@ -71,6 +71,9 @@ function draw.setup_setup()
 
                 --Particles
                 FX.particle_explosion(x+w/2, y+h/2 + pbh, exp_color, duration, max_part, speed, decaying)
+
+                --Shrink effect
+                FX.pulse(n_player_up)
                 
                 --Insert new CPU player
                 color_id = RGB.randomBaseColor()
@@ -101,8 +104,8 @@ function draw.setup_setup()
     img = bt_img_minus
     sx = 1
     sy = 1
-    w = img:getWidth()*sx
-    h = img:getHeight()*sy
+    w = img:getWidth()
+    h = img:getHeight()
     x = x - w --Get correct position
     n_player_down = But_Img(img, x, y, w, h, sx, sy, "-", font, color_t,
         function()
@@ -118,7 +121,10 @@ function draw.setup_setup()
             if N_PLAYERS > 1 then
                 
                 --Particles
-                FX.particle_explosion(x+w/2, y+h/2 - pbh, exp_color, duration, max_part, speed, decaying)
+                FX.particle_explosion(x+w/2, y+h/2 - 3*pbh/5, exp_color, duration, max_part, speed, decaying)
+
+                --Shrink effect
+                FX.pulse(n_player_down)
 
                 p = P_T[N_PLAYERS]
                 if p.control == "WASD" then WASD_PLAYER = 0
@@ -156,8 +162,8 @@ function draw.setup_setup()
     img = bt_img_plus
     sx = 1
     sy = 1
-    w = img:getWidth()*sx
-    h = img:getHeight()*sy
+    w = img:getWidth()
+    h = img:getHeight()
     --Up button
     goal_up = But_Img(img, x, y, w, h, sx, sy, "+", font, color_t,
         function()
@@ -171,6 +177,9 @@ function draw.setup_setup()
             --Particles
             FX.particle_explosion(x+w/2, y+h/2, exp_color, duration, max_part, speed, decaying) 
 
+            --Shrink effect
+            FX.pulse(goal_up)
+
             GOAL = GOAL + 1
         end
     )
@@ -180,8 +189,8 @@ function draw.setup_setup()
     img = bt_img_minus
     sx = 1
     sy = 1
-    w = img:getWidth()*sx
-    h = img:getHeight()*sy
+    w = img:getWidth()
+    h = img:getHeight()
     y = y + h - 20
     goal_down = But_Img(img, x, y, w, h, sx, sy, "-", font, color_t,
         function()
@@ -196,6 +205,9 @@ function draw.setup_setup()
                 
                 --Particles
                 FX.particle_explosion(x+w/2, y+h/2, exp_color, duration, max_part, speed, decaying)
+
+                --Shrink effect
+                FX.pulse(goal_down)
 
                 GOAL = GOAL - 1
             end
@@ -219,8 +231,8 @@ function draw.setup_setup()
     y  = 10
     sx = 1
     sy = .4
-    w = img:getWidth()*sx
-    h = img:getHeight()*sy
+    w = img:getWidth()
+    h = img:getHeight()
     n_player_i = IMG(img, x, y, w, h, sx, sy, "NUMBER OF PLAYERS", font, color_t)
     I_T["n_player_i"] = n_player_i
 
@@ -230,8 +242,8 @@ function draw.setup_setup()
     y = 10
     sx = .4
     sy = .4
-    w = img:getWidth()*sx
-    h = img:getHeight()*sy
+    w = img:getWidth()
+    h = img:getHeight()
     goal_i = IMG(img, x, y, w, h, sx, sy, "GOAL", font, color_t)
     I_T["goal_i"] = goal_i
 
@@ -245,8 +257,8 @@ function draw.setup_setup()
     y  = 150
     sx = 1
     sy = 1
-    w = img:getWidth()*sx
-    h = img:getHeight()*sy
+    w = img:getWidth()
+    h = img:getHeight()
     top_pb_i = IMG(img, x, y, w, h, sx, sy, "", font, color_t)
     I_T["top_pb_i"] = top_pb_i
 
@@ -257,8 +269,8 @@ function draw.setup_setup()
     y  = PB_T["P"..N_PLAYERS.."pb"].y - 40
     sx = 1
     sy = 1
-    w = img:getWidth()*sx
-    h = img:getHeight()*sy
+    w = img:getWidth()
+    h = img:getHeight()
     bot_pb_i = IMG(img, x, y, w, h, sx, sy, "", font, color_t)
     I_T["bot_pb_i"] = bot_pb_i
 
@@ -643,8 +655,8 @@ function drawButtonImg(but)
     font = but.font
     fwidth  = font:getWidth( but.text) --Width of font
     fheight = font:getHeight(but.text) --Height of font
-    tx = (but.w - fwidth)/2            --Relative x position of font on textbox
-    ty = (but.h - fheight)/2 - fix     --Relative y position of font on textbox
+    tx = (but.w*but.sx - fwidth)/2     --Relative x position of font on textbox
+    ty = (but.h*but.sy - fheight)/2 - fix     --Relative y position of font on textbox
 
     --Draws button text
     love.graphics.setColor(but.t_color.r, but.t_color.g, but.t_color.b, but.t_color.a)
@@ -669,8 +681,8 @@ function drawImg(img)
     font = img.font
     fwidth  = font:getWidth( img.text) --Width of font
     fheight = font:getHeight(img.text) --Height of font
-    tx = (img.w - fwidth)/2     --Relative x position of font on textbox
-    ty = (img.h - fheight)/2    --Relative y position of font on textbox
+    tx = (img.w*img.sx - fwidth)/2     --Relative x position of font on textbox
+    ty = (img.h*img.sy - fheight)/2    --Relative y position of font on textbox
 
     --Draws image text
     love.graphics.setColor(img.t_color.r, img.t_color.g, img.t_color.b, img.t_color.a)

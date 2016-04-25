@@ -64,11 +64,11 @@ function img.checkCollision(x,y)
     for i,b in pairs(BI_T) do
         if  b.x < x
             and
-            x < b.x + b.w
+            x < b.x + b.w*b.sx
             and
             b.y < y
             and
-            y < b.y + b.h
+            y < b.y + b.h*b.sy
         then
             if checkPixelCollision(b.img, (x-b.x), (y-b.y)) then
                 but = b.func
