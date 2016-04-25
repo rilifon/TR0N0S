@@ -43,11 +43,12 @@ end
 --------------------
 
 --Creates a colored article explosion starting position (x,y)
-function fx.particle_explosion(x, y, color, duration, max_part, speed, decaying)
+function fx.particle_explosion(x, y, color, duration, max_part, speed, decaying, radius)
     local duration = duration or 2    --Duration particles will stay on screen
     local max_part = max_part or 25   --Number of particles created in a explosion
     local speed    = speed    or 100  --Particles speed
     local decaying = decaying or .97  --Particles decaying speed
+    local radius   = radius or 3
     local p_color, part, rand, max 
     local dir_x, dir_y --Direction for particle
     local id = math.random() --Creates an id for this explosion
@@ -66,7 +67,7 @@ function fx.particle_explosion(x, y, color, duration, max_part, speed, decaying)
         rand = math.random()*max*2 - max --Varies between -max and max
         p_color  = COLOR(color.r+rand, color.g+rand, color.b+rand)
 
-        part = PARTICLE(x, y, dir_x, dir_y, speed, p_color, decaying)
+        part = PARTICLE(x, y, dir_x, dir_y, speed, p_color, decaying, radius)
         PART_T["px"..x.."y"..y.."i"..i.."id"..id] = part
     end
 

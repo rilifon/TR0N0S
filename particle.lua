@@ -4,7 +4,7 @@ local particle = {}
 
 --Color object
 PARTICLE = Class{
-    init = function(self, x, y, dir_x, dir_y, speed, color, decaying)
+    init = function(self, x, y, dir_x, dir_y, speed, color, decaying, r)
         self.x = x                   --Particle X position
         self.y = y                   --Particle Y position
         self.dir_x = dir_x           --X direction of particle
@@ -16,6 +16,8 @@ PARTICLE = Class{
         self.color.b  = color.b         --Blue
         self.color.a  = color.a or 255  --Alpha
         self.decaying = decaying        --Decaying speed of particle
+
+        self.r = r or 3 --Particle radius
     end
 }
 

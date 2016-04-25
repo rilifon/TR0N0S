@@ -417,7 +417,7 @@ function movePlayer(x,y,p)
     --Creates a mini-explosion
     x_ = p.x*TILESIZE + BORDER - TILESIZE/2
     y_ = p.y*TILESIZE + BORDER - TILESIZE/2
-    FX.particle_explosion(x_, y_, p.b_color, .2, 1) --Create effect
+    FX.particle_explosion(x_, y_, p.b_color, .5, 1, nil, nil, 1) --Create effect
 
     --Update player position
     p.x = x
@@ -442,7 +442,7 @@ end
 
 --Checks collision between players and walls/another player
 function CheckCollision(p)
-    local color = COLOR(65,17,180)
+    local color = COLOR(255,0,115)
     local x, y
     
     --Check collision with wall
@@ -451,7 +451,7 @@ function CheckCollision(p)
         
         x = p.x*TILESIZE + BORDER
         y = p.y*TILESIZE + BORDER
-        FX.particle_explosion(x, y, color) --Create effect
+        FX.particle_explosion(x, y, color, nil, nil, nil, nil, nil, 2) --Create effect
 
         MAP_T["mapx"..p.x.."y"..p.y].color = COLOR(0,0,0) --Paint tile black
     end

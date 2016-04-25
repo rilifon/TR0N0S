@@ -733,7 +733,7 @@ end
 
 --Draws a given particle
 function drawParticle(particle)
-    local r = 3 --Particle radius
+    local r = particle.r --Particle radius
 
     love.graphics.setColor(particle.color.r, particle.color.g, particle.color.b, particle.color.a)
     love.graphics.circle("fill", particle.x, particle.y, r)
