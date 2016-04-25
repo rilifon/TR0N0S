@@ -15,11 +15,13 @@ TXT = Class{
         self.color.r = color.r
         self.color.g = color.g
         self.color.b = color.b
-        if color.a then
-            self.color.a = color.a
-        else
-            self.color.a = 255
-        end
+        self.color.a = color.a or 255
+
+        self.sx = 1 --Scale x of text
+        self.sy = 1 --Scale y of text
+
+        self.w = self.font:getWidth(self.text)  --Width of text
+        self.h = self.font:getHeight(self.text) --Height of text
 
     end
 }

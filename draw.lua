@@ -719,7 +719,7 @@ function drawText(text)
 
     love.graphics.setColor(text.color.r, text.color.g, text.color.b, text.color.a)
     love.graphics.setFont(font)
-    love.graphics.print(text.text, text.x, text.y)
+    love.graphics.print(text.text, text.x, text.y, 0, text.sx, text.sy)
 
 end
 
@@ -935,12 +935,22 @@ end
 
 --Draw players indicator
 function SetupPlayerIndicator()
-    local label, txt, x, y
+    local label, txt, x, y, color, sx, sy
     local font = font_reg_s
-    local color = COLOR(255, 255, 255)
+
+    sx = 1.5
+    sy = 1.5
     
     for i, p in ipairs(P_T) do
         --Creates player indicator text
+
+        --Choose color
+        if p.control == "WASD" or p.control == "ARROWS" then
+            color = COLOR(250, 255, 97)
+        else
+            color = COLOR(97, 215, 255)
+        end
+
         label = "player"..p.number.."txt"
         x = (p.x-1)*TILESIZE + BORDER
         y = (p.y-5)*TILESIZE + BORDER
@@ -965,6 +975,14 @@ function SetupPlayerIndicator()
             txt = TXT(x, y, "CPU", font, color)
         end
         TXT_T[label] = txt
+        
+        --Pulse effect
+        if p.control == "WASD" or p.control == "ARROWS" then
+            FX.pulse(TXT_T[label], sx, sy, MAX_COUNTDOWN)
+            label = "player"..p.number.."txt"
+            FX.pulse(TXT_T[label], sx, sy, MAX_COUNTDOWN)
+        end
+
     end
 
 end

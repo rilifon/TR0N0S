@@ -53,7 +53,7 @@ function util.configGame()
     
     --TIME VARS
 
-    MAX_COUNTDOWN = 3   --Countdown in the beggining of each game
+    MAX_COUNTDOWN = 4   --Countdown in the beggining of each game
     TIMESTEP = 0.04     --Time between each game step
 
     --MAP VARS

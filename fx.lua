@@ -14,14 +14,22 @@ function fx.glowCircle(x, y, r, c)
 end
 
 --Creates a pulse effect on object o
-function fx.pulse(o, sx, sy)
-    local duration = .3
-
+function fx.pulse(o, sx, sy, d, m)
+    local duration = d or .3 --Duration of effect
+    local move = m or true --If it should also centralize while pulsing
     fx.smoothScale(o, sx, sy, duration/2, 'linear')
-     
-    Game_Timer.after(duration/2,
     
+    if move then
+        fx.smoothMove(o, o.x + o.w*(1-sx)/2, o.y + o.h*(1-sy)/2, duration/2, 'linear')
+    end 
+
+    Game_Timer.after(duration/2,
         function()
+            local m = move
+
+            if move then
+                fx.smoothMove(o, o.x - o.w*(1-sx)/2, o.y - o.h*(1-sy)/2, duration/2, 'linear')
+            end 
 
             fx.smoothScale(o, 1, 1, duration/2, 'linear')
 
