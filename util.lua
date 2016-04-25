@@ -61,7 +61,7 @@ function util.configGame()
     TILESIZE = 10       --Size of the game's tile
     HUDSIZE = 100       --Size of window dedicated for HUD
     BORDER = 90         --Border of the game map
-    MARGIN = 12         --Size of margin for players' inicial position
+    MARGIN = 6          --Size of margin for players' inicial position
     map = {}            --Game map
     map_x = 65          --Map x size (in tiles)
     map_y = 65          --Map y size (in tiles)
@@ -242,8 +242,10 @@ end
 
 --Setup all players
 function setupPlayers()
-    local p_x, p_y, is_rand, c, r, grad, color, tile
-    
+    local p_x, p_y, is_rand, c, r, grad, color, tile, p_margin
+        
+    p_margin = 6
+        
     for i, p in ipairs(P_T) do
 
         --Get random positions for all players
@@ -252,9 +254,11 @@ function setupPlayers()
             p_x = math.random(map_x-2*MARGIN)+MARGIN
             p_y = math.random(map_y-2*MARGIN)+MARGIN
             is_rand = true
-            --Iterate in all other players and checks for a valid position
+            --Iterate in all other players and checks for a valid position distant enough
             for j=1,i-1 do
-                if(p_x == P_T[j].x and p_y == P_T[j].y) then
+                if( p_x  <= P_T[j].x + p_margin and p_x  >= P_T[j].x - p_margin
+                and p_y  <= P_T[j].y + p_margin and p_y  >= P_T[j].y - p_margin)
+                then
                     is_rand = false
                 end
             end
