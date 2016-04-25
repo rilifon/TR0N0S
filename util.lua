@@ -157,10 +157,10 @@ function util.configGame()
     --All base colors players can have
     C_T    = {COLOR(11,175,230),  COLOR(26,83,240),  COLOR(129,26,240),
               COLOR(22,245,130),  COLOR(112,219,4),  COLOR(223,242,99),
-              COLOR(157,149,186), COLOR(230,25,165), COLOR(7,140,68),
-              COLOR(87,125,156),  COLOR(133,127,60)}
+              COLOR(157,149,186), COLOR(230,25,165), COLOR(66,9,273),
+              COLOR(87,125,156),  COLOR(133,127,60), COLOR(5,197,240)}
     --Base colors mapping table
-    C_MT   = {0,0,0,0,0,0,0,0,0,0,0}  
+    C_MT   = {0,0,0,0,0,0,0,0,0,0,0,0}  
     --Color for the map
     map_color = COLOR(0, 0, 0)
     
@@ -669,7 +669,7 @@ end
 function util.createPlayerButton(p)
     local font = font_but_m
     local color_b, color_t, cputext, controltext, pl
-    local pb, box, x, y, w, h, w_cb, h_cb
+    local pb, box, x, y, w, h, w_cb, h_cb, tween
 
     w_cb = 40 --Width of head color box
     h_cb = 40 --Height of head color box
@@ -786,9 +786,10 @@ function util.createPlayerButton(p)
     pb.b_color.a = 0
     pb.t_color.a = 0
     box.color.a = 0
-    FX.smoothAlpha(pb.b_color, 255, .5, 'linear')
-    FX.smoothAlpha(pb.t_color, 255, .5, 'linear')
-    FX.smoothAlpha(box.color, 255, .5, 'linear')
+    tween = 'linear'
+    FX.smoothAlpha(pb.b_color, 255, .4, tween)
+    FX.smoothAlpha(pb.t_color, 255, .4, tween)
+    FX.smoothAlpha(box.color, 255, .4, tween)
 
 end
 

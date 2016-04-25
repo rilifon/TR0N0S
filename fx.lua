@@ -13,11 +13,9 @@ function fx.glowCircle(x, y, r, c)
     
 end
 
---Creates a shrink and grow effect on object o
-function fx.pulse(o)
+--Creates a pulse effect on object o
+function fx.pulse(o, sx, sy)
     local duration = .3
-    local sx = .9
-    local sy = .9
 
     fx.smoothScale(o, sx, sy, duration/2, 'linear')
      

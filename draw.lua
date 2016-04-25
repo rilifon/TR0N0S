@@ -73,7 +73,7 @@ function draw.setup_setup()
                 FX.particle_explosion(x+w/2, y+h/2 + pbh, exp_color, duration, max_part, speed, decaying)
 
                 --Shrink effect
-                FX.pulse(n_player_up)
+                FX.pulse(n_player_up, 0.95, 0.95)
                 
                 --Insert new CPU player
                 color_id = RGB.randomBaseColor()
@@ -124,7 +124,7 @@ function draw.setup_setup()
                 FX.particle_explosion(x+w/2, y+h/2 - 3*pbh/5, exp_color, duration, max_part, speed, decaying)
 
                 --Shrink effect
-                FX.pulse(n_player_down)
+                FX.pulse(n_player_down, 0.95, 0.95)
 
                 p = P_T[N_PLAYERS]
                 if p.control == "WASD" then WASD_PLAYER = 0
@@ -137,12 +137,12 @@ function draw.setup_setup()
                 table.remove(P_T, N_PLAYERS)
                 
                 --Adjust positions of buttons
-                FX.smoothMove(n_player_up, n_player_up.x, n_player_up.y - pbh, .2, 'in-quad')
-                FX.smoothMove(n_player_down, n_player_down.x, n_player_down.y - pbh, .2, 'in-quad')
+                FX.smoothMove(n_player_up, n_player_up.x, n_player_up.y - pbh, .3, 'in-out-sine')
+                FX.smoothMove(n_player_down, n_player_down.x, n_player_down.y - pbh, .3, 'in-out-sine')
                 
                 bot = I_T["bot_pb_i"]
 
-                FX.smoothMove(bot, bot.x, bot.y - pbh, .2, 'in-quad')
+                FX.smoothMove(bot, bot.x, bot.y - pbh, .3, 'in-out-sine')
 
                 --Decreases players
                 N_PLAYERS = N_PLAYERS - 1
@@ -178,7 +178,7 @@ function draw.setup_setup()
             FX.particle_explosion(x+w/2, y+h/2, exp_color, duration, max_part, speed, decaying) 
 
             --Shrink effect
-            FX.pulse(goal_up)
+            FX.pulse(goal_up, 0.85, 0.85)
 
             GOAL = GOAL + 1
         end
@@ -207,7 +207,7 @@ function draw.setup_setup()
                 FX.particle_explosion(x+w/2, y+h/2, exp_color, duration, max_part, speed, decaying)
 
                 --Shrink effect
-                FX.pulse(goal_down)
+                FX.pulse(goal_down, 0.85, 0.85)
 
                 GOAL = GOAL - 1
             end

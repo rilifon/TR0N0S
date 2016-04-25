@@ -39,7 +39,7 @@ function rgb.randomColor(color_id)
     color = C_T[color_id]
 
     value = (color.r + color.g + color.b)/3
-    newValue = value + 2*math.random()*offset - offset
+    newValue = value + math.random()*offset
     valueRatio = newValue/value
 
     color.r = color.r * valueRatio
