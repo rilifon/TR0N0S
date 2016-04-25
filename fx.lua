@@ -15,21 +15,17 @@ end
 
 --Creates a shrink and grow effect on object o
 function fx.pulse(o)
-    local duration = .4
-    local sx = .98
-    local sy = .98
+    local duration = .3
+    local sx = .9
+    local sy = .9
 
     fx.smoothScale(o, sx, sy, duration/2, 'linear')
-    
-    fx.smoothMove(o, o.x + o.w*(1-sx), o.y + o.h*(1-sy), duration/2, 'linear')
-    
+     
     Game_Timer.after(duration/2,
     
         function()
 
             fx.smoothScale(o, 1, 1, duration/2, 'linear')
-    
-            fx.smoothMove(o, o.x - o.w*(1-sx), o.y - o.h*(1-sy), duration/2, 'linear')
 
         end
     )
