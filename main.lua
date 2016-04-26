@@ -66,10 +66,12 @@ function setup:update(dt)
 
     --Handles timers
     Game_Timer.update(dt)
+    Color_Timer.update(dt)
 
     --Update "real-time" stuff
     Particle.update(dt)
     Util.glowEPS_2(dt) --Make setup stuff glow
+    Util.updateBG(dt)
 
 end
 
@@ -128,6 +130,7 @@ function game:update(dt)
     --Handles timers
     Game_Timer.update(dt)
     Color_Timer.update(dt)
+    Util.updateBG(dt)
     
 
     if game_begin then
@@ -214,6 +217,12 @@ function pause:leave()
     
 end
 
+function pause:update()
+
+    Color_Timer.update(dt)
+
+end
+
 function pause:draw()
     
     Draw.pause_state()
@@ -255,9 +264,11 @@ function gameover:update(dt)
 
     --Handles timers
     Game_Timer.update(dt)
+    Color_Timer.update(dt)
 
     --Update "real-time" stuff
     Particle.update(dt*0.5)
+    Util.updateBG(dt)
 
 end
 

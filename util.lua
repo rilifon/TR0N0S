@@ -27,7 +27,9 @@ function util.configGame()
     bt_img = love.graphics.newImage("assets/default_img.png")
     border_top_img = love.graphics.newImage("assets/border_top.png")
     border_bot_img = love.graphics.newImage("assets/border_bot.png")
-
+    --Background
+    bg_img = love.graphics.newImage("assets/background.png")
+    BG_X = -954 --Background x position
     --RANDOM SEED
 
 
@@ -99,7 +101,7 @@ function util.configGame()
     end
 
     --SHADERS
-    SHADER = nil
+    SHADER = nil --Current shader
 
     --Shader for drawing glow effect
     Glow_Shader = love.graphics.newShader[[
@@ -119,24 +121,23 @@ function util.configGame()
     ]]
 
 
-    
-    --[[Shader for outline effect (to examine)
-    Outline_Shader = love.graphics.newShader[[
-        extern vec2 stepSize;
+    --Shader for drawing background effect
+    BG_Shader = love.graphics.newShader[[
+        extern number width; //Screen width
+        extern number height; //Screen height
         vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
-            
-            number alpha = 4*Texel( texture, texture_coords ).a;
-            alpha -= Texel( texture, texture_coords + vec2( stepSize.x, 0.0f ) ).a;
-            alpha -= Texel( texture, texture_coords + vec2( -stepSize.x, 0.0f ) ).a;
-            alpha -= Texel( texture, texture_coords + vec2( 0.0f, stepSize.y ) ).a;
-            alpha -= Texel( texture, texture_coords + vec2( 0.0f, -stepSize.y ) ).a;
-            
-            // calculate resulting color
-            vec4 resultCol = vec4( 1.0f, 1.0f, 1.0f, alpha );
-            // return color for current pixel
-            return resultCol;
+            vec4 pixel = Texel(texture, texture_coords );
+            vec2 center = vec2(width/2,height/2);
+            number grad = 0.7;
+            number dist = distance(center, screen_coords);
+            dist = dist / ((width+height)/2.5);
+            color.a = color.a * dist;
+            color.r = color.r;
+            color.g = color.g;
+            color.b = color.b;
+            return pixel*color;
         }
-    ]]--
+    ]]
 
     --DRAWING TABLES
 
@@ -161,11 +162,14 @@ function util.configGame()
               COLOR(87,125,156),  COLOR(133,127,60), COLOR(5,197,240)}
     --Base colors mapping table
     C_MT   = {0,0,0,0,0,0,0,0,0,0,0,0}  
-    --Color for the map
-    map_color = COLOR(0, 0, 0)
+    --Color for the map (initial random color)
+    map_color = C_T[math.random(#C_T)]
     
     --All base colors map background can have
     MC_T   = {COLOR(250,107,12), COLOR(250,81,62), COLOR(240,60,177), COLOR(180,18,201)}
+
+    --Starts background transition
+    BackgroundTransition()
 
     --OTHER TABLES
 
@@ -175,6 +179,8 @@ function util.configGame()
 
     --WINDOW CONFIG
     success = love.window.setMode(TILESIZE*map_x + 2*BORDER, TILESIZE*map_y + 2*BORDER, {borderless = not DEBUG})
+    BG_Shader:send("width", love.graphics.getWidth()) --Window width
+    BG_Shader:send("height", love.graphics.getHeight()) --Window height
 
     --FONT STUFF
     font_but_l = love.graphics.newFont( "assets/FUTUVA.ttf", 50) --Font for buttons, large size
@@ -221,9 +227,6 @@ function util.setupGame()
     
     if not game_setup then
         countdown = MAX_COUNTDOWN --Setup countdown
-             
-        --Clear all timers related to color    
-        Color_Timer.clear()
 
         game_begin = false
         step = 0
@@ -406,6 +409,22 @@ end
 -----------------------
 --USEFUL GAME FUNCTIONS
 -----------------------
+
+--Updates background position
+function util.updateBG(dt)
+    local t, max
+    
+    t = 60 --Speed to increase position
+    max = 0
+
+    BG_X = BG_X + dt * t
+
+    --Cicles image to a suitable position
+    if BG_X >= max then
+        BG_X = -954
+    end
+
+end
 
 function movePlayer(x,y,p)
     local c, x_,y_, color, grad, tile
@@ -792,8 +811,8 @@ function util.createPlayerButton(p)
     box.color.a = 0
     tween = 'linear'
     FX.smoothAlpha(pb.b_color, 255, .4, tween)
-    FX.smoothAlpha(pb.t_color, 255, .4, tween)
-    FX.smoothAlpha(box.color, 255, .4, tween)
+    FX.smoothAlpha(pb.t_color, 255, .6, tween)
+    FX.smoothAlpha(box.color, 255, .5, tween)
 
 end
 
@@ -892,45 +911,6 @@ function util.clearAllTables(mode)
 
 end
 
---Checks if position (x,y) is inside map
-function validPosition(x, y)
-    
-    if x < 1 or x > map_x or y < 1 or y > map_y then
-        return false
-    end
-
-    return true 
-end
-
---Returns next position starting in (x,y) and going direction dir
-function nextPosition(x, y, dir)
-
-    if dir == 1 then     --Left
-        x = x - 1
-    elseif dir == 2 then --Up
-        y = y - 1      
-    elseif dir == 3 then --Right
-        x = x + 1
-    elseif dir == 4 then --Down
-        y = y + 1
-    end
-
-    return x, y
-end
-
---Reset map, puttting 0 in all positions
-function resetMap()
-
-    --Resets map background color with a random possible color
-    map_color = MC_T[math.random(#MC_T)]
-    
-    --Reset all map positions to 0 and create a tile
-    for i=1,map_x do
-        for j=1,map_y do
-            map[i][j] = 0 --Reset map
-        end
-    end
-end
 
 --Glow effect
 function glowEPS(dt)
@@ -969,6 +949,84 @@ function util.glowEPS_2(dt)
     end
 
 end
+
+--------------------
+--MAP FUNCTIONS
+--------------------
+
+--Checks if position (x,y) is inside map
+function validPosition(x, y)
+    
+    if x < 1 or x > map_x or y < 1 or y > map_y then
+        return false
+    end
+
+    return true 
+end
+
+--Returns next position starting in (x,y) and going direction dir
+function nextPosition(x, y, dir)
+
+    if dir == 1 then     --Left
+        x = x - 1
+    elseif dir == 2 then --Up
+        y = y - 1      
+    elseif dir == 3 then --Right
+        x = x + 1
+    elseif dir == 4 then --Down
+        y = y + 1
+    end
+
+    return x, y
+end
+
+--Reset map, puttting 0 in all positions
+function resetMap()
+    
+    --Reset all map positions to 0 and create a tile
+    for i=1,map_x do
+        for j=1,map_y do
+            map[i][j] = 0 --Reset map
+        end
+    end
+end
+
+--Choses a random color from a table and transitions the map background to it 
+function BackgroundTransition()
+    local duration = 5
+    local targetColor, ori_color
+
+    ori_color = COLOR(map_color.r, map_color.g, map_color.b)
+
+    --Fixing imprecisions
+    ori_color.r = math.floor(ori_color.r + .5)
+    ori_color.g = math.floor(ori_color.g + .5)
+    ori_color.b = math.floor(ori_color.b + .5)
+
+    --Get a random different color for map background
+    targetColor = MC_T[math.random(#MC_T)]
+
+    while ((targetColor.r == ori_color.r) and
+           (targetColor.g == ori_color.g) and
+           (targetColor.b == ori_color.b)) do
+
+        targetColor = MC_T[math.random(#MC_T)]
+    end
+
+    FX.smoothColor(map_color, ori_color, targetColor, duration, 'linear')
+
+    --Starts a timer that gradually increse
+    Color_Timer.after(duration,
+        
+        --Calls parent function so that the transition is continuous
+        function()
+            map_color = COLOR(targetColor.r, targetColor.g, targetColor.b)
+            BackgroundTransition()
+
+        end
+    )
+
+end 
 
 --------------------
 --GLOBAL FUNCTIONS

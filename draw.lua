@@ -296,8 +296,6 @@ function draw.game_setup()
 
     SetupHUD_game()
 
-    BackgroundTransition()
-
     if not game_begin then
         SetupPlayerIndicator()
     end
@@ -464,6 +462,8 @@ end
 --Draws every drawable from tables
 function DrawAll(mode)
 
+    DrawBG()
+    
     if mode == "inGame" then
         DrawMAP()     --Draws the background
 
@@ -487,6 +487,21 @@ function DrawAll(mode)
     DrawTXT()     --Draws all default texts
 
     DrawTB()      --Draws all default textboxes
+
+end
+
+--Draws the background
+function DrawBG()
+
+    --Draws the glow effect
+    love.graphics.setShader(BG_Shader)
+    SHADER = "BG"
+
+    love.graphics.setColor(map_color.r, map_color.g, map_color.b, map_color.a)
+    love.graphics.draw(bg_img, BG_X, -200)
+
+    love.graphics.setShader()
+    SHADER = nil
 
 end
 
@@ -557,6 +572,7 @@ function DrawPB()
     love.graphics.setShader()
     SHADER = nil
 
+    --Draws the player button
     for i, v in pairs(PB_T) do
         drawButton(v)
     end
@@ -662,11 +678,6 @@ function drawButtonImg(but)
     love.graphics.setColor(but.t_color.r, but.t_color.g, but.t_color.b, but.t_color.a)
     love.graphics.setFont(font)
     love.graphics.print(but.text, but.x + tx , but.y + ty)
-
-    if DEBUG then
-        love.graphics.setColor(255,0,0)
-        love.graphics.rectangle("fill", but.x, but.y, but.w, but.h)
-    end
 
 end
 
@@ -803,47 +814,6 @@ function drawGlowTile(tile)
     love.graphics.draw(PIXEL, x, y, 0, w+2*e, h+2*e)
 
 end
-
---------------------
---MAP DRAW FUNCTIONS
---------------------
-
---Choses a random color from a table and transitions the map background to it 
-function BackgroundTransition()
-    local r, g, b, ratio
-    local duration = 5
-    local diff = 0
-    local ori_color = map_color
-
-    --Fixing imprecisions
-    ori_color.r = math.floor(ori_color.r + .5)
-    ori_color.g = math.floor(ori_color.g + .5)
-    ori_color.b = math.floor(ori_color.b + .5)
-
-    --Get a random different color for map background
-    targetColor = MC_T[math.random(#MC_T)]
-
-    while ((targetColor.r == ori_color.r) and
-           (targetColor.g == ori_color.g) and
-           (targetColor.b == ori_color.b)) do
-
-        targetColor = MC_T[math.random(#MC_T)]
-    end
-
-    FX.smoothColor(map_color, ori_color, targetColor, duration, 'linear')
-
-    --Starts a timer that gradually increse
-    Color_Timer.after(duration,
-        
-        --Calls parent function so that the transition is continuous
-        function()
-
-            BackgroundTransition()
-
-        end
-    )
-
-end 
 
 --------------------
 --HUD DRAW FUNCTIONS
