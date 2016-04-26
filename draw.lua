@@ -254,7 +254,7 @@ function draw.setup_setup()
     --TOP OF PLAYERS BUTTON
     img = border_top_img
     x  = 65
-    y  = 150
+    y  = 210
     sx = 1
     sy = 1
     w = img:getWidth()

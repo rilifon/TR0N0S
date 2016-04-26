@@ -738,7 +738,7 @@ function util.createPlayerButton(p)
     w = 500
     h = 40
     x = (love.graphics.getWidth() - w - w_cb)/2
-    y = 180 + 45*p.number
+    y = 240 + 45*p.number
     pb = But(x, y, w, h,
                     "PLAYER " .. p.number .. " " .. cputext .. " (" .. controltext .. ")",
                     font, color_b, color_t, 
