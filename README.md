@@ -82,7 +82,7 @@ Check the useful links on the bottom of this document
 -USEFUL LINKS
 
 	Github
-		~ https://github.com/rilifon/TR0N0S
+		~ https://github.com/uspgamedev/TR0N0S
 	UspGameDev Wiki
 		~ https://uspgamedev.org/wiki/TR0N0S
 
