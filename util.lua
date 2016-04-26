@@ -308,7 +308,7 @@ function util.tick(dt)
     --Update "timestep" stuff
     step = math.min(TIMESTEP, step + dt)
     if step >= TIMESTEP then    
-        
+
         UpdateCPU()
 
         UpdateHuman()
@@ -875,8 +875,8 @@ function util.clearTable(T)
     
     if not T then return end --If table is empty
     --Clear T table
-    for k in pairs (T) do
-        T[k] = nil
+    for i, k in pairs (T) do
+        T[i] = nil
     end
 
 end
