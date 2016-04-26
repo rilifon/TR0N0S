@@ -17,7 +17,7 @@ COLOR = Class{
 --Return a random base color id not used from the Color Table
 function rgb.randomBaseColor()
     local color_id
-
+    
     color_id = math.random(#C_T)
     
     while C_MT[color_id] == 1 do
@@ -32,7 +32,7 @@ end
 
 --Return a random color based on a default color_id with some slight variation
 function rgb.randomColor(color_id)
-    local offset = 40
+    local offset = 0
     local value, newValue, valueRatio
     local color
 

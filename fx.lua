@@ -118,15 +118,16 @@ end
 
 --Makes a smooth transition in color 'c'
 --to COLOR(rf,gf,bf)
-function fx.smoothColor(c, color0, colorf, duration, func)
-    local rf,gf,bf
+function fx.smoothColor(c, colorf, duration, func)
+    local rf,gf,bf,af
 
     rf = colorf.r
     gf = colorf.g
     bf = colorf.b
+    af = colorf.a
 
     --Starts a timer that gradually increse
-    Game_Timer.tween(duration, c, {r = rf, g = gf, b = bf}, func)
+    Game_Timer.tween(duration, c, {r = rf, g = gf, b = bf, a = af}, func)
 
 end
 

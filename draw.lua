@@ -497,7 +497,7 @@ function DrawBG()
     love.graphics.setShader(BG_Shader)
     SHADER = "BG"
 
-    love.graphics.setColor(map_color.r, map_color.g, map_color.b, map_color.a)
+    love.graphics.setColor(MAP_COLOR.r, MAP_COLOR.g, MAP_COLOR.b, MAP_COLOR.a)
     love.graphics.draw(bg_img, BG_X, -200)
 
     love.graphics.setShader()
@@ -599,8 +599,15 @@ end
 
 --Updates all background tiles
 function DrawMAP()
+    local x, y, w, h
     
-    drawBackground()
+    w = map_x*TILESIZE
+    h = map_y*TILESIZE
+    x = BORDER
+    y = BORDER
+
+    love.graphics.setColor(MAP_COLOR.r, MAP_COLOR.g, MAP_COLOR.b, MAP_COLOR.a)
+    love.graphics.draw(PIXEL, x, y, 0, w, h)
 
 end
 
@@ -767,20 +774,6 @@ function drawGlowBox(box)
     --Draws box
     love.graphics.setColor(box.color.r, box.color.g, box.color.b, box.color.a)
     love.graphics.draw(PIXEL, box.x-eps, box.y-eps, 0, box.w+2*eps, box.h+2*eps)
-
-end
-
---Draws the background
-function drawBackground(tile)
-    local x, y, w, h
-    
-    w = map_x*TILESIZE
-    h = map_y*TILESIZE
-    x = BORDER
-    y = BORDER
-
-    love.graphics.setColor(map_color.r, map_color.g, map_color.b, map_color.a)
-    love.graphics.draw(PIXEL, x, y, 0, w, h)
 
 end
 

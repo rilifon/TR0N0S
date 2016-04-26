@@ -13,7 +13,7 @@ local util = {}
 --Set game's global variables, random seed and window configuration
 function util.configGame()
     local P_1, P_2      --Player 1 and 2
-    local rgb_b, rgb_h, color_id  --Color for body and head
+    local color, rgb_b, rgb_h, color_id  --Color for body and head
     local ratio
 
     --IMAGES
@@ -43,9 +43,9 @@ function util.configGame()
     --MATCH/GAME SETUP VARS
 
     game_setup = false  --Inicial setup for each game
-    GOAL = 3          --Best of X games that will be played in the match
+    GOAL = 3            --Score goal that will be set in the match
     MATCH_BEGIN = false --If is in a current match
-    MAX_PLAYERS = 10    --Max number of players in a game
+    MAX_PLAYERS = 8     --Max number of players in a game
     N_PLAYERS = 2       --Number of players playing
     
     --CONTROL VARS
@@ -128,7 +128,6 @@ function util.configGame()
         vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
             vec4 pixel = Texel(texture, texture_coords );
             vec2 center = vec2(width/2,height/2);
-            number grad = 0.7;
             number dist = distance(center, screen_coords);
             dist = dist / ((width+height)/2.5);
             color.a = color.a * dist;
@@ -156,19 +155,23 @@ function util.configGame()
     --COLOR TABLES
 
     --All base colors players can have
-    C_T    = {COLOR(11,175,230),  COLOR(26,83,240),  COLOR(129,26,240),
-              COLOR(22,245,130),  COLOR(112,219,4),  COLOR(223,242,99),
-              COLOR(157,149,186), COLOR(230,25,165), COLOR(66,9,273),
-              COLOR(87,125,156),  COLOR(133,127,60), COLOR(5,197,240)}
+    C_T    = {COLOR(255,154,54),  COLOR(255,242,54),  COLOR(161,247,47),
+              COLOR(51,219,245),  COLOR(51,100,245),  COLOR(152,47,237),
+              COLOR(240,43,210),  COLOR(240,43,102),  COLOR(255,0,0),
+              COLOR(18, 173,42)}
     --Base colors mapping table
-    C_MT   = {0,0,0,0,0,0,0,0,0,0,0,0}  
-    --Color for the map (initial random color)
-    map_color = C_T[math.random(#C_T)]
+    C_MT   = {0,0,0,0,0,0,0,0,0}  
+
     
     --All base colors map background can have
     MC_T   = {COLOR(250,107,12), COLOR(250,81,62), COLOR(240,60,177), COLOR(180,18,201)}
+    --Color for the map (initial random color)
+    color = MC_T[math.random(#MC_T)]
+    MAP_COLOR = COLOR(color.r, color.g, color.b)
 
     --Starts background transition
+    MAP_COLOR.a = 0
+    FX.smoothColor(MAP_COLOR, COLOR(MAP_COLOR.r, MAP_COLOR.g, MAP_COLOR.b, 255), 2, 'linear')
     BackgroundTransition()
 
     --OTHER TABLES
@@ -245,7 +248,7 @@ end
 
 --Setup all players
 function setupPlayers()
-    local p_x, p_y, is_rand, c, r, grad, color, tile, p_margin
+    local p_x, p_y, is_rand, color, tile, p_margin
         
     p_margin = 6
         
@@ -318,12 +321,13 @@ end
 
 --Updates cpu players position
 function UpdateCPU()
-    
+    local x, y, dir
+
     for i, p in ipairs(P_T) do
         if not p.dead and p.cpu then
-            local dir = p.dir
-            local x = p.x
-            local y = p.y
+            dir = p.dir
+            x = p.x
+            y = p.y
             
             --Update map before moving
             map[x][y] = 1
@@ -363,8 +367,6 @@ function UpdateCPU()
             p.dir = dir
 
             movePlayer(x,y,p)
-
-
         end
     end
 
@@ -400,7 +402,6 @@ function UpdateHuman()
             p.dir = dir
 
             movePlayer(x,y,p)
-
         end
     end
 
@@ -427,11 +428,10 @@ function util.updateBG(dt)
 end
 
 function movePlayer(x,y,p)
-    local c, x_,y_, color, grad, tile
+    local c, x_,y_, color, tile
 
     --Update map color
     tile = MAP_T["mapx"..p.x.."y"..p.y]
-
     tile.color.r = p.b_color.r
     tile.color.g = p.b_color.g
     tile.color.b = p.b_color.b
@@ -453,12 +453,10 @@ function movePlayer(x,y,p)
     map[p.x][p.y] = 2
 
     if not p.dead then
-
         --Creates a box with players head
         color = COLOR(p.h_color.r, p.h_color.g, p.h_color.b, p.h_color.a)
         tile = TILE(p.x, p.y, color) --Creates a tile
         MAP_T["mapx"..p.x.."y"..p.y] = tile
-
     end
 
 end
@@ -482,7 +480,6 @@ function CheckCollision(p)
     --Check collision with other players
     for i, p2 in ipairs(P_T) do
         if p.number ~= p2.number then --Compare with different players
-            
             if p.x == p2.x and p.y == p2.y then
                 p.dead = true  --Makes inicial player dead
                 p2.dead = true --Makes player2 dead
@@ -493,7 +490,6 @@ function CheckCollision(p)
 
                 MAP_T["mapx"..p.x.."y"..p.y].color = COLOR(0,0,0) --Paint tile black
             end
-
         end
     end
 
@@ -659,12 +655,13 @@ function StartCountdown()
     
     time = 0
     Game_Timer.during(MAX_COUNTDOWN, 
-        
         --Decreases countdown
         function(dt)
+            
             t = time+dt
             cd = cd - t
             countdown = math.floor(cd)+1
+
         end,
 
         --After countdown, start game and fixes players positions
@@ -679,6 +676,7 @@ function StartCountdown()
                 if p.dir     == nil then p.dir     = rand end
                 if p.nextdir == nil then p.nextdir = rand end
             end
+
         end
     )
 
@@ -996,7 +994,7 @@ function BackgroundTransition()
     local duration = 5
     local targetColor, ori_color
 
-    ori_color = COLOR(map_color.r, map_color.g, map_color.b)
+    ori_color = COLOR(MAP_COLOR.r, MAP_COLOR.g, MAP_COLOR.b)
 
     --Fixing imprecisions
     ori_color.r = math.floor(ori_color.r + .5)
@@ -1013,14 +1011,13 @@ function BackgroundTransition()
         targetColor = MC_T[math.random(#MC_T)]
     end
 
-    FX.smoothColor(map_color, ori_color, targetColor, duration, 'linear')
+    FX.smoothColor(MAP_COLOR, targetColor, duration, 'linear')
 
     --Starts a timer that gradually increse
-    Color_Timer.after(duration,
+    Color_Timer.after(duration + .3,
         
         --Calls parent function so that the transition is continuous
         function()
-            map_color = COLOR(targetColor.r, targetColor.g, targetColor.b)
             BackgroundTransition()
 
         end
