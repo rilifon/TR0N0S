@@ -37,6 +37,7 @@ PLAYER = Class{
         	self.level = nil
         	self.control = control --indicates this player controls ("WASD" or "ARROWS")
         end
+        
         self.score = 0  --Player score
         self.side = nil --Side of player that he is going around(for cpu's level 3)
     end

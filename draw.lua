@@ -473,8 +473,10 @@ function DrawAll(mode)
     DrawB()       --Draws all default buttons
 
     DrawBI()      --Draws all default buttons with images
-
-    DrawBOX()     --Draws all default boxes
+    
+    if mode ~= "inGame" then
+        DrawBOX()     --Draws all default boxes
+    end
 
     DrawPB()      --Draws all default player buttons
 
@@ -619,12 +621,18 @@ function DrawPlayers()
     love.graphics.setShader(Glow_Shader)
     SHADER = "Glow"
     for i, tile in pairs(MAP_T) do
-        drawGlowTile(tile)
+       -- drawGlowTile(tile)
     end
     love.graphics.setShader()
     SHADER = nil
 
-    --Draws the players
+    --Draws players bodies
+    getRectangles()
+    for i, box in pairs(BOX_T) do
+        drawBox(box)
+    end
+
+    --Draws players heads
     for i, tile in pairs(MAP_T) do
         drawTile(tile)
     end

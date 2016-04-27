@@ -217,7 +217,7 @@ function pause:leave()
     
 end
 
-function pause:update()
+function pause:update(dt)
 
     Color_Timer.update(dt)
 
