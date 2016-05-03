@@ -86,7 +86,7 @@ function util.configGame()
 
     --GLOW FOR TILES EFFECT
 
-    EPS      = 0      --Range of players glow effect
+    EPS      = 6      --Range of players glow effect
     GROWING  = false  --If eps will be growing or not 
     MAX_EPS  = 12     --Max value for eps
     MIN_EPS  = 6      --Min value for eps
@@ -159,7 +159,8 @@ function util.configGame()
     PART_T = {}  --Particles table
     FX_T   = {}  --Effects Table
     BOX_T  = {}  --Box Table
-    MAP_T  = {}  --Map Table (contain all tiles)
+    HD_T   = {}  --Map Table (contain all head tiles)
+    GLOW_T = {}  --Map Table (contain all glow tiles)
      
     --COLOR TABLES
 
@@ -295,7 +296,10 @@ function setupPlayers()
         --Update map with players head
         color = COLOR(p.h_color.r, p.h_color.g, p.h_color.b, p.h_color.a)
         tile = TILE(p.x, p.y, color) --Creates a tile
-        MAP_T["mapx"..p.x.."y"..p.y] = tile
+        HD_T["mapx"..p.x.."y"..p.y] = tile
+
+        --Add glow effect for head
+        GLOW_T["mapx"..p.x.."y"..p.y] = TILE(p.x, p.y, color)
 
     end
 
@@ -440,10 +444,27 @@ function util.updateBG(dt)
 end
 
 function movePlayer(x,y,p)
-    local c, x_,y_, color, tile
+    local c, x_,y_, color, tile, a, b
 
     --Remove player headbox
-    MAP_T["mapx"..p.x.."y"..p.y] = nil
+    HD_T["mapx"..p.x.."y"..p.y] = nil
+
+    --Add glow effect for tile
+    GLOW_T["mapx"..p.x.."y"..p.y] = TILE(p.x, p.y, p.h_color)
+
+
+    for y_=p.y-1, p.y+1 do
+        for x_=p.x-1,p.x+1 do
+            if y_>=1 and y_<=map_y and
+               x_>=1 and x_<=map_x
+            then
+                if isSurrounded(y_, x_) then
+                    GLOW_T["mapx"..x_.."y"..y_] = nil
+                end
+            end
+        end
+    end
+
 
     --Creates a mini-explosion
     x_ = p.x*TILESIZE + BORDER - TILESIZE/2
@@ -463,11 +484,14 @@ function movePlayer(x,y,p)
     --Updates head box position
     if not p.dead then
         color = COLOR(p.h_color.r, p.h_color.g, p.h_color.b, p.h_color.a)
-        MAP_T["mapx"..p.x.."y"..p.y] = TILE(p.x, p.y, color)
+        HD_T["mapx"..p.x.."y"..p.y] = TILE(p.x, p.y, color)
     else
         color = COLOR(0,0,0)
-        MAP_T["mapx"..p.x.."y"..p.y] = TILE(p.x, p.y, color)
+        HD_T["mapx"..p.x.."y"..p.y] = TILE(p.x, p.y, color)
     end
+
+    --Add glow effect for head
+    GLOW_T["mapx"..p.x.."y"..p.y] = TILE(p.x, p.y, color)
 
 end
 
@@ -909,7 +933,8 @@ function util.clearAllTables(mode)
 
     if mode ~= "inGame" then
         util.clearTable(PART_T)
-        util.clearTable(MAP_T)
+        util.clearTable(GLOW_T)
+        util.clearTable(HD_T)
         util.clearTable(FX_T)
         util.clearTable(BOX_T)
     end
@@ -1115,6 +1140,32 @@ function getRectangles()
         end
     end
 
+end
+
+--Checks if tile (i,j) is completely surrounded by other tiles
+function isSurrounded(i, j)
+
+    for a=i-1, i+1 do
+        for b=j-1,j+1 do
+            
+            --Get middle cases
+            if a>=1 and a<=map_y and
+               b>=1 and b<=map_x
+            then
+                if map[a][b] == 0 then
+                    return false
+                end
+            end
+
+            --Edge cases
+            if a == 1 or a == map_y or b == 1 or b == map_x then
+                return false
+            end 
+
+        end
+    end
+
+    return true
 end
 
 --------------------
