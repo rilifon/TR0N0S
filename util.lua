@@ -450,7 +450,7 @@ function movePlayer(x,y,p)
     HD_T["mapx"..p.x.."y"..p.y] = nil
 
     --Add glow effect for tile
-    GLOW_T["mapx"..p.x.."y"..p.y] = TILE(p.x, p.y, p.h_color)
+    GLOW_T["mapx"..p.x.."y"..p.y] = TILE(p.x, p.y, p.b_color)
 
 
     for y_=p.y-1, p.y+1 do
