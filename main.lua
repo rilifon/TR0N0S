@@ -301,11 +301,9 @@ end
 --------------------
 
 function game:mousepressed(x, y, button, istouch)
-
 end
 
 function love.update(dt)
-
 end
 
 function love.draw()
@@ -326,6 +324,12 @@ function love.keypressed(key)
             end
             print("-")
         end
-    end 
+    elseif key == '8' then
+        print("--")
+        for i, box in pairs(BOX_T) do
+            print("x "..box.x.." y "..box.y.." w "..box.w.." h "..box.h)
+        end
+        print("--")
+    end  
 
 end

@@ -322,6 +322,9 @@ function util.tick(dt)
 
         UpdateHuman()
 
+        --Get players bodies
+        getRectangles()
+
         --Reset step counter
         step = 0
     end
@@ -891,8 +894,6 @@ function util.clearAllTables(mode)
     
     util.clearTable(TB_T)
 
-    util.clearTable(BOX_T)
-
     util.clearTable(B_T)
 
     util.clearTable(BI_T)
@@ -910,6 +911,7 @@ function util.clearAllTables(mode)
         util.clearTable(PART_T)
         util.clearTable(MAP_T)
         util.clearTable(FX_T)
+        util.clearTable(BOX_T)
     end
 
 end
@@ -1044,10 +1046,11 @@ function BackgroundTransition()
 end
 
 function getRectangles()
-    local current, w, h, k, l, stop, box, x, y, i, j
+    local current, w, h, k, l, stop, box, x, y, i, j, db, color, p_c
 
     --Clear all existing rectangles
     util.clearTable(BOX_T)
+
     --Clear auxiliar map
     resetAuxMap()
 
@@ -1056,15 +1059,15 @@ function getRectangles()
         for j=1,map_x do
             if aux_map[i][j] == 0 then
                 current = map[i][j] --Current player
+                aux_map[i][j] = 1
 
-                if current == 0 or current == HEAD then --Blank or head space
-                    aux_map[i][j] = 1
-                else                --Colored tile
+                if current ~= 0 and current ~= HEAD then --Colored tile
 
                     --Find biggest width
                     w = 1
                     k = j + 1
-                    while map[i][k] == current and k <= map_x do
+                    while map[i][k] == current and k <= map_x and aux_map[i][k] == 0 do
+                        aux_map[i][k] = 1
                         w = w + 1
                         k = k + 1
                     end
@@ -1072,19 +1075,23 @@ function getRectangles()
                     --Find biggest height for correspondent width
                     stop = false
                     h = 1
-                    while stop == false and i+h-1 <= map_y do
+                    l = i + 1
+                    while stop == false and l <= map_y do
                         h = h+1
                         for k=j,j+w-1 do
-                            if map[i+h-1][k] ~= current or aux_map[i+h-1][k] == 1  then
-                                if stop == false then h = h - 1 end
+                            if map[l][k] ~= current or aux_map[l][k] == 1  then
+                                if stop == false then
+                                    h = h - 1
+                                end
                                 stop = true
                             end
                         end
+                        l = l + 1
                     end
 
                     --Mark as positions visited
-                    for l=i,i+w-1 do
-                        for k=j,j+h-1 do
+                    for l=i,i+h-1 do
+                        for k=j,j+w-1 do
                             aux_map[l][k] = 1
                         end
                     end
@@ -1092,7 +1099,16 @@ function getRectangles()
                     --Create rectangle
                     x = BORDER + (j-1)*TILESIZE
                     y = BORDER + (i-1)*TILESIZE
-                    box = BOX(x, y, w*TILESIZE, h*TILESIZE, P_T[current].b_color)
+                    
+                    if DEBUG then
+                        db = (x + y)%130 + w%120
+                        color = COLOR(db, db, db)
+                    else
+                        p_c = P_T[current].b_color
+                        color = COLOR(p_c.r, p_c.g, p_c.b, p_c.a)
+                    end
+
+                    box = BOX(x, y, w*TILESIZE, h*TILESIZE, color)
                     BOX_T["x"..j.."y"..i] = box
                 end
             end

@@ -617,19 +617,18 @@ end
  --IS THE CAUSE OF LAG
 function DrawPlayers()
 
-    --Draws the glow effect
+    --[[Draws the glow effect
     love.graphics.setShader(Glow_Shader)
     SHADER = "Glow"
     for i, tile in pairs(MAP_T) do
-       -- drawGlowTile(tile)
+       drawGlowTile(tile)
     end
     love.graphics.setShader()
-    SHADER = nil
+    SHADER = nil ]]
 
     --Draws players bodies
-    getRectangles()
     for i, box in pairs(BOX_T) do
-        drawBox(box)
+       drawBox(box)
     end
 
     --Draws players heads
