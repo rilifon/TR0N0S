@@ -12,11 +12,13 @@ local Img      = require "img"
 local TextBox  = require "textbox"
 local Text     = require "text"
 local Player   = require "player"
-local Rgb      = require "rgb"
+local RGB      = require "rgb"
 local Filter   = require "filter"
 local Particle = require "particle"
 local FX       = require "fx"
 local Shapes   = require "shapes"
+local CPU      = require "cpu"
+local Map      = require "map"
 
 --GAMESTATES
 local menu     = {}
@@ -318,9 +320,9 @@ function love.keypressed(key)
     if key == "0" then
         Util.zoera()
     elseif key == "9" then
-        for i = 1, map_x do
-            for j = 1, map_y do
-                io.write(map[i][j])
+        for i = 1, MAP_X do
+            for j = 1, MAP_Y do
+                io.write(MAP[i][j])
             end
             print("-")
         end

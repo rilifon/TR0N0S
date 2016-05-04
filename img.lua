@@ -70,6 +70,7 @@ function img.checkCollision(x,y)
             and
             y < b.y + b.h*b.sy
         then
+            --Click is within image "box". Now checking by pixel position
             if checkPixelCollision(b.img, (x-b.x), (y-b.y)) then
                 but = b.func
             end
@@ -81,13 +82,12 @@ function img.checkCollision(x,y)
 
 end
 
---Checks if the relative NORMALIZED x,y position is the desired color
+--Checks if the relative NORMALIZED x,y position is colored
 function checkPixelCollision(img, x, y)
     local img_data, r, g, b, a 
 
     img_data = img:getData()
     r, g, b, a  = img_data:getPixel(x,y)
-    --print("r "..r.." g "..g.." b ".. b .." a ".. a)
     if r ~= 0 or
        g ~= 0 or
        b ~= 0

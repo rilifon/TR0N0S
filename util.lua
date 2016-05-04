@@ -1,8 +1,10 @@
 local Particle = require "particle"
 local RGB      = require "rgb"
 local FX       = require "fx"
+local CPU      = require "cpu"
+local Map      = require "map"
 
---MODULE WITH USEFUL LOGICAL, MATHEMATICAL AND USEFUL STUFF--
+--MODULE WITH LOGICAL, MATHEMATICAL AND USEFUL STUFF--
 
 local util = {}
 
@@ -66,21 +68,21 @@ function util.configGame()
     BORDER = 90         --Border of the game map
     MARGIN = 6          --Size of margin for players' inicial position
     
-    map = {}            --Game map
-    map_x = 65          --Map x size (in tiles)
-    map_y = 65          --Map y size (in tiles)
-    for i=1,map_y do    --Creates the map
-        map[i] = {}
-        for j=1,map_x do
-            map[i][j] = 0
+    MAP = {}            --Game map
+    MAP_X = 65          --Map x size (in tiles)
+    MAP_Y = 65          --Map y size (in tiles)
+    for i=1,MAP_Y do    --Creates the map
+        MAP[i] = {}
+        for j=1,MAP_X do
+            MAP[i][j] = 0
         end
     end
 
-    aux_map= {}        --Auxiliar map to find rectangles
-    for i=1,map_y do   --Creates the auxiliar map
-        aux_map[i] = {}
-        for j=1,map_x do
-            aux_map[i][j] = 0
+    AUX_MAP= {}        --Auxiliar map to find rectangles
+    for i=1,MAP_Y do   --Creates the auxiliar map
+        AUX_MAP[i] = {}
+        for j=1,MAP_X do
+            AUX_MAP[i][j] = 0
         end
     end
 
@@ -182,7 +184,7 @@ function util.configGame()
     --Starts background transition
     MAP_COLOR.a = 0
     FX.smoothColor(MAP_COLOR, COLOR(MAP_COLOR.r, MAP_COLOR.g, MAP_COLOR.b, 255), 2, 'linear')
-    BackgroundTransition()
+    Map.backgroundTransition()
 
     --OTHER TABLES
 
@@ -191,7 +193,7 @@ function util.configGame()
     H_T = {}    --Timer's handle table
 
     --WINDOW CONFIG
-    success = love.window.setMode(TILESIZE*map_x + 2*BORDER, TILESIZE*map_y + 2*BORDER, {borderless = not DEBUG})
+    success = love.window.setMode(TILESIZE*MAP_X + 2*BORDER, TILESIZE*MAP_Y + 2*BORDER, {borderless = not DEBUG})
     BG_Shader:send("width", love.graphics.getWidth()) --Window width
     BG_Shader:send("height", love.graphics.getHeight()) --Window height
 
@@ -245,7 +247,7 @@ function util.setupGame()
         step = 0
         winner = 0
         
-        resetMap()
+        Map.reset()
         
         setupPlayers()
 
@@ -267,8 +269,8 @@ function setupPlayers()
         --Get random positions for all players
         is_rand = false
         while is_rand == false do
-            p_x = math.random(map_x-2*MARGIN)+MARGIN
-            p_y = math.random(map_y-2*MARGIN)+MARGIN
+            p_x = math.random(MAP_X-2*MARGIN)+MARGIN
+            p_y = math.random(MAP_Y-2*MARGIN)+MARGIN
             is_rand = true
             --Iterate in all other players and checks for a valid position distant enough
             for j=1,i-1 do
@@ -290,7 +292,7 @@ function setupPlayers()
 
         p.side = nil --For cpu level 3
 
-        map[p_y][p_x] = HEAD --Update first position
+        MAP[p_y][p_x] = HEAD --Update first position
 
         
         --Update map with players head
@@ -327,7 +329,7 @@ function util.tick(dt)
         UpdateHuman()
 
         --Get players bodies
-        getRectangles()
+        Map.getRectangles()
 
         --Reset step counter
         step = 0
@@ -346,24 +348,24 @@ function UpdateCPU()
             y = p.y
             
             --Update map before moving
-            map[y][x] = p.number
+            MAP[y][x] = p.number
 
 
             --CPU LEVEL 1
             if p.level == 1 then
 
-               dir = CPU_Level1(p)
+               dir = CPU.level_1(p)
 
 
             --CPU LEVEL 2
             elseif p.level == 2 then
 
-               dir = CPU_Level2(p)
+               dir = CPU.level_2(p)
 
             --CPU LEVEL 3
             elseif p.level == 3 then
 
-               dir = CPU_Level3(p)
+               dir = CPU.level_3(p)
 
             end
 
@@ -374,9 +376,9 @@ function UpdateCPU()
             elseif dir == 2 then
                 y = math.max(1, y-1)           --Up
             elseif dir == 3 then
-                x = math.min(map_x, x+1)       --Right
+                x = math.min(MAP_X, x+1)       --Right
             elseif dir == 4 then
-                y = math.min(map_y, y+1)       --Down
+                y = math.min(MAP_Y, y+1)       --Down
             end
 
             --Updates player direction
@@ -401,7 +403,7 @@ function UpdateHuman()
             y = p.y
             
             --Update map before moving
-            map[y][x] = p.number
+            MAP[y][x] = p.number
 
             --Move players 
             if dir == 1 then
@@ -409,9 +411,9 @@ function UpdateHuman()
             elseif dir == 2 then
                 y = math.max(1, y-1)           --Up
             elseif dir == 3 then
-                x = math.min(map_x, x+1)       --Right
+                x = math.min(MAP_X, x+1)       --Right
             elseif dir == 4 then
-                y = math.min(map_y, y+1)       --Down
+                y = math.min(MAP_Y, y+1)       --Down
             end
 
             --Updates player direction
@@ -455,10 +457,10 @@ function movePlayer(x,y,p)
 
     for y_=p.y-1, p.y+1 do
         for x_=p.x-1,p.x+1 do
-            if y_>=1 and y_<=map_y and
-               x_>=1 and x_<=map_x
+            if y_>=1 and y_<=MAP_Y and
+               x_>=1 and x_<=MAP_X
             then
-                if isSurrounded(y_, x_) then
+                if Map.isSurrounded(y_, x_) then
                     GLOW_T["mapx"..x_.."y"..y_] = nil
                 end
             end
@@ -479,7 +481,7 @@ function movePlayer(x,y,p)
     CheckCollision(p)
 
     --Update map with player head
-    map[p.y][p.x] = HEAD
+    MAP[p.y][p.x] = HEAD
 
     --Updates head box position
     if not p.dead then
@@ -501,7 +503,7 @@ function CheckCollision(p)
     local x, y
     
     --Check collision with wall
-    if map[p.y][p.x] >= 1 and map[p.y][p.x] <= HEAD then
+    if MAP[p.y][p.x] >= 1 and MAP[p.y][p.x] <= HEAD then
         p.dead = true --Makes player dead
         
         x = p.x*TILESIZE + BORDER
@@ -557,123 +559,6 @@ function util.checkWinner()
         end
     end
 
-end
-
---------------------
---CPU'S AI FUNCTIONS
---------------------
-
---CPU LEVEL 1 - "L4-M0"
---Has 80% of going the same direction, and 20% of "turning" left or right
-function CPU_Level1(p)
-    local dir = p.dir
-
-    --Chooses a random different valid (not reverse) direction
-    if math.random() <= .2 then
-        --"Turn right"    
-        if math.random() <= .5 then
-            dir = dir%4 + 1
-        --"Turn left"
-        else
-            dir = (dir+2)%4 + 1
-        end
-    end
-
-    return dir
-end
-
---CPU LEVEL 2 - "TIMMY-2000"
---If it would reach an obstacle, turns direction
-function CPU_Level2(p)
-    local dir = p.dir
-    local next_x, next_y --Position that the CPU will go if move forward
-    local left_x, left_y --Position that the CPU will go if turn left
-    local right_x, right_y --Position that the CPU will go if turn right
-
-            
-    next_x, next_y = nextPosition(p.x, p.y, dir)
-    left_x, left_y = nextPosition(p.x, p.y, (dir + 2)%4 + 1)
-    right_x, right_y = nextPosition(p.x, p.y, dir%4 + 1)
-
-    --Found obstacle
-    if  not validPosition(next_x, next_y) or map[next_y][next_x] ~= 0 then
-        --Randomly tries to go right or left when reaching
-        if math.random() < 0.5 then
-            if  validPosition(left_x, left_y) and map[left_y][left_x] == 0 then
-                dir = (dir + 2)%4 + 1 --turn left
-            else
-                dir = dir%4 + 1       --turn right
-            end
-        else
-            if  validPosition(right_x, right_y) and map[right_y][right_x] == 0 then
-                dir = dir%4 + 1       --turn right
-            else
-                dir = (dir + 2)%4 + 1 --turn left
-            end
-        end
-    end
-
-    return dir
-end
-
---CPU LEVEL 3 - "R0B1N"
---Goes around everything
-function CPU_Level3(p)
-    local dir = p.dir
-    local next_x, next_y   --Position that the CPU will go if move forward
-    local left_x, left_y   --Position that the CPU will go if turn left
-    local right_x, right_y --Position that the CPU will go if turn right
-    local side = p.side    --Side CPU is going around
-
-    next_x, next_y   = nextPosition(p.x, p.y, dir)
-    left_x, left_y   = nextPosition(p.x, p.y, (dir + 2)%4 + 1)
-    right_x, right_y = nextPosition(p.x, p.y, dir%4 + 1)
-
-    if side == "left" then
-
-        --Can go left?
-        if validPosition(left_x, left_y) and map[left_y][left_x] == 0 then
-            dir = (dir + 2)%4 + 1 --turn left
-        --Can't go forward?
-        elseif not validPosition(next_x, next_y) or map[next_y][next_x] ~= 0 then
-            dir = dir%4 + 1       --turn right
-        end
-
-    elseif side == "right" then
-
-        --Can go right?
-        if validPosition(right_x, right_y) and map[right_y][right_x] == 0 then
-            dir = dir%4 + 1       --turn right
-        --Can't go forward?
-        elseif not validPosition(next_x, next_y) or map[next_y][next_x] ~= 0 then
-            dir = (dir + 2)%4 + 1 --turn left
-        end
-
-    elseif side == nil then
-
-        --Found obstacle
-        if  not validPosition(next_x, next_y) or map[next_y][next_x] ~= 0 then
-            if math.random() < 0.5 then
-                if  validPosition(left_x, left_y) and map[left_y][left_x] == 0 then
-                    dir = (dir + 2)%4 + 1 --turn left
-                    p.side = "right"
-                else
-                    dir = dir%4 + 1       --turn right
-                    p.side = "left"
-                end
-            else
-                if  validPosition(right_x, right_y) and map[right_y][right_x] == 0 then
-                    dir = dir%4 + 1       --turn right
-                    p.side = "left"
-                else
-                    dir = (dir + 2)%4 + 1 --turn left
-                    p.side = "right"
-                end
-            end
-        end
-    end
-
-    return dir
 end
 
 ---------------------
@@ -978,194 +863,6 @@ function util.glowEPS_2(dt)
         end
     end
 
-end
-
---------------------
---MAP FUNCTIONS
---------------------
-
---Checks if position (x,y) is inside map
-function validPosition(x, y)
-    
-    if x < 1 or x > map_x or y < 1 or y > map_y then
-        return false
-    end
-
-    return true 
-end
-
---Returns next position starting in (x,y) and going direction dir
-function nextPosition(x, y, dir)
-
-    if dir == 1 then     --Left
-        x = x - 1
-    elseif dir == 2 then --Up
-        y = y - 1      
-    elseif dir == 3 then --Right
-        x = x + 1
-    elseif dir == 4 then --Down
-        y = y + 1
-    end
-
-    return x, y
-end
-
---Reset map, puttting 0 in all positions
-function resetMap()
-    
-    --Reset all map positions to 0 and create a tile
-    for i=1,map_y do
-        for j=1,map_x do
-            map[i][j] = 0 --Reset map
-        end
-    end
-end
-
---Reset aux_map, puttting 0 in all positions
-function resetAuxMap()
-    
-    --Reset all map positions to 0 and create a tile
-    for i=1,map_y do
-        for j=1,map_x do
-            aux_map[i][j] = 0 --Reset map
-        end
-    end
-
-end
-
---Choses a random color from a table and transitions the map background to it 
-function BackgroundTransition()
-    local duration = 5
-    local targetColor, ori_color
-
-    ori_color = COLOR(MAP_COLOR.r, MAP_COLOR.g, MAP_COLOR.b)
-
-    --Fixing imprecisions
-    ori_color.r = math.floor(ori_color.r + .5)
-    ori_color.g = math.floor(ori_color.g + .5)
-    ori_color.b = math.floor(ori_color.b + .5)
-
-    --Get a random different color for map background
-    targetColor = MC_T[math.random(#MC_T)]
-
-    while ((targetColor.r == ori_color.r) and
-           (targetColor.g == ori_color.g) and
-           (targetColor.b == ori_color.b)) do
-
-        targetColor = MC_T[math.random(#MC_T)]
-    end
-
-    FX.smoothColor(MAP_COLOR, targetColor, duration, 'linear')
-
-    --Starts a timer that gradually increse
-    Color_Timer.after(duration + .3,
-        
-        --Calls parent function so that the transition is continuous
-        function()
-
-            BackgroundTransition()
-
-        end
-    )
-
-end
-
-function getRectangles()
-    local current, w, h, k, l, stop, box, x, y, i, j, db, color, p_c
-
-    --Clear all existing rectangles
-    util.clearTable(BOX_T)
-
-    --Clear auxiliar map
-    resetAuxMap()
-
-    --Sweep over auxiliar map
-    for i=1,map_y do
-        for j=1,map_x do
-            if aux_map[i][j] == 0 then
-                current = map[i][j] --Current player
-                aux_map[i][j] = 1
-
-                if current ~= 0 and current ~= HEAD then --Colored tile
-
-                    --Find biggest width
-                    w = 1
-                    k = j + 1
-                    while map[i][k] == current and k <= map_x and aux_map[i][k] == 0 do
-                        aux_map[i][k] = 1
-                        w = w + 1
-                        k = k + 1
-                    end
-                    
-                    --Find biggest height for correspondent width
-                    stop = false
-                    h = 1
-                    l = i + 1
-                    while stop == false and l <= map_y do
-                        h = h+1
-                        for k=j,j+w-1 do
-                            if map[l][k] ~= current or aux_map[l][k] == 1  then
-                                if stop == false then
-                                    h = h - 1
-                                end
-                                stop = true
-                            end
-                        end
-                        l = l + 1
-                    end
-
-                    --Mark as positions visited
-                    for l=i,i+h-1 do
-                        for k=j,j+w-1 do
-                            aux_map[l][k] = 1
-                        end
-                    end
-
-                    --Create rectangle
-                    x = BORDER + (j-1)*TILESIZE
-                    y = BORDER + (i-1)*TILESIZE
-                    
-                    if DEBUG then
-                        db = (x + y)%130 + w%120
-                        color = COLOR(db, db, db)
-                    else
-                        p_c = P_T[current].b_color
-                        color = COLOR(p_c.r, p_c.g, p_c.b, p_c.a)
-                    end
-
-                    box = BOX(x, y, w*TILESIZE, h*TILESIZE, color)
-                    BOX_T["x"..j.."y"..i] = box
-                end
-            end
-        end
-    end
-
-end
-
---Checks if tile (i,j) is completely surrounded by other tiles
-function isSurrounded(i, j)
-
-    for a=i-1, i+1 do
-        for b=j-1,j+1 do
-            
-            --Get middle cases
-            if a>=1 and a<=map_y and
-               b>=1 and b<=map_x
-            then
-                if map[a][b] == 0 then
-                    return false
-                end
-            end
-
-            --Edge cases
-            if a == 1 or a == map_y or b == 1 or b == map_x then
-                return false
-            end 
-
-        end
-    end
-
-    return true
 end
 
 --------------------

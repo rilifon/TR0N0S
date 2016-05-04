@@ -320,8 +320,8 @@ function draw.pause_setup()
     --Creates draw text
     font = font_reg_m
     text = "GAME PAUSED"
-    x = (map_x/2-10) * TILESIZE + BORDER
-    y = (map_y/2) * TILESIZE + BORDER
+    x = (MAP_X/2-10) * TILESIZE + BORDER
+    y = (MAP_Y/2) * TILESIZE + BORDER
     color  = COLOR(255, 255, 255)
     transp = COLOR(0, 0, 0, 0) --Transparent background
     tb = TB(0, 0, love.graphics.getWidth(), love.graphics.getHeight(), text, font, transp, color)
@@ -394,7 +394,7 @@ function draw.gameover_setup()
     TB_T["winnertxt"] = tb
 
      --Creates continue textbox
-    y = (map_y-5)*TILESIZE + BORDER
+    y = (MAP_Y-5)*TILESIZE + BORDER
     cont_tb = TB(0, y, love.graphics.getWidth(), font:getHeight(continue_text), continue_text, font, transp, color)
     TB_T["continue"] = cont_tb
 
@@ -603,8 +603,8 @@ end
 function DrawMAP()
     local x, y, w, h
     
-    w = map_x*TILESIZE
-    h = map_y*TILESIZE
+    w = MAP_X*TILESIZE
+    h = MAP_Y*TILESIZE
     x = BORDER
     y = BORDER
 
@@ -967,8 +967,8 @@ function DrawCountdown()
 
     color = COLOR(255, 255, 255)
     font = font_reg_m
-    x = map_x/2 * TILESIZE + BORDER
-    y = (map_y/2 - 5) * TILESIZE + BORDER
+    x = MAP_X/2 * TILESIZE + BORDER
+    y = (MAP_Y/2 - 5) * TILESIZE + BORDER
 
     love.graphics.setColor(color.r, color.g, color.b)
     love.graphics.setFont(font)
