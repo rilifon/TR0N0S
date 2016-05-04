@@ -194,9 +194,9 @@ function mp.getRectangles()
                     x = BORDER + (j-1)*TILESIZE
                     y = BORDER + (i-1)*TILESIZE
                     
-                    if DEBUG then
-                        db = (x + y)%130 + w%120
-                        color = COLOR(db, db, db)
+                    if DEBUG_DRAW then
+                        db = (10*x + 15*y)%130
+                        color = COLOR(0.9*db, 1.2*db, 1.5*db)
                     else
                         p_c = P_T[current].b_color
                         color = COLOR(p_c.r, p_c.g, p_c.b, p_c.a)

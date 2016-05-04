@@ -39,6 +39,7 @@ function setup.config()
     --GLOBAL VARIABLES
 
     DEBUG = false      --DEBUG mode status
+    DEBUG_DRAW = false --DEBUG mode status that shows players rectangles
     HEAD  = 9
     
     --MATCH/GAME SETUP VARS

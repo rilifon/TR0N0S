@@ -82,14 +82,13 @@ end
 
 function setup:keypressed(key)
 
-    --CHANGE STATES
-    if      key == 'q' then
-        Util.quit()
-    elseif  key == "return" then
+    Util.defaultKeyPressed(key)
+
+    if  key == "return" then
         MATCH_BEGIN = true
         Gamestate.switch(game)
-    elseif key == 'b' then
-        Draw.toggleDebug()
+
+    --Buttons shortcuts
     elseif key == 'right' then
         BI_T["n_player_up"].func()
     elseif key == 'left' then
@@ -98,7 +97,6 @@ function setup:keypressed(key)
         BI_T["goal_up"].func()
     elseif key == 'down' then
         BI_T["goal_down"].func()
-
     end
 
 end
@@ -162,16 +160,13 @@ end
 function game:keypressed(key)
     local i
 
-    --CHANGE STATES
-    if key == 'q' then
-        Util.quit()
-    elseif key == 'p' and GAME_BEGIN then
+    Util.defaultKeyPressed(key)
+
+    if key == 'p' and GAME_BEGIN then
         Gamestate.switch(pause)
     elseif key == 'r' and DEBUG then
         GAME_SETUP = false
         Gamestate.switch(game)
-    elseif key == 'b' then
-        Draw.toggleDebug()
     end
 
     
@@ -237,13 +232,11 @@ end
 
 function pause:keypressed(key)
 
-    --CHANGE STATES
-    if key == 'q' then
-        Util.quit()
-    elseif key == 'p' then
+    
+    Util.defaultKeyPressed(key)
+    
+    if key == 'p' then
         Gamestate.switch(game)
-    elseif key == 'b' then
-        Draw.toggleDebug()
     end
 
 end
@@ -286,18 +279,15 @@ end
 
 function gameover:keypressed(key)
 
-    --CHANGE STATES
-    if key == 'q' then
-        Util.quit()
-    elseif key == 'return' then
+    Util.defaultKeyPressed(key)
+
+    if key == 'return' then
         GAME_SETUP = false
         if MATCH_BEGIN == false then
             Gamestate.switch(setup)
         else            
             Gamestate.switch(game)
         end
-    elseif key == 'b' then
-        Draw.toggleDebug()
     end
 
 end

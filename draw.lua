@@ -456,29 +456,9 @@ function draw.gameover_state()
 
 end
 
-
-
-
 --------------------
 --HUD DRAW FUNCTIONS
 --------------------
-
---Toggles DEBUG
-function draw.toggleDebug()
-    local font, color, DEBUG_TEXT
-
-    if not DEBUG then 
-        font = font_reg_s
-        color = COLOR(255, 255, 255)
-        DEBUG_TEXT = TXT(150, love.graphics.getHeight() - 2* TILESIZE, "DEBUG ON", font, color)
-        TXT_T["DEBUG"] = DEBUG_TEXT
-        DEBUG = true
-    else
-        TXT_T["DEBUG"] = nil
-        DEBUG = false
-    end
-
-end
 
 --Draw the default HUD
 function SetupHUD_default(mode)  
@@ -502,12 +482,12 @@ function SetupHUD_default(mode)
 
     --DEBUG text
     if DEBUG then
-        font = font_reg_s
-        color = COLOR(255, 255, 255)
-        x = 150
-        y = love.graphics.getHeight() - 2* TILESIZE
-        DEBUG_TEXT = TXT(x, y, "DEBUG ON", font, color)
-        TXT_T["DEBUG"] = DEBUG_TEXT
+        UD.createDebugText()
+    end
+
+    --DEBUG text
+    if DEBUG_DRAW then
+        UD.createDebugDrawText()
     end
 
 end

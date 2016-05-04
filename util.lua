@@ -3,6 +3,7 @@ local RGB      = require "rgb"
 local FX       = require "fx"
 local CPU      = require "cpu"
 local Map      = require "map"
+local UD       = require "utildraw"
 
 --MODULE WITH LOGICAL, MATHEMATICAL AND USEFUL STUFF--
 
@@ -263,173 +264,6 @@ function util.checkWinner()
 
 end
 
------------------------------------
---PLAYER BUTTON/INDICATOR FUNCTIONS
------------------------------------
-
-function util.createPlayerButton(p)
-    local font = font_but_m
-    local color_b, color_t, cputext, controltext, pl
-    local pb, box, x, y, w, h, w_cb, h_cb, tween
-
-    w_cb = 40 --Width of head color box
-    h_cb = 40 --Height of head color box
-
-    --Fix case where a timer is rolling to remove the button and active
-    -- the button and active transitions
-    if H_T["h"..p.number] then
-
-        --Remove timer related to removing player button
-        Game_Timer.cancel(H_T["h"..p.number])
-        H_T["h"..p.number] = nil
-
-        --Remove timer related to changing playeer button alpha
-        if PB_T["P"..p.number.."pb"] then
-            Game_Timer.cancel(PB_T["P"..p.number.."pb"].h)
-        end
-
-        --Remove timer related to changing player head box alpha
-        if TB_T["P"..p.number.."tb"] then
-            Game_Timer.cancel(TB_T["P"..p.number.."tb"].h)
-        end
-        
-    end
-
-     if p.cpu then
-            cputext = "CPU"
-            controltext = "Level " .. p.level
-        else
-            cputext = "HUMAN"
-            controltext = p.control
-    end
-
-    --Counting the perceptive luminance - human eye favors green color... 
-    pl = 1 - ( 0.299 * p.b_color.r + 0.587 * p.b_color.g + 0.114 * p.b_color.b)/255;
-
-    if pl < 0.5 then
-        color_t = COLOR(0, 0, 0, 0)       --bright colors - using black font
-    else
-        color_t = COLOR(255, 255, 255, 0) --dark colors - using white font
-    end
-
-    color_b = COLOR(p.b_color.r, p.b_color.g, p.b_color.b, 0)
-
-    --Creates player button
-    w = 500
-    h = 40
-    x = (love.graphics.getWidth() - w - w_cb)/2
-    y = 240 + 45*p.number
-    pb = But(x, y, w, h,
-                    "PLAYER " .. p.number .. " " .. cputext .. " (" .. controltext .. ")",
-                    font, color_b, color_t, 
-                    --Change players from CPU to HUMAN with a controller
-                    function()
-                        --Human with WASD controls, on click, becomes ARROWS if possible, else becomes CPU
-                        if not p.cpu and p.control == "WASD" then
-                            if ARROWS_PLAYER == 0 then
-                                p.control = "ARROWS"
-                                ARROWS_PLAYER = p.number
-                                WASD_PLAYER = 0
-                            else
-                                p.cpu = true
-                                p.level = 1
-                                p.control = nil
-                                WASD_PLAYER = 0
-                            end
-
-                        --Human with ARROWS controls, on click, becomes CPU Level1
-                        elseif not p.cpu and p.control == "ARROWS" then
-                            p.cpu = true
-                            p.level = 1
-                            p.control = nil
-                            ARROWS_PLAYER = 0
-
-                        --CPU Level different from 3, on click, becomes next level CPU
-                        elseif p.cpu and p.level ~= 3 then
-                            p.level = p.level + 1
-
-                        --CPU Level3, on click, becomes WASD or ARROWS if possible. Else becomes CPU Level1
-                        elseif p.cpu and p.level == 3 then
-                            if WASD_PLAYER == 0 then
-                                p.control = "WASD"
-                                WASD_PLAYER = p.number
-                                p.cpu = false
-                                p.level = nil
-                            elseif ARROWS_PLAYER == 0 then
-                                p.control = "ARROWS"
-                                ARROWS_PLAYER = p.number
-                                p.cpu = false
-                                p.level = nil
-                            else
-                                p.level = 1
-                            end
-                        end
-
-                        --Update player text
-                        if p.cpu then
-                            cputext = "CPU"
-                            controltext = "Level " .. p.level
-                        else
-                            cputext = "HUMAN"
-                            controltext = p.control
-                        end
-                        PB_T["P"..p.number.."pb"].text =  "PLAYER " .. p.number .. " " .. cputext .. " (" .. controltext .. ")"
-
-                    end)
-    PB_T["P"..p.number.."pb"] =  pb
-
-    --Creates players head color box
-    x = x + w
-    box = BOX(x, y, w_cb, h_cb, p.h_color)
-    BOX_T["P"..p.number.."box"] = box
-
-    --Transitions
-    pb.b_color.a = 0
-    pb.t_color.a = 0
-    box.color.a = 0
-    tween = 'linear'
-    FX.smoothAlpha(pb.b_color, 255, .4, tween)
-    FX.smoothAlpha(pb.t_color, 255, .6, tween)
-    FX.smoothAlpha(box.color, 255, .5, tween)
-
-end
-
-function util.removePlayerButton(p)
-    local duration = .2
-    local pb, box
-
-    pb  = PB_T["P"..p.number.."pb"]
-    box = BOX_T["P"..p.number.."box"]
-    
-    --Fades out
-    pb.b_color.a = 255
-    pb.t_color.a = 255
-    box.color.a  = 255
-    FX.smoothAlpha(pb.b_color, 0, duration, 'linear')
-    FX.smoothAlpha(pb.t_color, 0, duration, 'linear')
-    FX.smoothAlpha(box.color, 0, duration, 'linear')
-    
-    H_T["h"..p.number] = Game_Timer.after(duration, 
-        function()
-            --Removes player button on setup screen
-            PB_T["P"..p.number.."pb"] = nil
-            BOX_T["P"..p.number.."box"] = nil
-        end
-    )
-end
-
-
---Update players buttons on setup
-function util.updatePlayersB()
-
-    for i, p in ipairs(P_T) do
-
-        util.createPlayerButton(p)
-
-    end
-
-end
-
 ---------------------
 --UTILITIES FUNCTIONS
 ---------------------
@@ -520,6 +354,18 @@ end
 function util.quit()
 
     love.event.quit()
+
+end
+
+function util.defaultKeyPressed(key)
+
+    if key == 'q' then
+        util.quit()
+    elseif key == 'b' then
+        UD.toggleDebug()
+    elseif key == 'n' then
+        UD.toggleDebugDraw()
+    end
 
 end
 --------------------

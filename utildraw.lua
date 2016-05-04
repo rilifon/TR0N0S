@@ -4,7 +4,6 @@ local FX = require "fx"
 
 local ud = {}
 
-
 ---------------------------------
 --PLAYER INDICATOR DRAW FUNCTIONS
 ---------------------------------
@@ -243,6 +242,56 @@ function ud.updatePlayersB()
         ud.createPlayerButton(p)
 
     end
+
+end
+
+-----------------
+--DEBUG FUNCTIONS
+-----------------
+
+--Toggles DEBUG
+function ud.toggleDebug()
+    local font, color, DEBUG_TEXT
+
+    if not DEBUG then 
+        ud.createDebugText()
+    else
+        TXT_T["DEBUG"] = nil
+        DEBUG = false
+    end
+
+end
+
+--Toggles DEBUG_DRAW
+function ud.toggleDebugDraw()
+    local font, color, DEBUG_TEXT
+
+    if not DEBUG_DRAW then 
+        ud.createDebugDrawText()
+    else
+        TXT_T["DEBUG_DRAW"] = nil
+        DEBUG_DRAW = false
+    end
+
+end
+
+function ud.createDebugText()
+
+    font = font_reg_s
+    color = COLOR(255, 255, 255)
+    DEBUG_TEXT = TXT(150, love.graphics.getHeight() - 2* TILESIZE, "DEBUG ON", font, color)
+    TXT_T["DEBUG"] = DEBUG_TEXT
+    DEBUG = true
+
+end
+
+function ud.createDebugDrawText()
+
+    font = font_reg_s
+    color = COLOR(255, 255, 255)
+    DEBUG_TEXT = TXT(650, love.graphics.getHeight() - 2* TILESIZE, "DEBUG DRAW ON", font, color)
+    TXT_T["DEBUG_DRAW"] = DEBUG_TEXT
+    DEBUG_DRAW = true
 
 end
 
