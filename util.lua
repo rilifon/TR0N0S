@@ -14,23 +14,23 @@ local util = {}
 
 --Set game's global variables, random seed and window configuration
 function util.configGame()
-    local P_1, P_2      --Player 1 and 2
+    local p1, p2      --Player 1 and 2
     local color, rgb_b, rgb_h, color_id  --Color for body and head
-    local ratio
+    local ratio, sucess
 
     --IMAGES
     
     --The Pixel
     PIXEL = love.graphics.newImage("assets/pixel.png")
     --Button
-    bt_img_plus = love.graphics.newImage("assets/button_plus.png")
-    bt_img_minus = love.graphics.newImage("assets/button_minus.png")
+    IMG_BUT_PLUS = love.graphics.newImage("assets/button_plus.png")
+    IMG_BUT_MINUS = love.graphics.newImage("assets/button_minus.png")
     --Regular images
-    bt_img = love.graphics.newImage("assets/default_img.png")
-    border_top_img = love.graphics.newImage("assets/border_top.png")
-    border_bot_img = love.graphics.newImage("assets/border_bot.png")
+    IMG_DEFAULT = love.graphics.newImage("assets/default_img.png")
+    IMG_BORDER_TOP = love.graphics.newImage("assets/border_top.png")
+    IMG_BORDER_BOT = love.graphics.newImage("assets/border_bot.png")
     --Background
-    bg_img = love.graphics.newImage("assets/background.png")
+    IMG_BG = love.graphics.newImage("assets/background.png")
     BG_X = -954 --Background x position
     --RANDOM SEED
 
@@ -45,7 +45,7 @@ function util.configGame()
     
     --MATCH/GAME SETUP VARS
 
-    game_setup = false  --Inicial setup for each game
+    GAME_SETUP = false  --Inicial setup for each game
     GOAL = 3            --Score goal that will be set in the match
     MATCH_BEGIN = false --If is in a current match
     MAX_PLAYERS = 8     --Max number of players in a game
@@ -210,17 +210,17 @@ function util.configGame()
     color_id = RGB.randomBaseColor()
     rgb_b = RGB.randomColor(color_id)
     rgb_h = RGB.randomDarkColor(rgb_b)
-    P_1   = PLAYER(1, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "WASD")
-    P_1.color_id = color_id
-    table.insert(P_T, P_1)
+    p1   = PLAYER(1, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "WASD")
+    p1.color_id = color_id
+    table.insert(P_T, p1)
 
     --Player 2
     color_id = RGB.randomBaseColor()
     rgb_b = RGB.randomColor(color_id)
     rgb_h = RGB.randomDarkColor(rgb_b)
-    P_2   = PLAYER(2, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "ARROWS")
-    P_2.color_id = color_id
-    table.insert(P_T, P_2)
+    p2   = PLAYER(2, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "ARROWS")
+    p2.color_id = color_id
+    table.insert(P_T, p2)
     
 
 end
@@ -240,7 +240,7 @@ end
  --Setup a new game
 function util.setupGame()
     
-    if not game_setup then
+    if not GAME_SETUP then
         countdown = MAX_COUNTDOWN --Setup countdown
 
         game_begin = false
@@ -251,7 +251,7 @@ function util.setupGame()
         
         setupPlayers()
 
-        game_setup = true
+        GAME_SETUP = true
         StartCountdown()
     end
 

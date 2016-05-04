@@ -46,7 +46,7 @@ function draw.setup_setup()
     --Up button
     y = PB_T["P"..N_PLAYERS.."pb"].y + PB_T["P"..N_PLAYERS.."pb"].h + 25
     color_b  = COLOR(23, 233, 0)
-    img = bt_img_plus
+    img = IMG_BUT_PLUS
     sx = 1
     sy = 1
     w = img:getWidth()
@@ -101,7 +101,7 @@ function draw.setup_setup()
 
     --Down button
     color_b  = COLOR(233, 10, 0)
-    img = bt_img_minus
+    img = IMG_BUT_MINUS
     sx = 1
     sy = 1
     w = img:getWidth()
@@ -159,7 +159,7 @@ function draw.setup_setup()
     y = 5
     font = font_but_l
     color_b   = COLOR(233, 131, 0)  --Color of button background
-    img = bt_img_plus
+    img = IMG_BUT_PLUS
     sx = 1
     sy = 1
     w = img:getWidth()
@@ -186,7 +186,7 @@ function draw.setup_setup()
     BI_T["goal_up"] =  goal_up
 
     --Down button
-    img = bt_img_minus
+    img = IMG_BUT_MINUS
     sx = 1
     sy = 1
     w = img:getWidth()
@@ -226,7 +226,7 @@ function draw.setup_setup()
     font = font_but_m
 
     --N_PLAYERS IMAGE
-    img = bt_img
+    img = IMG_DEFAULT
     x  = 15
     y  = 10
     sx = 1
@@ -237,7 +237,7 @@ function draw.setup_setup()
     I_T["n_player_i"] = n_player_i
 
     --GOAL TEXTBOX
-    img = bt_img
+    img = IMG_DEFAULT
     x = 540
     y = 10
     sx = .4
@@ -252,7 +252,7 @@ function draw.setup_setup()
     ----------------------
 
     --TOP OF PLAYERS BUTTON
-    img = border_top_img
+    img = IMG_BORDER_TOP
     x  = 65
     y  = 210
     sx = 1
@@ -264,7 +264,7 @@ function draw.setup_setup()
 
 
     --BOTTOM OF PLAYERS BUTTON
-    img = border_bot_img
+    img = IMG_BORDER_BOT
     x  = 65
     y  = PB_T["P"..N_PLAYERS.."pb"].y - 40
     sx = 1
@@ -500,7 +500,7 @@ function DrawBG()
     SHADER = "BG"
 
     love.graphics.setColor(MAP_COLOR.r, MAP_COLOR.g, MAP_COLOR.b, MAP_COLOR.a)
-    love.graphics.draw(bg_img, BG_X, -200)
+    love.graphics.draw(IMG_BG, BG_X, -200)
 
     love.graphics.setShader()
     SHADER = nil
