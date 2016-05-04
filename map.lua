@@ -1,4 +1,5 @@
-local FX = require "fx"
+local FX   = require "fx" 
+local UD   = require "utildraw"
 
 --MODULE FOR MAP STUFF--
 
@@ -209,6 +210,45 @@ function mp.getRectangles()
     end
 
 end
+
+--------------------
+--COUNTDOWN FUNCTION
+--------------------
+
+--Start the countdown to start a game
+function mp.startCountdown()
+    local cd = countdown
+    local t, rand
+    
+    time = 0
+    Game_Timer.during(MAX_COUNTDOWN, 
+        --Decreases countdown
+        function(dt)
+            
+            t = time+dt
+            cd = cd - t
+            countdown = math.floor(cd)+1
+
+        end,
+
+        --After countdown, start game and fixes players positions
+        function()
+
+            UD.removePlayerIndicator()
+
+            GAME_BEGIN = true
+            --Players go at a random direction at the start if they dont chose any
+            for i, p in ipairs(P_T) do
+                rand = math.random(4)
+                if p.dir     == nil then p.dir     = rand end
+                if p.nextdir == nil then p.nextdir = rand end
+            end
+
+        end
+    )
+
+end
+
 
 
 --Return functions

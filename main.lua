@@ -5,20 +5,23 @@ Class     = require "hump.class"
 
 
 --MY MODULES
-local Draw     = require "draw"
-local Util     = require "util"
-local Button   = require "button"
-local Img      = require "img"
-local TextBox  = require "textbox"
-local Text     = require "text"
-local Player   = require "player"
-local RGB      = require "rgb"
-local Filter   = require "filter"
-local Particle = require "particle"
-local FX       = require "fx"
-local Shapes   = require "shapes"
-local CPU      = require "cpu"
-local Map      = require "map"
+local Draw      = require "draw"
+local Util      = require "util"
+local Button    = require "button"
+local Img       = require "img"
+local TextBox   = require "textbox"
+local Text      = require "text"
+local Player    = require "player"
+local RGB       = require "rgb"
+local Filter    = require "filter"
+local Particle  = require "particle"
+local FX        = require "fx"
+local Shapes    = require "shapes"
+local CPU       = require "cpu"
+local Map       = require "map"
+local Setup     = require "setup"
+local UD        = require "utildraw"
+local Primitive = require "primitive"
 
 --GAMESTATES
 local menu     = {}
@@ -31,7 +34,7 @@ function love.load()
 
    -- love.graphics.setBackgroundColor(255,255,255)
 
-    Util.configGame()
+    Setup.config()
 
     Gamestate.registerEvents()
     Gamestate.switch(setup)
@@ -54,7 +57,7 @@ function setup:leave()
     
     Util.clearAllTables()
 
-    Util.setupMatch()
+    Setup.match()
 
 end
 
@@ -102,7 +105,7 @@ end
 
 function setup:mousepressed(x, y, button, istouch)
     
-    if button == 1 then
+    if button == 1 then  --Left mouse button
         Button.checkCollision(x,y)
         Img.checkCollision(x,y)
     end
@@ -115,7 +118,7 @@ end
 
 function game:enter()
     
-    Util.setupGame()
+    Setup.game()
 
     Draw.game_setup()
 
@@ -128,6 +131,7 @@ function game:leave()
 end
 
 function game:update(dt)
+    local cont
 
     --Handles timers
     Game_Timer.update(dt)
@@ -135,12 +139,12 @@ function game:update(dt)
     Util.updateBG(dt)
     
 
-    if game_begin then
+    if GAME_BEGIN then
 
         Util.tick(dt)
     
         --Count how many players are alive
-        local cont = Util.countPlayers()
+        cont = Util.countPlayers()
         if cont == 0 or (cont == 1 and not DEBUG) then
             Gamestate.switch(gameover)
         end
@@ -161,10 +165,10 @@ function game:keypressed(key)
     --CHANGE STATES
     if key == 'q' then
         Util.quit()
-    elseif key == 'p' and game_begin then
+    elseif key == 'p' and GAME_BEGIN then
         Gamestate.switch(pause)
     elseif key == 'r' and DEBUG then
-        game_setup = false
+        GAME_SETUP = false
         Gamestate.switch(game)
     elseif key == 'b' then
         Draw.toggleDebug()
@@ -286,7 +290,7 @@ function gameover:keypressed(key)
     if key == 'q' then
         Util.quit()
     elseif key == 'return' then
-        game_setup = false
+        GAME_SETUP = false
         if MATCH_BEGIN == false then
             Gamestate.switch(setup)
         else            
@@ -318,7 +322,7 @@ end
 function love.keypressed(key)
    
     if key == "0" then
-        Util.zoera()
+        Util.zoera("omar")
     elseif key == "9" then
         for i = 1, MAP_X do
             for j = 1, MAP_Y do
