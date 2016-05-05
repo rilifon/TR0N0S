@@ -27,6 +27,7 @@ function setup.config()
     IMG_DEFAULT = love.graphics.newImage("assets/default_img.png")
     IMG_BORDER_TOP = love.graphics.newImage("assets/border_top.png")
     IMG_BORDER_BOT = love.graphics.newImage("assets/border_bot.png")
+    IMG_BORDER_MAP = love.graphics.newImage("assets/map_border.png")
     --Background
     IMG_BG = love.graphics.newImage("assets/background.png")
     BG_X = -954 --Background x position
@@ -204,7 +205,10 @@ function setup.config()
     font_reg_m = love.graphics.newFont( "assets/FUTUVA.ttf", 30) --Font for regular text, medium size
     font_reg_s = love.graphics.newFont( "assets/FUTUVA.ttf", 16) --Font for regular text, small size
     love.graphics.setFont(font_reg_m)
-    
+
+    --EFFECTS
+    BORDER_LOOP = false
+
     --Creates first two players with random colors
 
     --Player 1
@@ -228,6 +232,8 @@ end
 
 --Setup a new match, setting all scores to zero
 function setup.match()
+
+    BORDER_LOOP = false
 
     GROWING = true
     EPS  = MIN_EPS

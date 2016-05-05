@@ -2,9 +2,9 @@
 
 local fx = {}
 
-----------------
+------------------
 --EFFECT FUNCTIONS
-----------------
+------------------
 
 --Creates a "glow" effect on position (x,y) with radius r and color c
 function fx.glowCircle(x, y, r, c)
@@ -15,7 +15,7 @@ end
 
 --Creates a pulse effect on object o
 function fx.pulse(o, sx, sy, d, m)
-    local duration = d or .3 --Duration of effect
+    local duration = d or .4 --Duration of effect
     local move = m or true --If it should also centralize while pulsing
     fx.smoothScale(o, sx, sy, duration/2, 'linear')
     
@@ -33,6 +33,18 @@ function fx.pulse(o, sx, sy, d, m)
 
             fx.smoothScale(o, 1, 1, duration/2, 'linear')
 
+        end
+    )
+
+end
+
+function fx.pulseLoop(o, sx, sy, d, m)
+    
+    fx.pulse(o, sx, sy, d, m)
+    
+    Game_Timer.after(d, 
+        function()
+            fx.pulseLoop(o, sx, sy, d, m)
         end
     )
 
@@ -139,8 +151,6 @@ function fx.smoothAlpha(o, f, duration, func)
     Game_Timer.tween(duration, o, {a = f}, func)
 
 end
-
-
 
 --Return functions
 return fx

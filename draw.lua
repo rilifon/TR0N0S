@@ -298,8 +298,12 @@ function draw.game_setup()
 
     if not GAME_BEGIN then
         UD.setupPlayerIndicator()
+        if not BORDER_LOOP then
+            FX.pulseLoop(I_T["map_border_i"], 1.01, 1.01, 3, true)
+            BORDER_LOOP = true
+        end
     end
-
+    
 end
 
 --Draw pause effect and text
@@ -516,6 +520,19 @@ function SetupHUD_game()
         label = text.."score"
         txt = TXT(x, y, text, font, color)
         TXT_T[label] = txt
+    end
+
+    --MAP BORDER
+    if not GAME_BEGIN and not BORDER_LOOP then
+        img = IMG_BORDER_MAP
+        x  = BORDER - 95
+        y  = BORDER - 95
+        sx = 1
+        sy = 1
+        w = img:getWidth()
+        h = img:getHeight()
+        map_border = IMG(img, x, y, w, h, sx, sy, "", font, color)
+        I_T["map_border_i"] = map_border
     end
 
 end

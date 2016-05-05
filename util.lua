@@ -288,16 +288,16 @@ function util.clearAllTables(mode)
 
     util.clearTable(BI_T)
 
-    util.clearTable(I_T)
-
     util.clearTable(TXT_T)
 
     util.clearTable(PB_T)
 
     util.clearTable(F_T)
 
-
     if mode ~= "inGame" then
+        if mode ~= "gameover" then
+            util.clearTable(I_T)
+        end
         util.clearTable(PART_T)
         util.clearTable(GLOW_T)
         util.clearTable(HD_T)

@@ -91,7 +91,11 @@ end
 function DrawI()
 
     for i, v in pairs(I_T) do
-        drawImg(v)
+        if i == "map_border_i" then
+            drawImg(v, "mapborder")
+        else
+            drawImg(v)
+        end
     end
 
 end
@@ -251,11 +255,21 @@ function drawButtonImg(but)
 end
 
 --Draws a given image with text
-function drawImg(img)
+function drawImg(img, mode)
     local fwidth, fheight, tx, ty, font
+    local grad = 0.65
+    local contrs = 265
+    local r, g, b
 
     --Draws image
-    love.graphics.setColor(255,255,255)
+    if mode == "mapborder" then
+        r = (contrs-grad*MAP_COLOR.r)
+        g = (contrs-grad*MAP_COLOR.g)
+        b = (contrs-grad*MAP_COLOR.b)
+        love.graphics.setColor(r, g, b)
+    else
+        love.graphics.setColor(255,255,255)
+    end
     love.graphics.draw(img.img, img.x, img.y, 0, img.sx, img.sy)
     
     font = img.font

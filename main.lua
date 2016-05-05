@@ -48,6 +48,8 @@ end
 ---------------
 function setup:enter()
     
+    Util.clearAllTables()
+
     Draw.setup_setup()
 
 end
@@ -255,7 +257,7 @@ end
 
 function gameover:leave()
 
-    Util.clearAllTables()
+    Util.clearAllTables("gameover")
     
 end
 
