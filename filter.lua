@@ -6,14 +6,10 @@ local filter = {}
 FILTER = Class{
     init = function(self, color)
         self.color = {}
-        self.color.r     = color.r     --Red
-        self.color.g     = color.g     --Green
-        self.color.b     = color.b     --Blue
-        if color.a then
-        	self.color.a = color.a
-        else
-        	self.color.a = 255
-        end
+        self.color.r     = color.r         --Red
+        self.color.g     = color.g         --Green
+        self.color.b     = color.b         --Blue
+        self.color.a     = color.a or 255  --Alpha
         
     end
 }

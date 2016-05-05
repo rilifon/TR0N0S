@@ -317,9 +317,11 @@ function draw.pause_setup()
     UD.setupPlayerIndicator()
 
     --Creates filter
-    color = COLOR(255, 25, 156, 90)
+    color = COLOR(255, 255, 255, 0)
     filter = FILTER(color)
     F_T["filter"] = filter
+    --Creates fade in effect
+    FX.smoothColor(F_T["filter"].color, COLOR(255, 25, 156, 90), 2, 'linear')
 
     --Creates draw text
     font = font_reg_m
@@ -387,8 +389,10 @@ function draw.gameover_setup()
     end
     
     --Creates filter
-    filter = FILTER(filter_color)
+    filter = FILTER(COLOR(255,255,255,0))
     F_T["filter"] = filter
+    --Filter fade-in effect
+    FX.smoothColor(F_T["filter"].color, filter_color, 1, 'linear')
 
      --Creates winner textbox
     font = font_reg_m

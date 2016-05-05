@@ -222,6 +222,8 @@ end
 
 function pause:update(dt)
 
+    --Handles timers
+    Game_Timer.update(dt)
     Color_Timer.update(dt)
 
 end
