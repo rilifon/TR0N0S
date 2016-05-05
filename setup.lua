@@ -180,7 +180,7 @@ function setup.config()
     MC_T   = {COLOR(250,107,12), COLOR(250,81,62), COLOR(240,60,177), COLOR(180,18,201)}
     --Color for the map (initial random color)
     color = MC_T[math.random(#MC_T)]
-    MAP_COLOR = COLOR(color.r, color.g, color.b)
+    MAP_COLOR = COLOR(color.r, color.g, color.b, color.a)
 
     --Starts background transition
     MAP_COLOR.a = 0

@@ -5,8 +5,6 @@ local FX        = require "fx"
 local UD        = require "utildraw"
 local Primitive = require "primitive"
 
-
-
 --MODULE FOR HIGH-LEVEL DRAWING STUFF--
 
 local draw = {}
@@ -268,7 +266,7 @@ function draw.setup_setup()
     --BOTTOM OF PLAYERS BUTTON
     img = IMG_BORDER_BOT
     x  = 65
-    y  = PB_T["P"..N_PLAYERS.."pb"].y - 40
+    y  = PB_T["P"..N_PLAYERS.."pb"].y - 43
     sx = 1
     sy = 1
     w = img:getWidth()
@@ -427,10 +425,10 @@ end
 
 --Draw all stuff from game
 function draw.game_state()
-    
-    DrawScore()
-    
+        
     Primitive.drawAll("inGame")
+
+    DrawScore()
 
     if not GAME_BEGIN then
         DrawCountdown()
@@ -440,19 +438,19 @@ end
 
 --Draw all stuff from pause
 function draw.pause_state()
-
-    DrawScore()
     
     Primitive.drawAll("inGame")
+
+    DrawScore()
 
 end
 
 --Draw all stuff from gameover
 function draw.gameover_state()
-
-    DrawScore()
     
     Primitive.drawAll("inGame")
+
+    DrawScore()
 
 end
 
@@ -545,16 +543,16 @@ end
 function DrawScore()
     local color, font, x, y, scale_x, scale_y
 
-    color = COLOR(255,255,255)
+    color = COLOR(255,255,255,255)
     font = font_reg_s
     scale_x = 1.2
     scale_y = 1.2
 
-    love.graphics.setColor(color.r, color.g, color.b)
+    love.graphics.setColor(color.r, color.g, color.b, color.a)
     love.graphics.setFont(font)
     
     --Draw players score
-    for i, p in ipairs(P_T) do
+    for i, p in pairs(P_T) do
         x = 100 + 45*p.number
         y = 20
         love.graphics.print(p.score, x, y, 0, scale_x, scale_y)
