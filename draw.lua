@@ -298,9 +298,10 @@ function draw.game_setup()
 
     if not GAME_BEGIN then
         UD.setupPlayerIndicator()
-        if not BORDER_LOOP then
+        if not EFFECT_LOOP then
             FX.pulseLoop(I_T["map_border_i"], 1.01, 1.01, 3, true)
-            BORDER_LOOP = true
+            FX.pulseLoop(I_T["goal_value"], .63, .63, 1.5, true)
+            EFFECT_LOOP = true
         end
     end
     
@@ -392,7 +393,7 @@ function draw.gameover_setup()
     filter = FILTER(COLOR(255,255,255,0))
     F_T["filter"] = filter
     --Filter fade-in effect
-    FX.smoothColor(F_T["filter"].color, filter_color, 1, 'linear')
+    FX.smoothColor(F_T["filter"].color, filter_color, .7, 'linear')
 
      --Creates winner textbox
     font = font_reg_m
@@ -536,7 +537,7 @@ function SetupHUD_game()
 
     --Goal Text
     x = love.graphics.getWidth()/2 - 80
-    y = BORDER + MAP_Y*TILESIZE + 50
+    y = BORDER + MAP_Y*TILESIZE + 60
     color = COLOR(51,100,245)
     font = font_reg_m
     sx = 1
@@ -544,21 +545,33 @@ function SetupHUD_game()
     txt = TXT(x, y, "GOAL:", font, color, sx, sy)
     TXT_T["goal_txt"] = txt
 
-    sx = .6
-    sy = .6
 
+    --Draw Goal value img
+    if not GAME_BEGIN and not EFFECT_LOOP then
+        sx = .6
+        sy = .6
+        y = BORDER + MAP_Y*TILESIZE + 30
+        x = love.graphics.getWidth()/2 - 20
+        img = IMG_VAR
+        color = COLOR(0,0,0)
+        text = ""
+        score = IMG(img, x, y, w, h, sx, sy, text, font, color)
+        I_T["goal_value"] = score
+    end
+    
     --Draw Goal value
-    y = y - 40
-    x = x + 50
-    img = IMG_SCORE
+    y = BORDER + MAP_Y*TILESIZE + 54
+    x = love.graphics.getWidth()/2 + 28
+    sx = 1.2
+    sy = 1.2
     color = COLOR(0,0,0)
     text = GOAL
-    score = IMG(img, x, y, w, h, sx, sy, text, font, color)
-    I_T["goal_value"] = score
+    txt = TXT(x, y, text, font, color, sx, sy)
+    TXT_T["goal_value_txt"] = txt
 
     --MAP BORDER--
 
-    if not GAME_BEGIN and not BORDER_LOOP then
+    if not GAME_BEGIN and not EFFECT_LOOP then
         img = IMG_BORDER_MAP
         x  = BORDER - 95
         y  = BORDER - 95

@@ -17,10 +17,15 @@ end
 function fx.pulse(o, sx, sy, d, m)
     local duration = d or .4 --Duration of effect
     local move = m or true --If it should also centralize while pulsing
+    local sxi, syi
+
+    sxi = o.sx
+    syi = o.sy
+
     fx.smoothScale(o, sx, sy, duration/2, 'linear')
     
     if move then
-        fx.smoothMove(o, o.x + o.w*(1-sx)/2, o.y + o.h*(1-sy)/2, duration/2, 'linear')
+        fx.smoothMove(o, o.x + o.w*(sxi-sx)/2, o.y + o.h*(syi-sy)/2, duration/2, 'linear')
     end 
 
     Game_Timer.after(duration/2,
@@ -28,10 +33,10 @@ function fx.pulse(o, sx, sy, d, m)
             local m = move
 
             if move then
-                fx.smoothMove(o, o.x - o.w*(1-sx)/2, o.y - o.h*(1-sy)/2, duration/2, 'linear')
+                fx.smoothMove(o, o.x - o.w*(sxi-sx)/2, o.y - o.h*(syi-sy)/2, duration/2, 'linear')
             end 
 
-            fx.smoothScale(o, 1, 1, duration/2, 'linear')
+            fx.smoothScale(o, sxi, syi, duration/2, 'linear')
 
         end
     )

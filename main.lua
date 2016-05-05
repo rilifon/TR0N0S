@@ -168,6 +168,7 @@ function game:keypressed(key)
         Gamestate.switch(pause)
     elseif key == 'r' and DEBUG then
         GAME_SETUP = false
+        Util.clearAllTables("gameover")
         Gamestate.switch(game)
     end
 
@@ -330,6 +331,10 @@ function love.keypressed(key)
             print("x "..box.x.." y "..box.y.." w "..box.w.." h "..box.h)
         end
         print("--")
+    elseif key == '5' then
+        GOAL = GOAL + 1
+    elseif key == '4' then
+        GOAL = GOAL - 1
     end  
 
 end

@@ -29,6 +29,7 @@ function setup.config()
     IMG_BORDER_BOT = love.graphics.newImage("assets/border_bot.png")
     IMG_BORDER_MAP = love.graphics.newImage("assets/map_border.png")
     IMG_SCORE      = love.graphics.newImage("assets/score_img.png")
+    IMG_VAR        = love.graphics.newImage("assets/var_img.png")
     --Background
     IMG_BG = love.graphics.newImage("assets/background.png")
     BG_X = -954 --Background x position
@@ -208,7 +209,7 @@ function setup.config()
     love.graphics.setFont(font_reg_m)
 
     --EFFECTS
-    BORDER_LOOP = false
+    EFFECT_LOOP = false
 
     --Creates first two players with random colors
 
@@ -234,7 +235,7 @@ end
 --Setup a new match, setting all scores to zero
 function setup.match()
 
-    BORDER_LOOP = false
+    EFFECT_LOOP = false
 
     GROWING = true
     EPS  = MIN_EPS
