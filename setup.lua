@@ -28,6 +28,7 @@ function setup.config()
     IMG_BORDER_TOP = love.graphics.newImage("assets/border_top.png")
     IMG_BORDER_BOT = love.graphics.newImage("assets/border_bot.png")
     IMG_BORDER_MAP = love.graphics.newImage("assets/map_border.png")
+    IMG_SCORE      = love.graphics.newImage("assets/score_img.png")
     --Background
     IMG_BG = love.graphics.newImage("assets/background.png")
     BG_X = -954 --Background x position
@@ -67,7 +68,7 @@ function setup.config()
 
     TILESIZE = 10       --Size of the game's tile
     HUDSIZE = 100       --Size of window dedicated for HUD
-    BORDER = 90         --Border of the game map
+    BORDER = 120        --Border of the game map
     MARGIN = 6          --Size of margin for players' inicial position
     
     MAP = {}            --Game map

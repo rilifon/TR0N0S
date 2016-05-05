@@ -261,7 +261,7 @@ function drawImg(img, mode)
     local contrs = 265
     local r, g, b
 
-    --Draws image
+    --Draws imagecd inGame
     if mode == "mapborder" then
         r = (contrs-grad*MAP_COLOR.r)
         g = (contrs-grad*MAP_COLOR.g)

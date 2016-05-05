@@ -128,10 +128,6 @@ function UpdateHuman()
 
 end
 
------------------------
---USEFUL GAME FUNCTIONS
------------------------
-
 --Updates background position
 function util.updateBG(dt)
     local t, max
@@ -147,6 +143,11 @@ function util.updateBG(dt)
     end
 
 end
+
+-----------------------
+--USEFUL GAME FUNCTIONS
+-----------------------
+
 
 function movePlayer(x,y,p)
     local c, x_,y_, color, tile, a, b

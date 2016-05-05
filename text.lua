@@ -4,7 +4,7 @@ local text = {}
 
 --TextBox object
 TXT = Class{
-    init = function(self, x, y, text, font, color)
+    init = function(self, x, y, text, font, color, sx, sy)
         self.x       = x       --x position
         self.y       = y       --y position
         self.text    = text    --text on button
@@ -17,8 +17,8 @@ TXT = Class{
         self.color.b = color.b
         self.color.a = color.a or 255
 
-        self.sx = 1 --Scale x of text
-        self.sy = 1 --Scale y of text
+        self.sx = sx or 1 --Scale x of text
+        self.sy = sy or 1 --Scale y of text
 
         self.w = self.font:getWidth(self.text)  --Width of text
         self.h = self.font:getHeight(self.text) --Height of text

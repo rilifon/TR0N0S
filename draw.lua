@@ -155,8 +155,8 @@ function draw.setup_setup()
     BI_T["n_player_down"] = n_player_down
 
     --GOAL BUTTON
-    x = 450
-    y = 5
+    x = 480
+    y = 25
     font = font_but_l
     color_b   = COLOR(233, 131, 0)  --Color of button background
     img = IMG_BUT_PLUS
@@ -227,8 +227,8 @@ function draw.setup_setup()
 
     --N_PLAYERS IMAGE
     img = IMG_DEFAULT
-    x  = 15
-    y  = 10
+    x  = 45
+    y  = 30
     sx = 1
     sy = .4
     w = img:getWidth()
@@ -238,8 +238,8 @@ function draw.setup_setup()
 
     --GOAL TEXTBOX
     img = IMG_DEFAULT
-    x = 540
-    y = 10
+    x = 570
+    y = 30
     sx = .4
     sy = .4
     w = img:getWidth()
@@ -253,7 +253,7 @@ function draw.setup_setup()
 
     --TOP OF PLAYERS BUTTON
     img = IMG_BORDER_TOP
-    x  = 65
+    x  = BORDER - 25
     y  = 210
     sx = 1
     sy = 1
@@ -265,7 +265,7 @@ function draw.setup_setup()
 
     --BOTTOM OF PLAYERS BUTTON
     img = IMG_BORDER_BOT
-    x  = 65
+    x  = BORDER - 25
     y  = PB_T["P"..N_PLAYERS.."pb"].y - 43
     sx = 1
     sy = 1
@@ -419,10 +419,10 @@ function draw.setup_state()
     love.graphics.setColor( 255, 255, 255)
     love.graphics.setFont(font)
     --N_PLAYERS var
-    love.graphics.print(N_PLAYERS, 240, 130, 0, 2, 2)
+    love.graphics.print(N_PLAYERS, 270, 160, 0, 2, 2)
 
     --GOAL var
-    love.graphics.print(GOAL, 620, 130, 0, 2, 2)
+    love.graphics.print(GOAL, 640, 155, 0, 2, 2)
 
 end
 
@@ -431,8 +431,6 @@ end
 function draw.game_state()
         
     Primitive.drawAll("inGame")
-
-    DrawScore()
 
     if not GAME_BEGIN then
         DrawCountdown()
@@ -445,16 +443,12 @@ function draw.pause_state()
     
     Primitive.drawAll("inGame")
 
-    DrawScore()
-
 end
 
 --Draw all stuff from gameover
 function draw.gameover_state()
     
     Primitive.drawAll("inGame")
-
-    DrawScore()
 
 end
 
@@ -496,33 +490,70 @@ end
 
 --Draw the game HUD
 function SetupHUD_game()
-    local text, x, y, label, txt
+    local text, x, y, label, txt, sx, sy
     local font = font_reg_s
     local color = COLOR(255, 255, 255)
+    local img, score, w, h
 
-    --Score Text
-    x = 80
-    y = 20
-    txt = TXT(x, y, "SCORE:", font, color)
-    TXT_T["SCOREtxt"] = txt
-
-    --Best Of Text
-    x = 100 + #P_T*45 + 80
-    y = 20
-    txt = TXT(x, y, "GOAL:", font, color)
-    TXT_T["goal_txt"] = txt
-
-    --Each player indicator
+    --SCORE STUFF --
+    
+    --Each player score
+    img = IMG_SCORE
+    color = COLOR(0,0,0,255)
+    font = font_reg_m
+    y = 0
+    sx = .5
+    sy = .5
     for i, p in ipairs(P_T) do
-        x = 100 + 45*p.number
-        y = 5
+        w = img:getWidth()
+        h = img:getHeight()
+        x =  (w-10)*sx * p.number-90
+        text = p.score
+        label = p.number.."score"
+        score = IMG(img, x, y, w, h, sx, sy, text, font, color)
+        I_T[label] = score
+    end
+    
+    --Player indicator
+    sx = 1
+    sy = 1
+    y = 35
+    font = font_reg_m
+    for i, p in ipairs(P_T) do
+        color = COLOR(p.b_color.r, p.b_color.g, p.b_color.b)
+        x =  p.number*(w-10)*.5 -100
         text = "P"..p.number
-        label = text.."score"
-        txt = TXT(x, y, text, font, color)
+        label = p.number.."scoreindicator"
+        txt = TXT(x, y, text, font, color, sx, sy)
         TXT_T[label] = txt
     end
 
-    --MAP BORDER
+    --GOAL STUFF--
+
+    --Goal Text
+    x = love.graphics.getWidth()/2 - 80
+    y = BORDER + MAP_Y*TILESIZE + 50
+    color = COLOR(51,100,245)
+    font = font_reg_m
+    sx = 1
+    sy = 1
+    txt = TXT(x, y, "GOAL:", font, color, sx, sy)
+    TXT_T["goal_txt"] = txt
+
+    sx = .6
+    sy = .6
+
+    --Draw Goal value
+    y = y - 40
+    x = x + 50
+    img = IMG_SCORE
+    color = COLOR(0,0,0)
+    text = GOAL
+    score = IMG(img, x, y, w, h, sx, sy, text, font, color)
+    I_T["goal_value"] = score
+
+    --MAP BORDER--
+
     if not GAME_BEGIN and not BORDER_LOOP then
         img = IMG_BORDER_MAP
         x  = BORDER - 95
@@ -553,32 +584,6 @@ function DrawCountdown()
     love.graphics.setColor(color.r, color.g, color.b)
     love.graphics.setFont(font)
     love.graphics.print(countdown, x, y, 0, 2, 2)
-
-end
-
---Draw all players score
-function DrawScore()
-    local color, font, x, y, scale_x, scale_y
-
-    color = COLOR(255,255,255,255)
-    font = font_reg_s
-    scale_x = 1.2
-    scale_y = 1.2
-
-    love.graphics.setColor(color.r, color.g, color.b, color.a)
-    love.graphics.setFont(font)
-    
-    --Draw players score
-    for i, p in pairs(P_T) do
-        x = 100 + 45*p.number
-        y = 20
-        love.graphics.print(p.score, x, y, 0, scale_x, scale_y)
-    end
-
-    --Draw Best of
-    x = 100 + #P_T*45 + 140
-    y = 19
-    love.graphics.print(GOAL, x, y, 0, scale_x, scale_y)
 
 end
 
