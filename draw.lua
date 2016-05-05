@@ -470,9 +470,9 @@ function SetupHUD_default(mode)
     
     --set text according to mode
     if mode == "simple" then
-        text = "(q)uit"
+        text = "(esc)ape"
     elseif mode == "complete" then
-        text = "(q)uit        (p)ause"
+        text = "(esc)ape     (p)ause"
     end
 
     --commands text
@@ -561,7 +561,7 @@ function SetupHUD_game()
     
     --Draw Goal value
     y = BORDER + MAP_Y*TILESIZE + 54
-    x = love.graphics.getWidth()/2 + 28
+    x = love.graphics.getWidth()/2 + 27
     sx = 1.2
     sy = 1.2
     color = COLOR(0,0,0)

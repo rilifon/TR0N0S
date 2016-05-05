@@ -24,11 +24,11 @@ local UD        = require "utildraw"
 local Primitive = require "primitive"
 
 --GAMESTATES
-local menu     = {}
-local setup    = {}
-local game     = {}
-local pause    = {}
-local gameover = {}
+GS_MENU     = {}
+GS_SETUP    = {}
+GS_GAME     = {}
+GS_PAUSE    = {}
+GS_GAMEOVER = {}
 
 function love.load()
 
@@ -37,7 +37,7 @@ function love.load()
     Setup.config()
 
     Gamestate.registerEvents()
-    Gamestate.switch(setup)
+    Gamestate.switch(GS_SETUP)
 
 end
 
@@ -46,7 +46,7 @@ end
 ---------------
 --STATE : SETUP
 ---------------
-function setup:enter()
+function GS_SETUP:enter()
     
     Util.clearAllTables()
 
@@ -55,7 +55,7 @@ function setup:enter()
 end
 
 --When leaving, clears tables with buttons and textboxes
-function setup:leave()
+function GS_SETUP:leave()
     
     Util.clearAllTables()
 
@@ -63,13 +63,13 @@ function setup:leave()
 
 end
 
-function setup:draw()
+function GS_SETUP:draw()
     
     Draw.setup_state()
 
 end
 
-function setup:update(dt)
+function GS_SETUP:update(dt)
 
     --Handles timers
     Game_Timer.update(dt)
@@ -82,13 +82,13 @@ function setup:update(dt)
 
 end
 
-function setup:keypressed(key)
+function GS_SETUP:keypressed(key)
 
     Util.defaultKeyPressed(key)
 
     if  key == "return" then
         MATCH_BEGIN = true
-        Gamestate.switch(game)
+        Gamestate.switch(GS_GAME)
 
     --Buttons shortcuts
     elseif key == 'right' then
@@ -103,7 +103,7 @@ function setup:keypressed(key)
 
 end
 
-function setup:mousepressed(x, y, button, istouch)
+function GS_SETUP:mousepressed(x, y, button, istouch)
     
     if button == 1 then  --Left mouse button
         Button.checkCollision(x,y)
@@ -116,7 +116,7 @@ end
 --STATE : GAME
 ---------------
 
-function game:enter()
+function GS_GAME:enter()
     
     Setup.game()
 
@@ -124,13 +124,13 @@ function game:enter()
 
 end
 
-function game:leave()
+function GS_GAME:leave()
 
     Util.clearAllTables("inGame")
 
 end
 
-function game:update(dt)
+function GS_GAME:update(dt)
     local cont
 
     --Handles timers
@@ -146,30 +146,30 @@ function game:update(dt)
         --Count how many players are alive
         cont = Util.countPlayers()
         if cont == 0 or (cont == 1 and not DEBUG) then
-            Gamestate.switch(gameover)
+            Gamestate.switch(GS_GAMEOVER)
         end
         
     end
 
 end
 
-function game:draw()
+function GS_GAME:draw()
     
     Draw.game_state()
 
 end
 
-function game:keypressed(key)
+function GS_GAME:keypressed(key)
     local i
 
     Util.defaultKeyPressed(key)
 
     if key == 'p' and GAME_BEGIN then
-        Gamestate.switch(pause)
+        Gamestate.switch(GS_PAUSE)
     elseif key == 'r' and DEBUG then
         GAME_SETUP = false
         Util.clearAllTables("gameover")
-        Gamestate.switch(game)
+        Gamestate.switch(GS_GAME)
     end
 
     
@@ -209,19 +209,19 @@ end
 --STATE : PAUSE
 ---------------
 
-function pause:enter()
+function GS_PAUSE:enter()
 
     Draw.pause_setup()
 
 end
 
-function pause:leave()
+function GS_PAUSE:leave()
 
     Util.clearAllTables("inGame")
     
 end
 
-function pause:update(dt)
+function GS_PAUSE:update(dt)
 
     --Handles timers
     Game_Timer.update(dt)
@@ -229,19 +229,19 @@ function pause:update(dt)
 
 end
 
-function pause:draw()
+function GS_PAUSE:draw()
     
     Draw.pause_state()
 
 end
 
-function pause:keypressed(key)
+function GS_PAUSE:keypressed(key)
 
     
     Util.defaultKeyPressed(key)
     
     if key == 'p' then
-        Gamestate.switch(game)
+        Gamestate.switch(GS_GAME)
     end
 
 end
@@ -250,7 +250,7 @@ end
 --STATE : GAMEOVER
 ------------------
 
-function gameover:enter()
+function GS_GAMEOVER:enter()
 
     Util.checkWinner()
 
@@ -258,13 +258,13 @@ function gameover:enter()
 
 end
 
-function gameover:leave()
+function GS_GAMEOVER:leave()
 
     Util.clearAllTables("gameover")
     
 end
 
-function gameover:update(dt)
+function GS_GAMEOVER:update(dt)
 
     --Handles timers
     Game_Timer.update(dt)
@@ -276,22 +276,22 @@ function gameover:update(dt)
 
 end
 
-function gameover:draw()
+function GS_GAMEOVER:draw()
     
     Draw.gameover_state()
 
 end
 
-function gameover:keypressed(key)
+function GS_GAMEOVER:keypressed(key)
 
     Util.defaultKeyPressed(key)
 
     if key == 'return' then
         GAME_SETUP = false
         if MATCH_BEGIN == false then
-            Gamestate.switch(setup)
+            Gamestate.switch(GS_SETUP)
         else            
-            Gamestate.switch(game)
+            Gamestate.switch(GS_GAME)
         end
     end
 
@@ -300,9 +300,6 @@ end
 --------------------
 --DEBUG
 --------------------
-
-function game:mousepressed(x, y, button, istouch)
-end
 
 function love.update(dt)
 end
