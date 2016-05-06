@@ -362,14 +362,14 @@ function util.defaultKeyPressed(key)
 
     if key == 'escape' then
         util.quit()
-    elseif key == 'q' then
+    elseif key == 'b' then
         GAME_BEGIN = false
         GAME_SETUP = false
         MATCH_BEGIN = false
         Gamestate.switch(GS_SETUP)
-    elseif key == 'b' then
+    elseif key == 'insert' then
         UD.toggleDebug()
-    elseif key == 'n' then
+    elseif key == 'home' then
         UD.toggleDebugDraw()
     end
 
