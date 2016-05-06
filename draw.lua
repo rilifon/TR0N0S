@@ -534,7 +534,8 @@ function SetupHUD_game()
     for i, p in ipairs(P_T) do
         w = img:getWidth()
         h = img:getHeight()
-        x =  (w-10)*sx * p.number-90
+        --Position is based on number of players playing to centralize score
+        x =  (w-10)*sx * p.number-90 + ((MAX_PLAYERS-N_PLAYERS)/2)*(w-10)*sx
         text = p.score
         label = p.number.."score"
         score = IMG(img, x, y, w, h, sx, sy, text, font, color)
@@ -548,7 +549,8 @@ function SetupHUD_game()
     font = font_reg_m
     for i, p in ipairs(P_T) do
         color = COLOR(p.b_color.r, p.b_color.g, p.b_color.b)
-        x =  p.number*(w-10)*.5 -100
+        --Position is based on number of players playing to centralize score
+        x =  p.number*(w-10)*.5 - 100 + ((MAX_PLAYERS-N_PLAYERS)/2)*(w-10)*.5
         text = "P"..p.number
         label = p.number.."scoreindicator"
         txt = TXT(x, y, text, font, color, sx, sy)
