@@ -29,6 +29,12 @@ function draw.setup_setup()
     --Chooses a simple HUD
     SetupHUD_default("simple")
 
+    --BUTTONS FLAGS
+    N_PLAYER_UP_FLAG = false
+    N_PLAYER_DOWN_FLAG = false
+    GOAL_UP_FLAG = false
+    GOAL_DOWN_FLAG = false
+
     -----------------------------
     --Creates setup buttons
     -----------------------------
@@ -73,7 +79,11 @@ function draw.setup_setup()
                 FX.particle_explosion(x+w/2, y+h/2 + pbh, exp_color, duration, max_part, speed, decaying)
 
                 --Shrink effect
-                FX.pulse(n_player_up, 0.95, 0.95)
+                if not N_PLAYER_UP_FLAG then
+                    FX.pulse(n_player_up, 0.95, 0.95, .4)
+                    N_PLAYER_UP_FLAG = true
+                    Game_Timer.after(.2, function() N_PLAYER_UP_FLAG = false end)
+                end
                 
                 --Insert new CPU player
                 color_id = RGB.randomBaseColor()
@@ -124,7 +134,11 @@ function draw.setup_setup()
                 FX.particle_explosion(x+w/2, y+h/2 - 3*pbh/5, exp_color, duration, max_part, speed, decaying)
 
                 --Shrink effect
-                FX.pulse(n_player_down, 0.95, 0.95)
+                if not N_PLAYER_DOWN_FLAG then
+                    FX.pulse(n_player_down, 0.95, 0.95,.4)
+                    N_PLAYER_DOWN_FLAG = true
+                    Game_Timer.after(.2, function() N_PLAYER_DOWN_FLAG = false end)
+                end
 
                 p = P_T[N_PLAYERS]
                 if p.control == "WASD" then WASD_PLAYER = 0
@@ -178,7 +192,11 @@ function draw.setup_setup()
             FX.particle_explosion(x+w/2, y+h/2, exp_color, duration, max_part, speed, decaying) 
 
             --Shrink effect
-            FX.pulse(goal_up, 0.85, 0.85)
+            if not GOAL_UP_FLAG then
+                FX.pulse(goal_up, 0.85, 0.85)
+                GOAL_UP_FLAG = true
+                Game_Timer.after(.2, function() GOAL_UP_FLAG = false end)
+            end
 
             GOAL = GOAL + 1
         end
@@ -207,7 +225,11 @@ function draw.setup_setup()
                 FX.particle_explosion(x+w/2, y+h/2, exp_color, duration, max_part, speed, decaying)
 
                 --Shrink effect
-                FX.pulse(goal_down, 0.85, 0.85)
+                if not GOAL_DOWN_FLAG then
+                    FX.pulse(goal_down, 0.85, 0.85)
+                    GOAL_DOWN_FLAG = true
+                    Game_Timer.after(.2, function() GOAL_DOWN_FLAG = false end)
+                end
 
                 GOAL = GOAL - 1
             end

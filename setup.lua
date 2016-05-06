@@ -115,6 +115,12 @@ function setup.config()
         Color_Timer = Timer.new()  --Timer for all color-related timing stuff
     end
 
+    --BUTTONS FLAGS
+    N_PLAYER_UP_FLAG = false    --if n_player_up button is pressed
+    N_PLAYER_DOWN_FLAG = false  --if n_player_down button is pressed
+    GOAL_UP_FLAG = false        --if goal_up button is pressed
+    GOAL_DOWN_FLAG = false      --if goal_down button is pressed
+
     --SHADERS
     SHADER = nil --Current shader
 

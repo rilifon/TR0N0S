@@ -15,7 +15,7 @@ end
 
 --Creates a pulse effect on object o
 function fx.pulse(o, sx, sy, d, m)
-    local duration = d or .4 --Duration of effect
+    local duration = d or .2 --Duration of effect
     local move = m or true --If it should also centralize while pulsing
     local sxi, syi
 
