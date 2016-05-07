@@ -12,6 +12,12 @@ local draw = {}
 local FONT_FIX_X = 10
 local FONT_FIX_Y = 8
 
+--Button functions
+local n_player_up_func   = require "buttons.n_player_up"
+local n_player_down_func = require "buttons.n_player_down"
+local goal_up_func       = require "buttons.goal_up"
+local goal_down_func     = require "buttons.goal_down"
+
 -----------------------
 --STATE SETUP FUNCTIONS
 -----------------------
@@ -58,55 +64,7 @@ function draw.setup_setup()
     w = img:getWidth()
     h = img:getHeight()
     x = love.graphics.getWidth()/2 --Get half the screen
-    n_player_up = But_Img(img, x, y, w, h, sx, sy, "+", font, color_t,
-        function()
-            local this = n_player_up
-            local x = this.x
-            local y = this.y
-            local w = this.w
-            local h = this.h
-            local pbh = PB_T["P"..N_PLAYERS.."pb"].h + 5 --Height of players button
-            local x_nil = 0
-            local exp_color = COLOR(65,168,17)   --Color of particle explosion
-            local bot
-
-            if N_PLAYERS < MAX_PLAYERS then
-               
-                --Increases players
-                N_PLAYERS = N_PLAYERS + 1
-
-                --Particles
-                FX.particle_explosion(x+w/2, y+h/2 + pbh, exp_color, duration, max_part, speed, decaying)
-
-                --Shrink effect
-                if not N_PLAYER_UP_FLAG then
-                    FX.pulse(n_player_up, 0.95, 0.95, .4)
-                    N_PLAYER_UP_FLAG = true
-                    Game_Timer.after(.2, function() N_PLAYER_UP_FLAG = false end)
-                end
-                
-                --Insert new CPU player
-                color_id = RGB.randomBaseColor()
-                rgb_b = RGB.randomColor(color_id)
-                rgb_h = RGB.randomDarkColor(rgb_b)
-                p = PLAYER(N_PLAYERS, false, nil, nil, nil, nil, rgb_b, rgb_h, true, 1, nil)
-                p.color_id = color_id
-                table.insert(P_T, p)
-
-                --Adjust positions of buttons
-                FX.smoothMove(n_player_up, n_player_up.x, n_player_up.y + pbh, .5, 'out-back')
-                FX.smoothMove(n_player_down, n_player_down.x, n_player_down.y + pbh, .5, 'out-back')
-                
-                bot = I_T["bot_pb_i"]
-
-                FX.smoothMove(bot, bot.x, bot.y + pbh, .4, 'out-back')
-
-                --Creates a player button on setup screen
-                UD.createPlayerButton(p)
-
-            end
-        end
-    )
+    n_player_up = But_Img(img, x, y, w, h, sx, sy, "+", font, color_t, n_player_up_func)
     BI_T["n_player_up"] = n_player_up
 
     --Down button
@@ -117,55 +75,7 @@ function draw.setup_setup()
     w = img:getWidth()
     h = img:getHeight()
     x = x - w --Get correct position
-    n_player_down = But_Img(img, x, y, w, h, sx, sy, "-", font, color_t,
-        function()
-            local this = n_player_down
-            local x = this.x
-            local y = this.y
-            local w = this.w
-            local h = this.h
-            local pbh = PB_T["P"..N_PLAYERS.."pb"].h + 5 --Height of players button
-            local exp_color = COLOR(217,9,18)   --Color of particle explosion)
-            local bot 
-
-            if N_PLAYERS > 1 then
-                
-                --Particles
-                FX.particle_explosion(x+w/2, y+h/2 - 3*pbh/5, exp_color, duration, max_part, speed, decaying)
-
-                --Shrink effect
-                if not N_PLAYER_DOWN_FLAG then
-                    FX.pulse(n_player_down, 0.95, 0.95,.4)
-                    N_PLAYER_DOWN_FLAG = true
-                    Game_Timer.after(.2, function() N_PLAYER_DOWN_FLAG = false end)
-                end
-
-                p = P_T[N_PLAYERS]
-                if p.control == "WASD" then WASD_PLAYER = 0
-                elseif p.control == "ARROWS" then ARROWS_PLAYER = 0 end
-                
-                --"Free" player color
-                C_MT[p.color_id] = 0
-
-                --Removes last player
-                table.remove(P_T, N_PLAYERS)
-                
-                --Adjust positions of buttons
-                FX.smoothMove(n_player_up, n_player_up.x, n_player_up.y - pbh, .3, 'in-out-sine')
-                FX.smoothMove(n_player_down, n_player_down.x, n_player_down.y - pbh, .3, 'in-out-sine')
-                
-                bot = I_T["bot_pb_i"]
-
-                FX.smoothMove(bot, bot.x, bot.y - pbh, .3, 'in-out-sine')
-
-                --Decreases players
-                N_PLAYERS = N_PLAYERS - 1
-
-                UD.removePlayerButton(p)
-
-            end
-        end
-    )
+    n_player_down = But_Img(img, x, y, w, h, sx, sy, "-", font, color_t, n_player_down_func)
     BI_T["n_player_down"] = n_player_down
 
     --GOAL BUTTON
@@ -179,28 +89,7 @@ function draw.setup_setup()
     w = img:getWidth()
     h = img:getHeight()
     --Up button
-    goal_up = But_Img(img, x, y, w, h, sx, sy, "+", font, color_t,
-        function()
-            local this = goal_up
-            local x = this.x
-            local y = this.y
-            local w = this.w
-            local h = this.h
-            local exp_color = COLOR(65,168,17)   --Color of particle explosion
-
-            --Particles
-            FX.particle_explosion(x+w/2, y+h/2, exp_color, duration, max_part, speed, decaying) 
-
-            --Shrink effect
-            if not GOAL_UP_FLAG then
-                FX.pulse(goal_up, 0.85, 0.85)
-                GOAL_UP_FLAG = true
-                Game_Timer.after(.2, function() GOAL_UP_FLAG = false end)
-            end
-
-            GOAL = GOAL + 1
-        end
-    )
+    goal_up = But_Img(img, x, y, w, h, sx, sy, "+", font, color_t, goal_up_func)
     BI_T["goal_up"] =  goal_up
 
     --Down button
@@ -210,34 +99,8 @@ function draw.setup_setup()
     w = img:getWidth()
     h = img:getHeight()
     y = y + h - 20
-    goal_down = But_Img(img, x, y, w, h, sx, sy, "-", font, color_t,
-        function()
-            local this = goal_down
-            local x = this.x
-            local y = this.y
-            local w = this.w
-            local h = this.h
-            local exp_color = COLOR(217,9,18)   --Color of particle explosion
-
-            if GOAL > 1 then
-                
-                --Particles
-                FX.particle_explosion(x+w/2, y+h/2, exp_color, duration, max_part, speed, decaying)
-
-                --Shrink effect
-                if not GOAL_DOWN_FLAG then
-                    FX.pulse(goal_down, 0.85, 0.85)
-                    GOAL_DOWN_FLAG = true
-                    Game_Timer.after(.2, function() GOAL_DOWN_FLAG = false end)
-                end
-
-                GOAL = GOAL - 1
-            end
-        end
-    )
+    goal_down = But_Img(img, x, y, w, h, sx, sy, "-", font, color_t, goal_down_func)
     BI_T["goal_down"] = goal_down
-
-
 
     --------------------------------
     --Creates setup images with text
