@@ -2,6 +2,11 @@ local FX  = require "fx"
 local RGB = require "rgb"
 local UD  = require "utildraw"
 
+local duration = .5  --Duration of particles
+local max_part = 45  --Max number of particles
+local speed    = 200 --Speed of particles
+local decaying = .99 --Decaying speed of particles
+
 --Function for n_player_up button
 function n_player_up()
     local this = n_player_up
@@ -20,7 +25,7 @@ function n_player_up()
         N_PLAYERS = N_PLAYERS + 1
 
         --Particles
-        FX.particle_explosion(x+w/2, y+h/2 + pbh, exp_color, duration, max_part, speed, decaying)
+        FX.particle_explosion(x+w/2, y+h/2 + 4*pbh/5, exp_color, duration, max_part, speed, decaying)
 
         --Shrink effect
         if not N_PLAYER_UP_FLAG then

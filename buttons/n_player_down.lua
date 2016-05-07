@@ -1,6 +1,11 @@
 local FX  = require "fx"
 local UD  = require "utildraw"
 
+local duration = .5  --Duration of particles
+local max_part = 45  --Max number of particles
+local speed    = 200 --Speed of particles
+local decaying = .99 --Decaying speed of particles
+
 --Function for n_player_down button
 function n_player_down()
     local this = n_player_down
@@ -15,7 +20,7 @@ function n_player_down()
     if N_PLAYERS > 1 then
         
         --Particles
-        FX.particle_explosion(x+w/2, y+h/2 - 3*pbh/5, exp_color, duration, max_part, speed, decaying)
+        FX.particle_explosion(x+w/2, y+h/2 - pbh/5, exp_color, duration, max_part, speed, decaying)
 
         --Shrink effect
         if not N_PLAYER_DOWN_FLAG then

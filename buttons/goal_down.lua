@@ -1,5 +1,10 @@
 local FX  = require "fx"
 
+local duration = .5  --Duration of particles
+local max_part = 45  --Max number of particles
+local speed    = 200 --Speed of particles
+local decaying = .99 --Decaying speed of particles
+
 --Function for goal_down button
 function goal_down()
     local this = goal_down

@@ -46,11 +46,7 @@ function draw.setup_setup()
     -----------------------------
 
     gap = 40
-    color_t   = COLOR(0, 0, 0)
-    duration = .5                   --Duration of particles
-    max_part = 45                   --Max number of particles
-    speed    = 200                  --Speed of particles
-    decaying = .99                  --Decaying speed of particles
+    color_t   = COLOR(0, 0, 0)      --Color of text
 
     --N_PLAYERS BUTTON
     font = font_but_l
