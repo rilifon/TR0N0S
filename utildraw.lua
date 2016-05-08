@@ -83,7 +83,7 @@ end
 -----------------------------------
 
 function ud.createPlayerButton(p)
-    local font = font_but_m
+    local font = font_but_mml
     local color_b, color_t, cputext, controltext, pl
     local pb, box, x, y, w, h, w_cb, h_cb, tween
 

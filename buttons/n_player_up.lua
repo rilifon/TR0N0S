@@ -16,16 +16,20 @@ function n_player_up()
     local h = this.h
     local pbh = PB_T["P"..N_PLAYERS.."pb"].h + 5 --Height of players button
     local x_nil = 0
-    local exp_color = COLOR(65,168,17)   --Color of particle explosion
+    local exp_color --Color of particle explosion
     local bot
 
     if N_PLAYERS < MAX_PLAYERS then
        
         --Increases players
         N_PLAYERS = N_PLAYERS + 1
+        I_T["n_players_value"].text = N_PLAYERS
 
         --Particles
-        FX.particle_explosion(x+w/2, y+h/2 + 4*pbh/5, exp_color, duration, max_part, speed, decaying)
+        exp_color = COLOR(65,168,17)
+        FX.particle_explosion(x+w/2, y+h/2 + 4*pbh/5, exp_color, duration, max_part, speed, decaying)--Button explosion
+        exp_color = COLOR(205,144,212)
+        FX.particle_explosion(2*love.graphics.getWidth()/8 + 60, 200, exp_color, duration, 20, speed, .98) --Value
 
         --Shrink effect
         if not N_PLAYER_UP_FLAG then

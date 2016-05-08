@@ -75,7 +75,7 @@ function draw.setup_setup()
     BI_T["n_player_down"] = n_player_down
 
     --GOAL BUTTON
-    x = 480
+    x = 580
     y = 25
     font = font_but_l
     color_b   = COLOR(233, 131, 0)  --Color of button background
@@ -89,8 +89,9 @@ function draw.setup_setup()
     BI_T["goal_up"] =  goal_up
 
     --Down button
+    x = x + w
     img = IMG_BUT_MINUS
-    sx = 1
+    sx = -1
     sy = 1
     w = img:getWidth()
     h = img:getHeight()
@@ -104,22 +105,37 @@ function draw.setup_setup()
     
     color_b = COLOR(233, 131, 0)
     color_t = COLOR(0, 0, 0)
-    font = font_but_m
 
     --N_PLAYERS IMAGE
     img = IMG_DEFAULT
-    x  = 45
+    font = font_but_ml
+    x  = -5
     y  = 30
-    sx = 1
+    sx = 1.2
     sy = .4
     w = img:getWidth()
     h = img:getHeight()
     n_player_i = IMG(img, x, y, w, h, sx, sy, "NUMBER OF PLAYERS", font, color_t)
     I_T["n_player_i"] = n_player_i
 
+    --N_PLAYERS VALUE
+    sx = .6
+    font = font_reg_m
+    sy = .6
+    y = y + 120
+    x = 2*love.graphics.getWidth()/8
+    img = IMG_VAR
+    w = img:getWidth()
+    h = img:getHeight()
+    color = COLOR(0,0,0)
+    text = N_PLAYERS
+    score = IMG(img, x, y, w, h, sx, sy, text, font, color)
+    I_T["n_players_value"] = score
+
     --GOAL TEXTBOX
     img = IMG_DEFAULT
-    x = 570
+    font = font_but_ml
+    x = 670
     y = 30
     sx = .4
     sy = .4
@@ -127,6 +143,20 @@ function draw.setup_setup()
     h = img:getHeight()
     goal_i = IMG(img, x, y, w, h, sx, sy, "GOAL", font, color_t)
     I_T["goal_i"] = goal_i
+
+    --GOAL VALUE
+    sx = .6
+    font = font_reg_m
+    sy = .6
+    y = y + 120
+    x = 4*love.graphics.getWidth()/6 + 100
+    img = IMG_VAR
+    w = img:getWidth()
+    h = img:getHeight()
+    color = COLOR(0,0,0)
+    text = GOAL
+    score = IMG(img, x, y, w, h, sx, sy, text, font, color)
+    I_T["goal_value"] = score
 
     ----------------------
     --Creates setup images
@@ -166,7 +196,13 @@ function draw.setup_setup()
     transp = COLOR(0, 0, 0, 0)
     tb = TB(0, y, love.graphics.getWidth(), font:getHeight(text), text, font, transp,color)
     TB_T["start"] = tb
-    
+
+    -----------------------------
+    --Creates effects on images
+    -----------------------------
+
+    FX.pulseLoop(I_T["goal_value"], .65, .65, 1.5, true)
+    FX.pulseLoop(I_T["n_players_value"], .65, .65, 1.5, true)
 
 end
 
@@ -296,19 +332,8 @@ end
 
 --Draw all stuff from setup
 function draw.setup_state()
-    local font
 
     Primitive.drawAll()
-
-    --Draw variables
-    font = font_but_m
-    love.graphics.setColor( 255, 255, 255)
-    love.graphics.setFont(font)
-    --N_PLAYERS var
-    love.graphics.print(N_PLAYERS, 270, 160, 0, 2, 2)
-
-    --GOAL var
-    love.graphics.print(GOAL, 640, 155, 0, 2, 2)
 
 end
 
@@ -429,28 +454,20 @@ function SetupHUD_game()
     TXT_T["goal_txt"] = txt
 
 
-    --Draw Goal value img
+    --Draw Goal Value img
     if not GAME_BEGIN and not EFFECT_LOOP then
         sx = .6
         sy = .6
         y = BORDER + MAP_Y*TILESIZE + 30
         x = love.graphics.getWidth()/2 - 20
         img = IMG_VAR
+        w = img:getWidth()
+        h = img:getHeight()
         color = COLOR(0,0,0)
-        text = ""
+        text = GOAL
         score = IMG(img, x, y, w, h, sx, sy, text, font, color)
         I_T["goal_value"] = score
     end
-    
-    --Draw Goal value
-    y = BORDER + MAP_Y*TILESIZE + 54
-    x = love.graphics.getWidth()/2 + 27
-    sx = 1.2
-    sy = 1.2
-    color = COLOR(0,0,0)
-    text = GOAL
-    txt = TXT(x, y, text, font, color, sx, sy)
-    TXT_T["goal_value_txt"] = txt
 
     --MAP BORDER--
 

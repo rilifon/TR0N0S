@@ -14,13 +14,16 @@ function n_player_down()
     local w = this.w
     local h = this.h
     local pbh = PB_T["P"..N_PLAYERS.."pb"].h + 5 --Height of players button
-    local exp_color = COLOR(217,9,18)   --Color of particle explosion)
+    local exp_color  --Color of particle explosion)
     local bot 
 
     if N_PLAYERS > 1 then
         
         --Particles
-        FX.particle_explosion(x+w/2, y+h/2 - pbh/5, exp_color, duration, max_part, speed, decaying)
+        exp_color = COLOR(217,9,18)
+        FX.particle_explosion(x+w/2, y+h/2 - pbh/5, exp_color, duration, max_part, speed, decaying)--Button explosion
+         exp_color = COLOR(205,144,212)
+        FX.particle_explosion(2*love.graphics.getWidth()/8 + 60, 200, exp_color, duration, 20, speed, .98) --Value
 
         --Shrink effect
         if not N_PLAYER_DOWN_FLAG then
@@ -49,6 +52,7 @@ function n_player_down()
 
         --Decreases players
         N_PLAYERS = N_PLAYERS - 1
+        I_T["n_players_value"].text = N_PLAYERS
 
         UD.removePlayerButton(p)
 
