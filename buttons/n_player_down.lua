@@ -27,9 +27,9 @@ function n_player_down()
 
         --Shrink effect
         if not N_PLAYER_DOWN_FLAG then
-            FX.pulse(n_player_down, 0.95, 0.95,.4)
+            FX.pulse(n_player_down, 0.9, 0.9,.3)
             N_PLAYER_DOWN_FLAG = true
-            Game_Timer.after(.2, function() N_PLAYER_DOWN_FLAG = false end)
+            Game_Timer.after(.3, function() N_PLAYER_DOWN_FLAG = false end)
         end
 
         p = P_T[N_PLAYERS]

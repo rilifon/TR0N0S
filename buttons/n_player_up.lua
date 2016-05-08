@@ -33,9 +33,9 @@ function n_player_up()
 
         --Shrink effect
         if not N_PLAYER_UP_FLAG then
-            FX.pulse(n_player_up, 0.95, 0.95, .4)
+            FX.pulse(n_player_up, 0.9, 0.9, .3)
             N_PLAYER_UP_FLAG = true
-            Game_Timer.after(.2, function() N_PLAYER_UP_FLAG = false end)
+            Game_Timer.after(.3, function() N_PLAYER_UP_FLAG = false end)
         end
         
         --Insert new CPU player
