@@ -407,7 +407,7 @@ function SetupHUD_default(mode)
         --"go back" button
         color = COLOR(0,0,0)
         font = font_reg_ms
-        x = love.graphics.getWidth() - 2*w*sx
+        x = love.graphics.getWidth() - 2*w*sx + 40
         o = But_Img(img, x, y, w, h, sx, sy, "(b)ack", font, color,
             function()
                 Util.goBack()
@@ -501,7 +501,7 @@ function SetupHUD_game()
         sy = .6
         y = BORDER + MAP_Y*TILESIZE + 30
         x = love.graphics.getWidth()/2 - 20
-        img = IMG_VAR
+        img = IMG_GOAL
         w = img:getWidth()
         h = img:getHeight()
         color = COLOR(0,0,0)
