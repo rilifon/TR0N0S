@@ -25,7 +25,7 @@ function goal_down()
 
         --Shrink effect
         if not GOAL_DOWN_FLAG then
-            FX.pulse(goal_down, 0.85, 0.85, d)
+            FX.pulse(goal_down, -0.85, 0.85, d)
             GOAL_DOWN_FLAG = true
             Game_Timer.after(d, function() GOAL_DOWN_FLAG = false end)
         end

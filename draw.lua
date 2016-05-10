@@ -89,9 +89,8 @@ function draw.setup_setup()
     BI_T["goal_up"] =  goal_up
 
     --Down button
-    x = x + w
-    img = IMG_BUT_MINUS
-    sx = -1
+    img = IMG_BUT_MINUS_INV
+    sx = 1
     sy = 1
     w = img:getWidth()
     h = img:getHeight()
@@ -370,22 +369,40 @@ end
 --Draw the default HUD
 function SetupHUD_default(mode)  
     local text, txt, x, y, DEBUG_TEXT
-    local font = font_reg_s
-    local color = COLOR(255, 255, 255)
+    local o, img, w, h, sx, sy
+    local font = font_reg_ms
+    local color = COLOR(0,0,0)
     
-    
-    --set text according to mode
-    if mode == "simple" then
-        text = "(esc)ape"
-    elseif mode == "complete" then
-        text = "(esc)ape     (p)ause"
-    end
 
-    --commands text
-    x = 0
-    y = love.graphics.getHeight() - 2* TILESIZE
-    txt = TXT(x, y, text, font, color)
-    TXT_T["commands"] = txt
+    --set images according to mode
+    if mode == "simple" then
+        --"quit" image
+        img = IMG_COM
+        w = img:getWidth()
+        h = img:getHeight()
+        sx = .7
+        sy = 1.1
+        x = 0
+        y = love.graphics.getHeight() - 95 
+        o = IMG(img, x, y, w, h, sx, sy, "(esc)ape", font, color)
+        I_T["quit_hud"] = o
+    elseif mode == "complete" then
+        img = IMG_COM
+        w = img:getWidth()
+        h = img:getHeight()
+        sx = .7
+        sy = 1.1
+        y = love.graphics.getHeight() - 95 
+        
+        --"quit" image
+        x = 0
+        o = IMG(img, x, y, w, h, sx, sy, "(esc)ape", font, color)
+        I_T["quit_hud"] = o
+        --"pause" image
+        x = love.graphics.getWidth() - w*sx
+        o = IMG(img, x, y, w, h, sx, sy, "(p)ause", font, color)
+        I_T["pause_hud"] = o
+    end
 
     --DEBUG text
     if DEBUG then

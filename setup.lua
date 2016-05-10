@@ -23,6 +23,7 @@ function setup.config()
     --Button
     IMG_BUT_PLUS = love.graphics.newImage("assets/button_plus.png")
     IMG_BUT_MINUS = love.graphics.newImage("assets/button_minus.png")
+    IMG_BUT_MINUS_INV = love.graphics.newImage("assets/button_minus_inv.png")
     --Regular images
     IMG_DEFAULT = love.graphics.newImage("assets/default_img.png")
     IMG_BORDER_TOP = love.graphics.newImage("assets/border_top.png")
@@ -30,6 +31,7 @@ function setup.config()
     IMG_BORDER_MAP = love.graphics.newImage("assets/map_border.png")
     IMG_SCORE      = love.graphics.newImage("assets/score_img.png")
     IMG_VAR        = love.graphics.newImage("assets/var_img.png")
+    IMG_COM        = love.graphics.newImage("assets/default_command_img.png")
     --Background
     IMG_BG = love.graphics.newImage("assets/background.png")
     BG_X = -954 --Background x position
@@ -213,6 +215,7 @@ function setup.config()
     font_but_mml = love.graphics.newFont( "assets/vanadine_bold.ttf", 32) --Font for buttons, large size
     font_but_m = love.graphics.newFont( "assets/vanadine_bold.ttf", 30) --Font for buttons, medium size
     font_reg_m = love.graphics.newFont( "assets/FUTUVA.ttf", 30) --Font for regular text, medium size
+    font_reg_ms = love.graphics.newFont( "assets/FUTUVA.ttf", 23) --Font for regular text, medium size
     font_reg_s = love.graphics.newFont( "assets/FUTUVA.ttf", 16) --Font for regular text, small size
     love.graphics.setFont(font_reg_m)
 
