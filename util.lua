@@ -295,6 +295,8 @@ function util.clearAllTables(mode)
 
     util.clearTable(F_T)
 
+    util.clearTable(HUD_T)
+    
     if mode ~= "inGame" then
         if mode ~= "gameover" then
             util.clearTable(I_T)
@@ -358,19 +360,37 @@ function util.quit()
 
 end
 
+--Pause program
+function util.pause()
+
+    if Gamestate.current() == GS_GAME and GAME_BEGIN then
+        Gamestate.switch(GS_PAUSE)
+    elseif Gamestate.current() == GS_PAUSE then
+        Gamestate.switch(GS_GAME)
+    end
+
+end
+
+function util.goBack()
+    
+    GAME_BEGIN = false
+    GAME_SETUP = false
+    MATCH_BEGIN = false
+    Gamestate.switch(GS_SETUP)
+
+end
 function util.defaultKeyPressed(key)
 
     if key == 'escape' then
         util.quit()
     elseif key == 'b' then
-        GAME_BEGIN = false
-        GAME_SETUP = false
-        MATCH_BEGIN = false
-        Gamestate.switch(GS_SETUP)
+        util.goBack()
     elseif key == 'insert' then
         UD.toggleDebug()
     elseif key == 'home' then
         UD.toggleDebugDraw()
+    elseif key == 'p' then
+        util.pause()
     end
 
 end

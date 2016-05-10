@@ -217,17 +217,15 @@ end
 
 --Start the countdown to start a game
 function mp.startCountdown()
-    local cd = countdown
+    local cd = COUNTDOWN
     local t, rand
     
-    time = 0
     Game_Timer.during(MAX_COUNTDOWN, 
         --Decreases countdown
         function(dt)
             
-            t = time+dt
-            cd = cd - t
-            countdown = math.floor(cd)+1
+            cd = cd - dt
+            COUNTDOWN = math.floor(cd)+1
 
         end,
 

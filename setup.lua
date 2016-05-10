@@ -64,6 +64,7 @@ function setup.config()
     --TIME VARS
 
     MAX_COUNTDOWN = 4   --Countdown in the beggining of each game
+    COUNTDOWN = 0       --Current countdown
     TIMESTEP = 0.04     --Time between each game step
     STEP     = 0        --Step Counter
 
@@ -175,6 +176,7 @@ function setup.config()
     BOX_T  = {}  --Box Table
     HD_T   = {}  --Map Table (contain all head tiles)
     GLOW_T = {}  --Map Table (contain all glow tiles)
+    HUD_T  = {}  --HUD Table
      
     --COLOR TABLES
 
@@ -261,7 +263,7 @@ end
 function setup.game()
     
     if not GAME_SETUP then
-        countdown = MAX_COUNTDOWN --Setup countdown
+        COUNTDOWN = MAX_COUNTDOWN --Setup countdown
 
         GAME_BEGIN = false
         STEP = 0

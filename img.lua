@@ -77,6 +77,23 @@ function img.checkCollision(x,y)
         end
     end
 
+    --Iterate on HUD table
+    for i,b in pairs(HUD_T) do
+        if  b.x < x
+            and
+            x < b.x + b.w*b.sx
+            and
+            b.y < y
+            and
+            y < b.y + b.h*b.sy
+        then
+            --Click is within image "box". Now checking by pixel position
+            if checkPixelCollision(b.img, (x-b.x), (y-b.y)) then
+                but = b.func
+            end
+        end
+    end
+
     --Do respective functions
     if but then but() end
 

@@ -41,7 +41,14 @@ function love.load()
 
 end
 
+function love.mousepressed(x, y, button, istouch)
+    
+    if button == 1 then  --Left mouse button
+        Button.checkCollision(x,y)
+        Img.checkCollision(x,y)
+    end
 
+end
 
 ---------------
 --STATE : SETUP
@@ -103,15 +110,6 @@ function GS_SETUP:keypressed(key)
 
 end
 
-function GS_SETUP:mousepressed(x, y, button, istouch)
-    
-    if button == 1 then  --Left mouse button
-        Button.checkCollision(x,y)
-        Img.checkCollision(x,y)
-    end
-
-end
-
 ---------------
 --STATE : GAME
 ---------------
@@ -164,9 +162,7 @@ function GS_GAME:keypressed(key)
 
     Util.defaultKeyPressed(key)
 
-    if key == 'p' and GAME_BEGIN then
-        Gamestate.switch(GS_PAUSE)
-    elseif key == 'r' and DEBUG then
+    if key == 'r' and DEBUG then
         GAME_SETUP = false
         Util.clearAllTables("gameover")
         Gamestate.switch(GS_GAME)
@@ -237,12 +233,7 @@ end
 
 function GS_PAUSE:keypressed(key)
 
-    
     Util.defaultKeyPressed(key)
-    
-    if key == 'p' then
-        Gamestate.switch(GS_GAME)
-    end
 
 end
 

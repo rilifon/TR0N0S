@@ -43,6 +43,8 @@ function pr.drawAll(mode)
 
     DrawTB()      --Draws all default textboxes
 
+    DrawHUD()     --Draws HUD stuff
+
 end
 
 --Draws the background
@@ -83,6 +85,18 @@ function DrawBI()
 
     for i, v in pairs(BI_T) do
         drawButtonImg(v)
+    end
+
+end
+
+--Draws all default buttons with images
+function DrawHUD()
+    local m
+
+    for i, v in pairs(HUD_T) do
+        m = "normal"
+        if i == "pause_hud" and not GAME_BEGIN then m = "dark" end
+        drawButtonImg(v, m)
     end
 
 end
@@ -232,13 +246,20 @@ function drawGlowButton(button)
 end
 
 --Draws a given button with image
-function drawButtonImg(but)
+function drawButtonImg(but, mode)
     local fwidth, fheight, tx, ty, font, fix
+    local m
+
+    m = mode or "normal"
 
     fix = 5 --Fix font position on images
 
     --Draws image
-    love.graphics.setColor(255,255,255)
+    if m == "normal" then
+        love.graphics.setColor(255,255,255)
+    else
+        love.graphics.setColor(100,100,100)
+    end
     love.graphics.draw(but.img, but.x, but.y, 0, but.sx, but.sy)
     
     font = but.font

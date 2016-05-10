@@ -33,7 +33,7 @@ function draw.setup_setup()
     UD.updatePlayersB()
 
     --Chooses a simple HUD
-    SetupHUD_default("simple")
+    SetupHUD_default("setup")
 
     --BUTTONS FLAGS
     N_PLAYER_UP_FLAG = false
@@ -208,7 +208,7 @@ end
 --Draw game countdown and text
 function draw.game_setup()
 
-    SetupHUD_default("complete")
+    SetupHUD_default("game")
 
     SetupHUD_game()
 
@@ -227,7 +227,7 @@ end
 function draw.pause_setup()
     local color, filter, x, y, font, text, transp, tb
     
-    SetupHUD_default("complete")
+    SetupHUD_default("game")
 
     SetupHUD_game()
 
@@ -259,7 +259,7 @@ function draw.gameover_setup()
     local continue_text --text to continue match or go back to setup
     local p, tb, filter, winnertext, cont_tb
     
-    SetupHUD_default("simple")
+    SetupHUD_default("gameover")
 
     SetupHUD_game()
     
@@ -370,38 +370,62 @@ end
 function SetupHUD_default(mode)  
     local text, txt, x, y, DEBUG_TEXT
     local o, img, w, h, sx, sy
-    local font = font_reg_ms
-    local color = COLOR(0,0,0)
+    local font
+    local color
     
+    -------------
+    --HUD BUTTONS
+    -------------
 
-    --set images according to mode
-    if mode == "simple" then
-        --"quit" image
+    --"quit" button
+    img = IMG_COM
+    color = COLOR(54,9,14)
+    font = font_reg_m
+    w = img:getWidth()
+    h = img:getHeight()
+    sx = .4
+    sy = 1.1
+    x = 0
+    y = love.graphics.getHeight() - 90 
+    o = But_Img(img, x, y, w, h, sx, sy, "X", font, color,
+        function()
+            Util.quit()
+        end
+    )
+    HUD_T["quit_hud"] = o
+
+    if mode == "setup" then
+        --Nothing for now
+    else
         img = IMG_COM
         w = img:getWidth()
         h = img:getHeight()
+        y = love.graphics.getHeight() - 90 
         sx = .7
         sy = 1.1
-        x = 0
-        y = love.graphics.getHeight() - 95 
-        o = IMG(img, x, y, w, h, sx, sy, "(esc)ape", font, color)
-        I_T["quit_hud"] = o
-    elseif mode == "complete" then
-        img = IMG_COM
-        w = img:getWidth()
-        h = img:getHeight()
-        sx = .7
-        sy = 1.1
-        y = love.graphics.getHeight() - 95 
         
-        --"quit" image
-        x = 0
-        o = IMG(img, x, y, w, h, sx, sy, "(esc)ape", font, color)
-        I_T["quit_hud"] = o
-        --"pause" image
-        x = love.graphics.getWidth() - w*sx
-        o = IMG(img, x, y, w, h, sx, sy, "(p)ause", font, color)
-        I_T["pause_hud"] = o
+        --"go back" button
+        color = COLOR(0,0,0)
+        font = font_reg_ms
+        x = love.graphics.getWidth() - 2*w*sx
+        o = But_Img(img, x, y, w, h, sx, sy, "(b)ack", font, color,
+            function()
+                Util.goBack()
+            end
+        )
+        HUD_T["back_hud"] = o
+        
+        if mode == "game" then  
+            --"pause" button
+            x = love.graphics.getWidth() - w*sx
+            o = But_Img(img, x, y, w, h, sx, sy, "(p)ause", font, color,
+                function()
+                    Util.pause()
+                end
+            )
+            HUD_T["pause_hud"] = o
+        end
+
     end
 
     --DEBUG text
@@ -517,7 +541,7 @@ function DrawCountdown()
 
     love.graphics.setColor(color.r, color.g, color.b)
     love.graphics.setFont(font)
-    love.graphics.print(countdown, x, y, 0, 2, 2)
+    love.graphics.print(COUNTDOWN, x, y, 0, 2, 2)
 
 end
 
