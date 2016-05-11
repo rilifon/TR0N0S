@@ -178,6 +178,7 @@ function setup.config()
     HD_T   = {}  --Map Table (contain all head tiles)
     GLOW_T = {}  --Map Table (contain all glow tiles)
     HUD_T  = {}  --HUD Table
+    PBOX_T = {}  --Players Box Table
      
     --COLOR TABLES
 
@@ -242,6 +243,7 @@ function setup.config()
     p2   = PLAYER(2, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "ARROWS")
     p2.color_id = color_id
     table.insert(P_T, p2)
+    
     
 
 end
@@ -317,14 +319,7 @@ function setup.players()
 
         MAP[p_y][p_x] = HEAD --Update first position
 
-        
-        --Update map with players head
-        color = COLOR(p.h_color.r, p.h_color.g, p.h_color.b, p.h_color.a)
-        tile = TILE(p.x, p.y, color) --Creates a tile
-        HD_T["mapx"..p.x.."y"..p.y] = tile
-
-        --Add glow effect for head
-        GLOW_T["mapx"..p.x.."y"..p.y] = TILE(p.x, p.y, color)
+        FX.playerEntrance(p)
 
     end
 

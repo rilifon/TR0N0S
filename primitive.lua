@@ -35,6 +35,8 @@ function pr.drawAll(mode)
 
     DrawI()       --Draws all default images with text
 
+    DrawPBOX()
+
     DrawPART()    --Draws all default particles
 
     DrawF()       --Draws all default filters
@@ -95,7 +97,8 @@ function DrawHUD()
 
     for i, v in pairs(HUD_T) do
         m = "normal"
-        if i == "pause_hud" and not GAME_BEGIN then m = "dark" end
+        if i == "pause_hud" and not GAME_BEGIN then m = "dark"
+        elseif i == "back_hud" and Gamestate.current() ~= GS_PAUSE then m = "dark" end
         drawButtonImg(v, m)
     end
 
@@ -161,10 +164,19 @@ function DrawPART()
 
 end
 
---Draws all boxes with a glow effect below
+--Draws all boxes
 function DrawBOX()
    
     for i, v in pairs(BOX_T) do
+        drawBox(v)
+    end
+
+end
+
+--Draws all player boxes
+function DrawPBOX()
+   
+    for i, v in pairs(PBOX_T) do
         drawBox(v)
     end
 

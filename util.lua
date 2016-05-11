@@ -293,6 +293,8 @@ function util.clearAllTables(mode)
 
     util.clearTable(PB_T)
 
+    util.clearTable(PBOX_T)
+
     util.clearTable(F_T)
 
     util.clearTable(HUD_T)
@@ -371,7 +373,10 @@ function util.pause()
 
 end
 
+--Go back to setup screen
 function util.goBack()
+    
+    if Gamestate.current() ~= GS_PAUSE then return end
     
     GAME_BEGIN = false
     GAME_SETUP = false
