@@ -60,54 +60,76 @@ function fx.playerEntrance(p)
     local color, d, box, xf, yf
     local dir, x, y, w, h
 
-    --Get random position outside the game window to spawn player box
-    dir = math.random(4)
-    if     dir == 1 then
-        x = -2*TILESIZE
-        y = math.random(love.graphics.getHeight())
-    elseif dir == 2 then
-        x = math.random(love.graphics.getWidth())
-        y = -2*TILESIZE
-    elseif dir == 3 then
-        x = love.graphics.getWidth() + 2*TILESIZE
-        y = math.random(love.graphics.getHeight())
-    elseif dir == 4 then
-        x = math.random(love.graphics.getWidth())
-        y = love.graphics.getHeight() + 2*TILESIZE
-    end
-
-    w = 3*TILESIZE
-    h = 3*TILESIZE
-    color = COLOR(p.h_color.r, p.h_color.g, p.h_color.b, p.h_color.a)
-    
-    box = BOX(x, y, w, h, color)
-    PBOX_T["P"..p.number.."effect"] = box
-    box = PBOX_T["P"..p.number.."effect"]
-
-    xf = BORDER + (p.x - 1)*TILESIZE
-    yf = BORDER + (p.y - 1)*TILESIZE
-    d = 1
-    --Move player
-    fx.smoothMove(box, xf, yf, d, 'linear')
-    --Scale player
-    fx.smoothDimension(box, TILESIZE, TILESIZE, d, 'linear')
-    
-    --Set players to be ready for game
-    Game_Timer.after(d, 
-        function ()
-            
-            PBOX_T["P"..p.number.."effect"] = nil
-
-            --Update map with players head
-            tile = TILE(p.x, p.y, color) --Creates a tile
-            HD_T["mapx"..p.x.."y"..p.y] = tile
-
-            --Add glow effect for head
-            GLOW_T["mapx"..p.x.."y"..p.y] = TILE(p.x, p.y, color)
-
+    --HUMAN PLAYER
+    if not p.cpu then
+        --Get random position outside the game window to spawn player box
+        dir = math.random(4)
+        if     dir == 1 then
+            x = -2*TILESIZE
+            y = math.random(love.graphics.getHeight())
+        elseif dir == 2 then
+            x = math.random(love.graphics.getWidth())
+            y = -2*TILESIZE
+        elseif dir == 3 then
+            x = love.graphics.getWidth() + 2*TILESIZE
+            y = math.random(love.graphics.getHeight())
+        elseif dir == 4 then
+            x = math.random(love.graphics.getWidth())
+            y = love.graphics.getHeight() + 2*TILESIZE
         end
-    )
 
+        w = 10*TILESIZE
+        h = 10*TILESIZE
+        color = COLOR(p.h_color.r, p.h_color.g, p.h_color.b, p.h_color.a)
+        
+        box = BOX(x, y, w, h, color)
+        PBOX_T["P"..p.number.."effect"] = box
+        box = PBOX_T["P"..p.number.."effect"]
+
+        xf = BORDER + (p.x - 1)*TILESIZE
+        yf = BORDER + (p.y - 1)*TILESIZE
+        d = 1.2
+        --Move player
+        fx.smoothMove(box, xf, yf, d, 'linear')
+        --Scale player
+        fx.smoothDimension(box, TILESIZE, TILESIZE, d, 'linear')
+        --Spin player
+        fx.smoothRotation(box, 20, d, 'linear')
+        
+        --Set players to be ready for game
+        Game_Timer.after(d, 
+            function ()
+                
+                PBOX_T["P"..p.number.."effect"] = nil
+
+                --Update map with players head
+                tile = TILE(p.x, p.y, color) --Creates a tile
+                HD_T["mapx"..p.x.."y"..p.y] = tile
+
+                --Add glow effect for head
+                GLOW_T["mapx"..p.x.."y"..p.y] = TILE(p.x, p.y, color)
+
+            end
+        )
+    --CPU PLAYER
+    else
+
+        color = COLOR(p.h_color.r, p.h_color.g, p.h_color.b, 0)
+
+        --Update map with players head
+        tile = TILE(p.x, p.y, color) --Creates a tile
+        HD_T["mapx"..p.x.."y"..p.y] = tile
+        tile = HD_T["mapx"..p.x.."y"..p.y]
+
+        --Add glow effect for head
+        GLOW_T["mapx"..p.x.."y"..p.y] = TILE(p.x, p.y, color)
+
+        d = 1
+        --Creates fade-in effect on players
+        fx.smoothAlpha(HD_T["mapx"..p.x.."y"..p.y].color, 255, d, 'linear')
+        fx.smoothAlpha(GLOW_T["mapx"..p.x.."y"..p.y].color, 255, d, 'linear')
+
+    end
 
 end
 
@@ -164,7 +186,7 @@ end
 --Makes a smooth transition in object o.i to f in "duration" time
 function fx.smoothTransition(o, i, f, duration, func)
 
-    --Starts a timer that gradually increse
+    --Starts a timer that gradually increases
     Game_Timer.tween(duration, o, {i = f}, func)
 
 end
@@ -172,27 +194,35 @@ end
 --Makes a smooth transition in object scale to sxf and syf in "duration" time
 function fx.smoothScale(o, sxf, syf, duration, func)
 
-    --Starts a timer that gradually increse
+    --Starts a timer that gradually increases
     Game_Timer.tween(duration, o, {sx = sxf}, func)
     Game_Timer.tween(duration, o, {sy = syf}, func)
 
 end
 
---Makes a smooth transition in object with and height to wf and hf in "duration" time
+--Makes a smooth transition in object width and height to wf and hf in "duration" time
 function fx.smoothDimension(o, wf, hf, duration, func)
 
-    --Starts a timer that gradually increse
+    --Starts a timer that gradually increases
     Game_Timer.tween(duration, o, {w = wf}, func)
     Game_Timer.tween(duration, o, {h = hf}, func)
 
 end
 
 
+--Makes a smooth transition in object with and height to wf and hf in "duration" time
+function fx.smoothRotation(o, rf, duration, func)
+
+    --Starts a timer that gradually increases
+    Game_Timer.tween(duration, o, {r = rf}, func)
+
+end
+
 --Makes a smooth transition in object 'o' position
 -- to point (xf,yf)
 function fx.smoothMove(o, xf, yf, duration, func)
 
-    --Starts a timer that gradually increase
+    --Starts a timer that gradually increases
     Game_Timer.tween(duration, o, {x = xf}, func)
     Game_Timer.tween(duration, o, {y = yf}, func)
 
@@ -208,7 +238,7 @@ function fx.smoothColor(c, colorf, duration, func)
     bf = colorf.b
     af = colorf.a
 
-    --Starts a timer that gradually increse
+    --Starts a timer that gradually increases
     Game_Timer.tween(duration, c, {r = rf, g = gf, b = bf, a = af}, func)
 
 end
@@ -217,7 +247,7 @@ end
 --to f
 function fx.smoothAlpha(o, f, duration, func)
 
-    --Starts a timer that gradually increase
+    --Starts a timer that gradually increases
     Game_Timer.tween(duration, o, {a = f}, func)
 
 end

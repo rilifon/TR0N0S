@@ -16,6 +16,8 @@ BOX = Class{
         self.color.g = color.g
         self.color.b = color.b
         self.color.a = color.a or 255
+
+        self.r = 0
     end
 }
 

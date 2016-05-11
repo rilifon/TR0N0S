@@ -376,7 +376,9 @@ end
 --Go back to setup screen
 function util.goBack()
     
-    if Gamestate.current() ~= GS_PAUSE then return end
+    if Gamestate.current() ~= GS_PAUSE and Gamestate.current() ~= GS_GAMEOVER then
+        return
+    end
     
     GAME_BEGIN = false
     GAME_SETUP = false

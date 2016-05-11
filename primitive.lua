@@ -97,8 +97,16 @@ function DrawHUD()
 
     for i, v in pairs(HUD_T) do
         m = "normal"
-        if i == "pause_hud" and not GAME_BEGIN then m = "dark"
-        elseif i == "back_hud" and Gamestate.current() ~= GS_PAUSE then m = "dark" end
+        if i == "pause_hud" and
+          (not GAME_BEGIN or Gamestate.current() == GS_GAMEOVER)
+        then
+            m = "dark"
+        elseif i == "back_hud" and
+                Gamestate.current() ~= GS_PAUSE and
+                Gamestate.current() ~= GS_GAMEOVER  
+        then
+            m = "dark"
+        end
         drawButtonImg(v, m)
     end
 
@@ -372,7 +380,7 @@ function drawBox(box)
 
     --Draws box
     love.graphics.setColor(box.color.r, box.color.g, box.color.b, box.color.a)
-    love.graphics.draw(PIXEL, box.x, box.y, 0, box.w, box.h)
+    love.graphics.draw(PIXEL, box.x, box.y, box.r, box.w, box.h)
 
 end
 

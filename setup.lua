@@ -64,7 +64,7 @@ function setup.config()
     
     --TIME VARS
 
-    MAX_COUNTDOWN = 4   --Countdown in the beggining of each game
+    MAX_COUNTDOWN = 5   --Countdown in the beggining of each game
     COUNTDOWN = 0       --Current countdown
     TIMESTEP = 0.04     --Time between each game step
     STEP     = 0        --Step Counter
@@ -319,7 +319,11 @@ function setup.players()
 
         MAP[p_y][p_x] = HEAD --Update first position
 
-        FX.playerEntrance(p)
+        Game_Timer.after(p.number*.5, 
+            function()
+                FX.playerEntrance(p)
+            end
+        )
 
     end
 

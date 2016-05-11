@@ -414,17 +414,15 @@ function SetupHUD_default(mode)
             end
         )
         HUD_T["back_hud"] = o
-        
-        if mode == "game" then  
-            --"pause" button
-            x = love.graphics.getWidth() - w*sx
-            o = But_Img(img, x, y, w, h, sx, sy, "(p)ause", font, color,
-                function()
-                    Util.pause()
-                end
-            )
-            HUD_T["pause_hud"] = o
-        end
+         
+        --"pause" button
+        x = love.graphics.getWidth() - w*sx
+        o = But_Img(img, x, y, w, h, sx, sy, "(p)ause", font, color,
+            function()
+                Util.pause()
+            end
+        )
+        HUD_T["pause_hud"] = o
 
     end
 
