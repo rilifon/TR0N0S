@@ -185,16 +185,19 @@ end
 ------------------
 
 --Shake the camera for d seconds
-function fx.shake(d)
+function fx.shake(d, s)
     local orig_x, orig_y
+    local str
+
+    str = s or 4 --Strength of shake
 
     orig_x = CAM.x
     orig_y = CAM.y
 
     Game_Timer.during(d, 
         function()
-            CAM.x = orig_x + math.random(-2,2)
-            CAM.y = orig_y + math.random(-2,2)
+            CAM.x = orig_x + math.random(-str,str)
+            CAM.y = orig_y + math.random(-str,str)
         end,
         function()
             -- reset camera position

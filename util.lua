@@ -205,15 +205,29 @@ end
 function CheckCollision(p)
     local color = COLOR(255,0,115)
     local x, y
+    local str, d
+    local duration, max_part, speed, decaying, radius
+
+    --Particles vars
+    duration = 1
+    max_part = 50
+    speed = 360
+    decaying = .975
+    radius = 2.5
     
+    d = .3  --Duration of shake
+    str = 1 --Strength of shake
+
     --Check collision with wall
     if MAP[p.y][p.x] >= 1 and MAP[p.y][p.x] <= HEAD then
         p.dead = true --Makes player dead
-        
+
         x = p.x*TILESIZE + BORDER
         y = p.y*TILESIZE + BORDER
-        FX.particle_explosion(x, y, color, nil, nil, nil, nil, nil, 2) --Create effect
-
+        
+        --Effects
+        FX.particle_explosion(x, y, color, duration, max_part, speed, decaying, radius) --Create effect
+        FX.shake(d,str)
     end
 
     --Check collision with other players
@@ -225,8 +239,10 @@ function CheckCollision(p)
 
                 x = p.x*TILESIZE + BORDER
                 y = p.y*TILESIZE + BORDER
-                FX.particle_explosion(x, y, color) --Create effect
-
+                
+                --Effects
+                FX.particle_explosion(x, y, color, duration, max_part, speed, decaying, radius) --Create effect
+                FX.shake(d,str)
             end
         end
     end
@@ -388,7 +404,7 @@ function util.goBack()
 end
 function util.defaultKeyPressed(key)
 
-    if key == 'escape' then
+    if key == 'escape' or key == 'x' then
         util.quit()
     elseif key == 'b' then
         util.goBack()
