@@ -31,6 +31,8 @@ function goal_up()
     GOAL = GOAL + 1
     I_T["goal_value"].text = GOAL
 
+    FX.shake(.5)
+
 end
 
 --Return function

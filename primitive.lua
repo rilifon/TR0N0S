@@ -11,6 +11,8 @@ local pr = {}
 --Draws every drawable from tables
 function pr.drawAll(mode)
 
+    CAM:attach()
+
     DrawBG()          --Draws the program background
     
     if mode == "inGame" then
@@ -47,6 +49,8 @@ function pr.drawAll(mode)
 
     DrawHUD()     --Draws HUD stuff
 
+    CAM:detach()
+    
 end
 
 --Draws the background

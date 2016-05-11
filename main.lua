@@ -2,6 +2,7 @@
 Gamestate = require "hump.gamestate"
 Timer     = require "hump.timer"
 Class     = require "hump.class"
+Camera    = require "hump.camera"
 
 
 --MY MODULES
@@ -31,8 +32,6 @@ GS_PAUSE    = {}
 GS_GAMEOVER = {}
 
 function love.load()
-
-   -- love.graphics.setBackgroundColor(255,255,255)
 
     Setup.config()
 

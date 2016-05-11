@@ -109,6 +109,8 @@ function fx.playerEntrance(p)
                 --Add glow effect for head
                 GLOW_T["mapx"..p.x.."y"..p.y] = TILE(p.x, p.y, color)
 
+                fx.shake(.3)
+
             end
         )
     --CPU PLAYER
@@ -178,6 +180,29 @@ function fx.particle_explosion(x, y, color, duration, max_part, speed, decaying,
     )
 end
 
+------------------
+--CAMERA FUNCTIONS
+------------------
+
+--Shake the camera for d seconds
+function fx.shake(d)
+    local orig_x, orig_y
+
+    orig_x = CAM.x
+    orig_y = CAM.y
+
+    Game_Timer.during(d, 
+        function()
+            CAM.x = orig_x + math.random(-2,2)
+            CAM.y = orig_y + math.random(-2,2)
+        end,
+        function()
+            -- reset camera position
+            CAM.x = orig_x
+            CAM.y = orig_y
+        end
+    )
+end
 
 ----------------------
 --TRANSITION FUNCTIONS

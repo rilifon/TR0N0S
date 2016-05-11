@@ -38,7 +38,6 @@ function setup.config()
     BG_X = -954 --Background x position
     --RANDOM SEED
 
-
     math.randomseed( os.time() )
     math.random(); math.random(); --Improves random
 
@@ -222,6 +221,11 @@ function setup.config()
     font_reg_ms = love.graphics.newFont( "assets/FUTUVA.ttf", 23) --Font for regular text, medium size
     font_reg_s = love.graphics.newFont( "assets/FUTUVA.ttf", 16) --Font for regular text, small size
     love.graphics.setFont(font_reg_m)
+
+    --CAMERA
+    --Set camera position to center of screen
+    CAM = Camera(love.graphics.getWidth()/2, love.graphics.getHeight()/2)
+
 
     --EFFECTS
     EFFECT_LOOP = false
