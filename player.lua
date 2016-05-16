@@ -6,7 +6,7 @@ local player = {}
 
 --PLayer object
 PLAYER = Class{
-    init = function(self, number, dead, x, y, dir, nextdir, b_color, h_color, cpu, level, control)
+    init = function(self, number, dead, x, y, dir, nextdir, b_color, h_color, cpu)
         self.number = number   --player number
         self.dead = dead       --if player is dead
         self.x = x             --x position
@@ -29,16 +29,13 @@ PLAYER = Class{
         self.h_color.b = h_color.b 
         self.h_color.a = h_color.a or 255        
 
-        self.cpu = cpu   --boolean that indicates if player is cpu
-        if self.cpu then
-        	self.level   = level --cpu level
-        	self.control = nil   
-        else
-        	self.level = nil
-        	self.control = control --indicates this player controls ("WASD" or "ARROWS")
-        end
-        
+
         self.score = 0  --Player score
+
+        self.cpu = cpu or false     --If this player is a cpu or not
+        self.control = nil --Indicates this player controls ("WASD" or "ARROWS") or nothing at all
+        
+        self.level = nil   --Level of cpu
         self.side = nil --Side of player that he is going around(for cpu's level 3)
     end
 }

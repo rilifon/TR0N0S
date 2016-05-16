@@ -236,7 +236,8 @@ function setup.config()
     color_id = RGB.randomBaseColor()
     rgb_b = RGB.randomColor(color_id)
     rgb_h = RGB.randomDarkColor(rgb_b)
-    p1   = PLAYER(1, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "WASD")
+    p1   = PLAYER(1, false, nil, nil, nil, nil, rgb_b, rgb_h)
+    p1. control = "WASD"
     p1.color_id = color_id
     table.insert(P_T, p1)
 
@@ -244,7 +245,8 @@ function setup.config()
     color_id = RGB.randomBaseColor()
     rgb_b = RGB.randomColor(color_id)
     rgb_h = RGB.randomDarkColor(rgb_b)
-    p2   = PLAYER(2, false, nil, nil, nil, nil, rgb_b, rgb_h, false, nil, "ARROWS")
+    p2   = PLAYER(2, false, nil, nil, nil, nil, rgb_b, rgb_h)
+    p2.control = "ARROWS"
     p2.color_id = color_id
     table.insert(P_T, p2)
     

@@ -42,7 +42,8 @@ function n_player_up()
         color_id = RGB.randomBaseColor()
         rgb_b = RGB.randomColor(color_id)
         rgb_h = RGB.randomDarkColor(rgb_b)
-        p = PLAYER(N_PLAYERS, false, nil, nil, nil, nil, rgb_b, rgb_h, true, 1, nil)
+        p = PLAYER(N_PLAYERS, false, nil, nil, nil, nil, rgb_b, rgb_h, true)
+        p.level = 2
         p.color_id = color_id
         table.insert(P_T, p)
 
