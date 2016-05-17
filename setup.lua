@@ -33,6 +33,7 @@ function setup.config()
     IMG_VAR        = love.graphics.newImage("assets/var_img.png")
     IMG_GOAL       = love.graphics.newImage("assets/goal_img.png")
     IMG_COM        = love.graphics.newImage("assets/default_command_img.png")
+    IMG_COLOR      = love.graphics.newImage("assets/button_color_change.png")
     --Background
     IMG_BG = love.graphics.newImage("assets/background.png")
     BG_X = -954 --Background x position

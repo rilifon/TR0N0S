@@ -32,19 +32,13 @@ end
 
 --Return a random color based on a default color_id with some slight variation
 function rgb.randomColor(color_id)
-    local offset = 0
-    local value, newValue, valueRatio
     local color
 
     color = C_T[color_id]
 
-    value = (color.r + color.g + color.b)/3
-    newValue = value + math.random()*offset
-    valueRatio = newValue/value
-
-    color.r = color.r * valueRatio
-    color.g = color.g * valueRatio
-    color.b = color.b * valueRatio 
+    color.r = color.r
+    color.g = color.g
+    color.b = color.b
 
     return color
 

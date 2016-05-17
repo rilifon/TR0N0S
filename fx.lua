@@ -267,7 +267,7 @@ function fx.smoothColor(c, colorf, duration, func)
     af = colorf.a
 
     --Starts a timer that gradually increases
-    Game_Timer.tween(duration, c, {r = rf, g = gf, b = bf, a = af}, func)
+    return Game_Timer.tween(duration, c, {r = rf, g = gf, b = bf, a = af}, func)
 
 end
 

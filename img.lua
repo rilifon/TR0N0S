@@ -26,6 +26,13 @@ But_Img = Class{
         self.t_color.b = t_color.b
         self.t_color.a = t_color.a or 255
 
+        --Color to paint image
+        self.b_color = {}
+        self.b_color.r = 255
+        self.b_color.g = 255
+        self.b_color.b = 255
+        self.b_color.a = 255
+
         self.func  = func  --function to call when pressed
     end
 }
@@ -52,6 +59,13 @@ IMG = Class{
         self.t_color.g = t_color.g
         self.t_color.b = t_color.b
         self.t_color.a = t_color.a or 255
+
+        --Color to paint image
+        self.b_color = {}
+        self.b_color.r = 255
+        self.b_color.g = 255
+        self.b_color.b = 255
+        self.b_color.a = 255
 
     end
 }

@@ -304,24 +304,16 @@ end
 function love.keypressed(key)
    
     if key == "0" then
-        Util.zoera("omar")
-    elseif key == "9" then
-        for i = 1, MAP_X do
-            for j = 1, MAP_Y do
-                io.write(MAP[i][j])
-            end
-            print("-")
-        end
+        Util.zoera("mayts")
     elseif key == '8' then
-        print("--")
-        for i, box in pairs(BOX_T) do
-            print("x "..box.x.." y "..box.y.." w "..box.w.." h "..box.h)
+        for i, v in pairs(P_T) do
+            print("Player "..v.number..":"..v.color_id)
         end
-        print("--")
-    elseif key == '5' then
-        GOAL = GOAL + 1
-    elseif key == '4' then
-        GOAL = GOAL - 1
-    end  
-
+        print("---")
+    elseif key == '7' then
+        for i, v in pairs(C_MT) do
+            print("CM "..i..":"..v)
+        end
+        print("---")
+    end
 end

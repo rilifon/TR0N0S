@@ -4,6 +4,9 @@ local FX = require "fx"
 
 local ud = {}
 
+--Button functions
+local color_change_func = require "buttons.change_color"
+
 ---------------------------------
 --PLAYER INDICATOR DRAW FUNCTIONS
 ---------------------------------
@@ -86,6 +89,10 @@ function ud.createPlayerButton(p)
     local font = font_but_mml
     local color_b, color_t, cputext, controltext, pl
     local pb, box, x, y, w, h, w_cb, h_cb, tween
+    local img, nulc, nulf
+
+    nulc = COLOR(255,255,255,255) --Any random color
+    nulf = font_reg_s  --Any random font
 
     w_cb = 40 --Width of head color box
     h_cb = 40 --Height of head color box
@@ -193,42 +200,59 @@ function ud.createPlayerButton(p)
 
     PB_T["P"..p.number.."pb"] =  pb
 
-    --Creates players head color box
+    --Creates players head color box button
     x = x + w
-    box = BOX(x, y, w_cb, h_cb, p.h_color)
-    BOX_T["P"..p.number.."box"] = box
+    box = But(x, y, w_cb, h_cb, "", nulf, p.h_color, nulc,
+        function()
+            color_change_func(p.number)
+        end
+    )
+    B_T["P"..p.number.."but"] = box 
+    --Creates image
+    img = IMG_COLOR
+    w = img:getWidth()
+    h = img:getHeight()
+    box = IMG(img, x, y, w, h, 1, 1, "", nulf, nulc)
+
+    I_T["P"..p.number.."img"] = box
 
     --Transitions
     pb.b_color.a = 0
     pb.t_color.a = 0
-    box.color.a = 0
+    I_T["P"..p.number.."img"].b_color.a = 0
+    B_T["P"..p.number.."but"].b_color.a = 0
     tween = 'linear'
     FX.smoothAlpha(pb.b_color, 255, .4, tween)
     FX.smoothAlpha(pb.t_color, 255, .6, tween)
-    FX.smoothAlpha(box.color, 255, .5, tween)
+    FX.smoothAlpha(I_T["P"..p.number.."img"].b_color, 255, .5, tween)
+    FX.smoothAlpha(B_T["P"..p.number.."but"].b_color, 255, .5, tween)
 
 end
 
 function ud.removePlayerButton(p)
     local duration = .2
-    local pb, box
+    local pb, but, img
 
     pb  = PB_T["P"..p.number.."pb"]
-    box = BOX_T["P"..p.number.."box"]
+    but = B_T["P"..p.number.."but"]
+    img = I_T["P"..p.number.."img"]
     
     --Fades out
     pb.b_color.a = 255
     pb.t_color.a = 255
-    box.color.a  = 255
+    but.b_color.a  = 255
+    img.b_color.a  = 255
     FX.smoothAlpha(pb.b_color, 0, duration, 'linear')
     FX.smoothAlpha(pb.t_color, 0, duration, 'linear')
-    FX.smoothAlpha(box.color, 0, duration, 'linear')
+    FX.smoothAlpha(but.b_color, 0, duration, 'linear')
+    FX.smoothAlpha(img.b_color, 0, duration, 'linear')
     
     H_T["h"..p.number] = Game_Timer.after(duration, 
         function()
             --Removes player button on setup screen
             PB_T["P"..p.number.."pb"] = nil
-            BOX_T["P"..p.number.."box"] = nil
+            I_T["P"..p.number.."img"] = nil
+            B_T["P"..p.number.."but"] = nil
         end
     )
 end

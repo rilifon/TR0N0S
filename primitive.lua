@@ -11,9 +11,9 @@ local pr = {}
 --Draws every drawable from tables
 function pr.drawAll(mode)
 
-    CAM:attach()
-
     DrawBG()          --Draws the program background
+
+    CAM:attach() --Start tracking camera
     
     if mode == "inGame" then
         
@@ -22,6 +22,8 @@ function pr.drawAll(mode)
         DrawPlayers() --Draws all players on screen
 
     end
+
+    CAM:detach() --Stop tracking camera
 
     DrawB()       --Draws all default buttons
 
@@ -47,9 +49,8 @@ function pr.drawAll(mode)
 
     DrawTB()      --Draws all default textboxes
 
-    DrawHUD()     --Draws HUD stuff
 
-    CAM:detach()
+    DrawHUD()     --Draws HUD stuff
     
 end
 
@@ -280,7 +281,7 @@ function drawButtonImg(but, mode)
 
     --Draws image
     if m == "normal" then
-        love.graphics.setColor(255,255,255)
+        love.graphics.setColor(but.b_color.r, but.b_color.g, but.b_color.b, but.b_color.a)
     else
         love.graphics.setColor(100,100,100)
     end
@@ -313,7 +314,7 @@ function drawImg(img, mode)
         b = (contrs-grad*MAP_COLOR.b)
         love.graphics.setColor(r, g, b)
     else
-        love.graphics.setColor(255,255,255)
+        love.graphics.setColor(img.b_color.r, img.b_color.g, img.b_color.b, img.b_color.a)
     end
     love.graphics.draw(img.img, img.x, img.y, 0, img.sx, img.sy)
     
