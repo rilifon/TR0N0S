@@ -117,6 +117,8 @@ function ud.createPlayerButton(p)
         
     end
 
+
+    --PLAYER BUTTON
      if p.cpu then
             cputext = "CPU"
             controltext = "Level " .. p.level
@@ -137,9 +139,9 @@ function ud.createPlayerButton(p)
     color_b = COLOR(p.b_color.r, p.b_color.g, p.b_color.b, 0)
 
     --Creates player button
-    w = 500
+    w = 460
     h = 40
-    x = (love.graphics.getWidth() - w - w_cb)/2
+    x = (love.graphics.getWidth() - w -w_cb)/2 + 20
     y = 240 + 45*p.number
     pb = But(x, y, w, h, "PLAYER " .. p.number .. " " .. cputext .. " (" .. controltext .. ")", font, color_b, color_t,       
         --Change players from CPU to HUMAN with a assigned control scheme
@@ -200,14 +202,36 @@ function ud.createPlayerButton(p)
 
     PB_T["P"..p.number.."pb"] =  pb
 
+    --TEXT CHANGE BUTTON
     --Creates players head color box button
-    x = x + w
-    box = But(x, y, w_cb, h_cb, "", nulf, p.h_color, nulc,
+    x = (love.graphics.getWidth() - w - w_cb)/2 - 20
+    box = But(x, y, w_cb, h_cb, "", nulf, p.b_color, nulc,
+        function()
+            print("oi")
+        end
+    )
+    B_T["P"..p.number.."textbut"] = box 
+    --Creates image
+    img = IMG_TEXT
+    x = x - 13
+    y = pb.y - 12
+    w = img:getWidth()
+    h = img:getHeight()
+    box = IMG(img, x, y, w, h, 1, 1, "", nulf, nulc)
+
+    I_T["P"..p.number.."textimg"] = box
+
+    --COLOR CHANGE BUTTON
+
+    --Creates players head color box button
+    x = pb.x + pb.w
+    y = pb.y
+    box = But(x, y, w_cb, h_cb, "", nulf, p.b_color, nulc,
         function()
             color_change_func(p.number)
         end
     )
-    B_T["P"..p.number.."but"] = box 
+    B_T["P"..p.number.."colorbut"] = box 
     --Creates image
     img = IMG_COLOR
     x = x - 34
@@ -216,45 +240,58 @@ function ud.createPlayerButton(p)
     h = img:getHeight()
     box = IMG(img, x, y, w, h, 1, 1, "", nulf, nulc)
 
-    I_T["P"..p.number.."img"] = box
+    I_T["P"..p.number.."colorimg"] = box
+
 
     --Transitions
     pb.b_color.a = 0
     pb.t_color.a = 0
-    I_T["P"..p.number.."img"].b_color.a = 0
-    B_T["P"..p.number.."but"].b_color.a = 0
+    I_T["P"..p.number.."colorimg"].b_color.a = 0
+    B_T["P"..p.number.."colorbut"].b_color.a = 0
+    I_T["P"..p.number.."textimg"].b_color.a = 0
+    B_T["P"..p.number.."textbut"].b_color.a = 0
     tween = 'linear'
     FX.smoothAlpha(pb.b_color, 255, .4, tween)
     FX.smoothAlpha(pb.t_color, 255, .6, tween)
-    FX.smoothAlpha(I_T["P"..p.number.."img"].b_color, 255, .5, tween)
-    FX.smoothAlpha(B_T["P"..p.number.."but"].b_color, 255, .5, tween)
+    FX.smoothAlpha(I_T["P"..p.number.."colorimg"].b_color, 255, .5, tween)
+    FX.smoothAlpha(B_T["P"..p.number.."colorbut"].b_color, 255, .5, tween)
+    FX.smoothAlpha(I_T["P"..p.number.."textimg"].b_color, 255, .5, tween)
+    FX.smoothAlpha(B_T["P"..p.number.."textbut"].b_color, 255, .5, tween)
 
 end
 
 function ud.removePlayerButton(p)
     local duration = .2
-    local pb, but, img
+    local pb, c_but, c_img, t_but, t_img
 
     pb  = PB_T["P"..p.number.."pb"]
-    but = B_T["P"..p.number.."but"]
-    img = I_T["P"..p.number.."img"]
+    c_but = B_T["P"..p.number.."colorbut"]
+    c_img = I_T["P"..p.number.."colorimg"]
+    t_but = B_T["P"..p.number.."textbut"]
+    t_img = I_T["P"..p.number.."textimg"]
     
     --Fades out
     pb.b_color.a = 255
     pb.t_color.a = 255
-    but.b_color.a  = 255
-    img.b_color.a  = 255
+    c_but.b_color.a  = 255
+    c_img.b_color.a  = 255
+    t_but.b_color.a  = 255
+    t_img.b_color.a  = 255
     FX.smoothAlpha(pb.b_color, 0, duration, 'linear')
     FX.smoothAlpha(pb.t_color, 0, duration, 'linear')
-    FX.smoothAlpha(but.b_color, 0, duration, 'linear')
-    FX.smoothAlpha(img.b_color, 0, duration, 'linear')
+    FX.smoothAlpha(c_but.b_color, 0, duration, 'linear')
+    FX.smoothAlpha(c_img.b_color, 0, duration, 'linear')
+    FX.smoothAlpha(t_but.b_color, 0, duration, 'linear')
+    FX.smoothAlpha(t_img.b_color, 0, duration, 'linear')
     
     H_T["h"..p.number] = Game_Timer.after(duration, 
         function()
             --Removes player button on setup screen
             PB_T["P"..p.number.."pb"] = nil
-            I_T["P"..p.number.."img"] = nil
-            B_T["P"..p.number.."but"] = nil
+            I_T["P"..p.number.."colorimg"] = nil
+            B_T["P"..p.number.."colorbut"] = nil
+            I_T["P"..p.number.."textimg"] = nil
+            B_T["P"..p.number.."textbut"] = nil
         end
     )
 end

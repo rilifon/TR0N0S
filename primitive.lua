@@ -24,8 +24,8 @@ function pr.drawAll(mode)
     end
 
     CAM:detach() --Stop tracking camera
-
-    DrawB()       --Draws all default buttons
+    
+    DrawPB()      --Draws all default player buttons
 
     DrawBI()      --Draws all default buttons with images
     
@@ -34,12 +34,13 @@ function pr.drawAll(mode)
         DrawBOX()     --Draws all default boxes
 
     end
+    
+    DrawB()       --Draws all default buttons
 
-    DrawPB()      --Draws all default player buttons
 
     DrawI()       --Draws all default images with text
 
-    DrawPBOX()
+    DrawPBOX()    --Drawl all default player boxes
 
     DrawPART()    --Draws all default particles
 

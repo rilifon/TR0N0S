@@ -37,22 +37,25 @@ function changeColor(n)
     if handle then
         Game_Timer.cancel(handle)
         H_T["h"..p.number.."cg1"] = nil
-    end
-    handle = H_T["h"..p.number.."cg2"]
-    if handle then
+       
+        handle = H_T["h"..p.number.."cg2"]
         Game_Timer.cancel(handle)
         H_T["h"..p.number.."cg2"] = nil
-    end
-    handle = H_T["h"..p.number.."cg3"]
-    if handle then
+       
+        handle = H_T["h"..p.number.."cg3"]
         Game_Timer.cancel(handle)
         H_T["h"..p.number.."cg3"] = nil
+
+        handle = H_T["h"..p.number.."cg4"]
+        Game_Timer.cancel(handle)
+        H_T["h"..p.number.."cg4"] = nil
     end
 
     --Change player button colors
     H_T["h"..p.number.."cg1"] = FX.smoothColor(PB_T["P"..n.."pb"].b_color, rgb_b, d, "linear")
     H_T["h"..p.number.."cg2"] = FX.smoothColor(PB_T["P"..n.."pb"].t_color, color_t, d, "linear")
-    H_T["h"..p.number.."cg3"] = FX.smoothColor(B_T["P"..n.."but"].b_color, rgb_h, d, "linear")
+    H_T["h"..p.number.."cg3"] = FX.smoothColor(B_T["P"..n.."colorbut"].b_color, rgb_b, d, "linear")
+    H_T["h"..p.number.."cg4"] = FX.smoothColor(B_T["P"..n.."textbut"].b_color, rgb_b, d, "linear")
 
     --Fix in case of several transitions
     handle = H_T["handle"..p.number.."colorchangeset"] 
@@ -64,9 +67,14 @@ function changeColor(n)
     --Set colors
     handle = Game_Timer.after(d,
             function()
-                PB_T["P"..n.."pb"].b_color = rgb_b   --Player button body
-                PB_T["P"..n.."pb"].t_color = color_t --Player button text
-                B_T["P"..n.."but"].b_color = rgb_h   --Color button
+                --Player button body
+                PB_T["P"..n.."pb"].b_color = COLOR(rgb_b.r, rgb_b.g, rgb_b.b, rgb_b.a)
+                --Player button text
+                PB_T["P"..n.."pb"].t_color = COLOR(color_t.r, color_t.g, color_t.b, color_t.a)
+                --Color button
+                B_T["P"..n.."colorbut"].b_color = COLOR(rgb_b.r, rgb_b.g, rgb_b.b, rgb_b.a)
+                --Text button 
+                B_T["P"..n.."textbut"].b_color = COLOR(rgb_b.r, rgb_b.g, rgb_b.b, rgb_b.a)
             end
         )
     H_T["handle"..p.number.."colorchangeset"] = handle

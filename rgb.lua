@@ -44,14 +44,12 @@ end
 
 --Return a random darker color based on a receiving color with some slight variation
 function rgb.randomDarkColor(color)
-    local Newcolor, rand
+    local rand
 
     --Generates a random number between 0.4 nd 0.7
     rand = math.random()*0.3 + 0.4
-    Newcolor = COLOR(color.r*rand, color.g*rand, color.b*rand)
 
-    return Newcolor
-
+    return COLOR(color.r*rand, color.g*rand, color.b*rand, color.a)
 end
 
 --Return functions
