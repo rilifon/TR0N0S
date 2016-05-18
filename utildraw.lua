@@ -210,6 +210,8 @@ function ud.createPlayerButton(p)
     B_T["P"..p.number.."but"] = box 
     --Creates image
     img = IMG_COLOR
+    x = x - 34
+    y = y - 36
     w = img:getWidth()
     h = img:getHeight()
     box = IMG(img, x, y, w, h, 1, 1, "", nulf, nulc)
