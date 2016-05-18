@@ -213,8 +213,7 @@ function ud.createPlayerButton(p)
     B_T["P"..p.number.."textbut"] = box 
     --Creates image
     img = IMG_TEXT
-    x = x - 13
-    y = pb.y - 12
+    y = pb.y
     w = img:getWidth()
     h = img:getHeight()
     box = IMG(img, x, y, w, h, 1, 1, "", nulf, nulc)
@@ -234,8 +233,6 @@ function ud.createPlayerButton(p)
     B_T["P"..p.number.."colorbut"] = box 
     --Creates image
     img = IMG_COLOR
-    x = x - 34
-    y = y - 36
     w = img:getWidth()
     h = img:getHeight()
     box = IMG(img, x, y, w, h, 1, 1, "", nulf, nulc)
