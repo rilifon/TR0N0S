@@ -31,6 +31,7 @@ PLAYER = Class{
 
 
         self.score = 0  --Player score
+        self.name = ""  --Player name
 
         self.cpu = cpu or false     --If this player is a cpu or not
         self.control = nil --Indicates this player controls ("WASD" or "ARROWS") or nothing at all

@@ -88,7 +88,7 @@ end
 function ud.createPlayerButton(p)
     local font = font_but_mml
     local color_b, color_t, cputext, controltext, pl
-    local pb, box, x, y, w, h, w_cb, h_cb, tween
+    local pb, box, x, y, w, h, w_cb, h_cb, tween, text
     local img, nulc, nulf
 
     nulc = COLOR(255,255,255,255) --Any random color
@@ -143,7 +143,12 @@ function ud.createPlayerButton(p)
     h = 40
     x = (love.graphics.getWidth() - w -w_cb)/2 + 20
     y = 240 + 45*p.number
-    pb = But(x, y, w, h, "PLAYER " .. p.number .. " " .. cputext .. " (" .. controltext .. ")", font, color_b, color_t,       
+    if p.name == '' then
+        text =  "PLAYER " .. p.number .. " " .. cputext .. " (" .. controltext .. ")"
+    else
+        text =  p.name .. " (" .. controltext .. ")"
+    end
+    pb = But(x, y, w, h, text, font, color_b, color_t,       
         --Change players from CPU to HUMAN with a assigned control scheme
         function()
             --Human with WASD controls, on click, becomes ARROWS if possible, else becomes CPU
@@ -195,7 +200,12 @@ function ud.createPlayerButton(p)
                 cputext = "HUMAN"
                 controltext = p.control
             end
-            PB_T["P"..p.number.."pb"].text =  "PLAYER " .. p.number .. " " .. cputext .. " (" .. controltext .. ")"
+
+            if p.name == '' then
+                PB_T["P"..p.number.."pb"].text =  "PLAYER " .. p.number .. " " .. cputext .. " (" .. controltext .. ")"
+            else
+                PB_T["P"..p.number.."pb"].text =  p.name .. " (" .. controltext .. ")"
+            end
 
         end
     )
