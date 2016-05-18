@@ -30,15 +30,13 @@ function rgb.randomBaseColor()
 
 end
 
---Return a random color based on a default color_id with some slight variation
+--Return a random color based on a default color_id
 function rgb.randomColor(color_id)
-    local color
+    local c, color
 
-    color = C_T[color_id]
+    c = C_T[color_id]
 
-    color.r = color.r
-    color.g = color.g
-    color.b = color.b
+    color = COLOR(c.r, c.g, c.b, c.a)
 
     return color
 
