@@ -26,12 +26,8 @@ TB = Class{
         self.t_color.r = t_color.r
         self.t_color.g = t_color.g
         self.t_color.b = t_color.b
-        if t_color.a then
-        	self.t_color.a = t_color.a
-        else
-        	self.t_color.a = 255
-        end        
-
+        self.t_color.a = t_color.a or 255
+        
     end
 }
 

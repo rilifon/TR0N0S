@@ -207,6 +207,21 @@ end
 
 --Draw game countdown and text
 function draw.game_setup()
+    local color, font, transp, tb, text
+
+    --Creates countdown text
+    font = font_but_l
+    text = COUNTDOWN
+    color  = COLOR(255, 255, 255, 0)
+    transp = COLOR(0, 0, 0, 0) --Transparent background
+    tb = TB(0, 0, love.graphics.getWidth(), love.graphics.getHeight(), text, font, transp, color)
+    TB_T["countdown"] = tb
+    --Creates fade-in for countdown
+    Game_Timer.after((N_PLAYERS-1)*.8, 
+        function()
+            FX.smoothAlpha(TB_T["countdown"].t_color, 255, .8, "linear")
+        end
+    )
 
     SetupHUD_default("game")
 
@@ -243,8 +258,6 @@ function draw.pause_setup()
     --Creates draw text
     font = font_reg_m
     text = "GAME PAUSED"
-    x = (MAP_X/2-10) * TILESIZE + BORDER
-    y = (MAP_Y/2) * TILESIZE + BORDER
     color  = COLOR(255, 255, 255)
     transp = COLOR(0, 0, 0, 0) --Transparent background
     tb = TB(0, 0, love.graphics.getWidth(), love.graphics.getHeight(), text, font, transp, color)
@@ -341,10 +354,6 @@ end
 function draw.game_state()
         
     Primitive.drawAll("inGame")
-
-    if not GAME_BEGIN then
-        DrawCountdown()
-    end
 
 end
 
@@ -521,25 +530,6 @@ function SetupHUD_game()
         map_border = IMG(img, x, y, w, h, sx, sy, "", font, color)
         I_T["map_border_i"] = map_border
     end
-
-end
-
-----------------------
---OTHER DRAW FUNCTIONS
-----------------------
-
---Draw countdown in the beggining of every match
-function DrawCountdown()
-    local color, font, x, y
-
-    color = COLOR(255, 255, 255)
-    font = font_reg_m
-    x = MAP_X/2 * TILESIZE + BORDER
-    y = (MAP_Y/2 - 5) * TILESIZE + BORDER
-
-    love.graphics.setColor(color.r, color.g, color.b)
-    love.graphics.setFont(font)
-    love.graphics.print(COUNTDOWN, x, y, 0, 2, 2)
 
 end
 

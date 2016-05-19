@@ -285,7 +285,7 @@ function setup.game()
         setup.players()
 
         GAME_SETUP = true
-        Map.startCountdown()
+        Game_Timer.after(N_PLAYERS*.8, Map.startCountdown)
     end
 
 end

@@ -226,6 +226,7 @@ function mp.startCountdown()
             
             cd = cd - dt
             COUNTDOWN = math.floor(cd)+1
+            TB_T["countdown"].text = COUNTDOWN
 
         end,
 
@@ -241,6 +242,14 @@ function mp.startCountdown()
                 if p.dir     == nil then p.dir     = rand end
                 if p.nextdir == nil then p.nextdir = rand end
             end
+
+            --Fades-out countdown and removes
+            FX.smoothAlpha(TB_T["countdown"].t_color, 0, .8, "linear")
+            Game_Timer.after(.81, 
+                function()
+                    TB_T["countdown"] = nil
+                end
+            )
 
         end
     )
