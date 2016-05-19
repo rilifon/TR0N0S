@@ -47,7 +47,10 @@ function setup.config()
 
     DEBUG = false      --DEBUG mode status
     DEBUG_DRAW = false --DEBUG mode status that shows players rectangles
-    HEAD  = 9
+    HEAD  = 9 --Value that represents a player head in the game map
+    PLAYER_IS_TYPING = false --Represents if a player is in a state of typing
+    PLAYER_TYPING = nil --Player that is having his name changed
+    BUTTON_LOCK   = false --If true, buttons won't work
     
     --MATCH/GAME SETUP VARS
 
@@ -65,7 +68,7 @@ function setup.config()
     
     --TIME VARS
 
-    MAX_COUNTDOWN = 5   --Countdown in the beggining of each game
+    MAX_COUNTDOWN = 3   --Countdown in the beggining of each game
     COUNTDOWN = 0       --Current countdown
     TIMESTEP = 0.04     --Time between each game step
     STEP     = 0        --Step Counter
@@ -285,7 +288,7 @@ function setup.game()
         setup.players()
 
         GAME_SETUP = true
-        Game_Timer.after(N_PLAYERS*.8, Map.startCountdown)
+        Game_Timer.after(N_PLAYERS*.6 - .4, Map.startCountdown)
     end
 
 end
@@ -327,7 +330,7 @@ function setup.players()
 
         MAP[p_y][p_x] = HEAD --Update first position
 
-        Game_Timer.after(p.number*.5, 
+        Game_Timer.after(p.number*.4, 
             function()
                 FX.playerEntrance(p)
             end

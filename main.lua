@@ -90,22 +90,25 @@ end
 
 function GS_SETUP:keypressed(key)
 
-    Util.defaultKeyPressed(key)
+    --Case where user is typing for a players name
+    if not PLAYER_IS_TYPING then
+        if  key == "return" then
+            MATCH_BEGIN = true
+            Gamestate.switch(GS_GAME)
 
-    if  key == "return" then
-        MATCH_BEGIN = true
-        Gamestate.switch(GS_GAME)
-
-    --Buttons shortcuts
-    elseif key == 'right' then
-        BI_T["n_player_up"].func()
-    elseif key == 'left' then
-        BI_T["n_player_down"].func()
-    elseif key == 'up' then
-        BI_T["goal_up"].func()
-    elseif key == 'down' then
-        BI_T["goal_down"].func()
+        --Buttons shortcuts
+        elseif key == 'right' then
+            BI_T["n_player_up"].func()
+        elseif key == 'left' then
+            BI_T["n_player_down"].func()
+        elseif key == 'up' then
+            BI_T["goal_up"].func()
+        elseif key == 'down' then
+            BI_T["goal_down"].func()
+        end
     end
+    
+    Util.defaultKeyPressed(key)
 
 end
 

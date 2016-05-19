@@ -126,7 +126,7 @@ function fx.playerEntrance(p)
         --Add glow effect for head
         GLOW_T["mapx"..p.x.."y"..p.y] = TILE(p.x, p.y, color)
 
-        d = 1
+        d = .6
         --Creates fade-in effect on players
         fx.smoothAlpha(HD_T["mapx"..p.x.."y"..p.y].color, 255, d, 'linear')
         fx.smoothAlpha(GLOW_T["mapx"..p.x.."y"..p.y].color, 255, d, 'linear')

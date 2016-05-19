@@ -244,8 +244,8 @@ function mp.startCountdown()
             end
 
             --Fades-out countdown and removes
-            FX.smoothAlpha(TB_T["countdown"].t_color, 0, .8, "linear")
-            Game_Timer.after(.81, 
+            FX.smoothAlpha(TB_T["countdown"].t_color, 0, .6, "linear")
+            Game_Timer.after(.61, 
                 function()
                     TB_T["countdown"] = nil
                 end

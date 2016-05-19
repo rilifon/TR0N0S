@@ -402,20 +402,60 @@ function util.goBack()
     Gamestate.switch(GS_SETUP)
 
 end
+
+--Get any key that is pressed and checks for an event
 function util.defaultKeyPressed(key)
 
-    if key == 'escape' or key == 'x' then
-        util.quit()
-    elseif key == 'b' then
-        util.goBack()
-    elseif key == 'insert' then
-        UD.toggleDebug()
-    elseif key == 'home' then
-        UD.toggleDebugDraw()
-    elseif key == 'p' then
-        util.pause()
+    --In case user is typing for name, removes any keys shortcuts
+    if not PLAYER_IS_TYPING then
+        if key == 'escape' or key == 'x' then
+            util.quit()
+        elseif key == 'b' then
+            util.goBack()
+        elseif key == 'insert' then
+            UD.toggleDebug()
+        elseif key == 'home' then
+            UD.toggleDebugDraw()
+        elseif key == 'p' then
+            util.pause()
+        end
+    else
+        --Send key to the typing place
+        typingName(key)
     end
 
+
+
+end
+
+--Case where user is typing to change a player's name
+function typingName(key)
+    local p, controltext
+
+    p = P_T[PLAYER_TYPING]
+    --Finish typing name
+    if key == 'return' then 
+        
+        --Update player name
+        p.name = TB_T["typingbox"].text
+        
+        --Update playerbutton
+        if p.cpu then
+            controltext = "Level " .. p.level
+        else
+            controltext = p.control
+        end
+        PB_T["P"..p.number.."pb"].text =  p.name .. " (" .. controltext .. ")"
+        
+        --Clear created stuff
+        TB_T["typingbox"] = nil
+        PLAYER_TYPING = nil
+
+        --Unlock key pressing
+        PLAYER_IS_TYPING = false
+    else
+        TB_T["typingbox"].text = TB_T["typingbox"].text .. key
+    end
 end
 --------------------
 --ZOEIRAZOEIRAZOEIRA 

@@ -6,7 +6,7 @@ local ud = {}
 
 --Button functions
 local color_change_func = require "buttons.change_color"
-local text_change_func  = require "buttons.change_text"
+local name_change_func  = require "buttons.change_name"
 
 ---------------------------------
 --PLAYER INDICATOR DRAW FUNCTIONS
@@ -218,7 +218,7 @@ function ud.createPlayerButton(p)
     x = (love.graphics.getWidth() - w - w_cb)/2 - 20
     box = But(x, y, w_cb, h_cb, "", nulf, p.b_color, nulc,
         function()
-            text_change_func(p.number)
+            name_change_func(p.number)
         end
     )
     B_T["P"..p.number.."textbut"] = box 

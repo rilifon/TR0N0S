@@ -217,7 +217,7 @@ function draw.game_setup()
     tb = TB(0, 0, love.graphics.getWidth(), love.graphics.getHeight(), text, font, transp, color)
     TB_T["countdown"] = tb
     --Creates fade-in for countdown
-    Game_Timer.after((N_PLAYERS-1)*.8, 
+    Game_Timer.after((N_PLAYERS-1)*.6, 
         function()
             FX.smoothAlpha(TB_T["countdown"].t_color, 255, .8, "linear")
         end

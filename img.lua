@@ -74,6 +74,8 @@ IMG = Class{
 function img.checkCollision(x,y)
     local but = nil
 
+    if BUTTON_LOCK then return end --If buttons are locked, does nothing
+
     --Iterate on default "buttons with image" table
     for i,b in pairs(BI_T) do
         if  b.x < x
