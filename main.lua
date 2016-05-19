@@ -106,9 +106,22 @@ function GS_SETUP:keypressed(key)
         elseif key == 'down' then
             BI_T["goal_down"].func()
         end
+        
+        Util.defaultKeyPressed(key)
+    elseif key == 'return' or
+           key == 'backspace'
+        then
+        --Send specific keys to the typing place
+        Util.typingName(key)
     end
-    
-    Util.defaultKeyPressed(key)
+end
+
+function GS_SETUP:textinput(t)
+
+    if PLAYER_IS_TYPING then
+        --Send text input to the typing place
+        Util.typingName(t)
+    end
 
 end
 

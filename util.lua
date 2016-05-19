@@ -1,3 +1,5 @@
+local utf8 = require("utf8") --For manipulating text
+
 local Particle = require "particle"
 local RGB      = require "rgb"
 local FX       = require "fx"
@@ -407,37 +409,36 @@ end
 function util.defaultKeyPressed(key)
 
     --In case user is typing for name, removes any keys shortcuts
-    if not PLAYER_IS_TYPING then
-        if key == 'escape' or key == 'x' then
-            util.quit()
-        elseif key == 'b' then
-            util.goBack()
-        elseif key == 'insert' then
-            UD.toggleDebug()
-        elseif key == 'home' then
-            UD.toggleDebugDraw()
-        elseif key == 'p' then
-            util.pause()
-        end
-    else
-        --Send key to the typing place
-        typingName(key)
+    if key == 'escape' or key == 'x' then
+        util.quit()
+    elseif key == 'b' then
+        util.goBack()
+    elseif key == 'insert' then
+        UD.toggleDebug()
+    elseif key == 'home' then
+        UD.toggleDebugDraw()
+    elseif key == 'p' then
+        util.pause()
     end
-
-
 
 end
 
 --Case where user is typing to change a player's name
-function typingName(key)
-    local p, controltext
+function util.typingName(key)
+    local p, controltext, byteoffset, text
 
     p = P_T[PLAYER_TYPING]
+    
+    text = TB_T["typingbox"].text
+
+    --------------
+    --SPECIAL KEYS
+    --------------
     --Finish typing name
     if key == 'return' then 
         
         --Update player name
-        p.name = TB_T["typingbox"].text
+        p.name = text
         
         --Update playerbutton
         if p.cpu then
@@ -450,12 +451,37 @@ function typingName(key)
         --Clear created stuff
         TB_T["typingbox"] = nil
         PLAYER_TYPING = nil
+        love.keyboard.setKeyRepeat(false) --Remove holding down keys
 
         --Unlock key pressing
         PLAYER_IS_TYPING = false
-    else
-        TB_T["typingbox"].text = TB_T["typingbox"].text .. key
+    
+    --Deletes last text
+    elseif key == 'backspace' then
+        
+        byteoffset = utf8.offset(text, -1)
+
+        if byteoffset then
+            -- remove the last UTF-8 character.
+            -- string.sub operates on bytes rather than UTF-8 characters, so we couldn't do string.sub(text, 1, -2).
+            text = string.sub(text, 1, byteoffset - 1)
+        end
+
+        --Updates text
+        TB_T["typingbox"].text = text
+
+    --------------
+    --REGULAR TEXT
+    --------------
+    --Adds new text if name isn't at its max
+    elseif key and utf8.len(text) < MAX_NAME_SIZE then
+        text = text .. key
+
+        --Updates text
+        TB_T["typingbox"].text = text
+
     end
+
 end
 --------------------
 --ZOEIRAZOEIRAZOEIRA 

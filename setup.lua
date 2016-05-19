@@ -48,6 +48,9 @@ function setup.config()
     DEBUG = false      --DEBUG mode status
     DEBUG_DRAW = false --DEBUG mode status that shows players rectangles
     HEAD  = 9 --Value that represents a player head in the game map
+    
+    --TYPING AND NAMING VARS
+    MAX_NAME_SIZE = 10 --Max number of chars a player name can have
     PLAYER_IS_TYPING = false --Represents if a player is in a state of typing
     PLAYER_TYPING = nil --Player that is having his name changed
     BUTTON_LOCK   = false --If true, buttons won't work

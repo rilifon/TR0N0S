@@ -20,6 +20,9 @@ function changeName(n)
     PLAYER_TYPING = n
     PLAYER_IS_TYPING = true
 
+    -- Enable key repeat so keys can be hold for multiple keypressed events
+    love.keyboard.setKeyRepeat(true)
+
 end
 
 
