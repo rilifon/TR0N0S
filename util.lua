@@ -425,7 +425,7 @@ end
 
 --Case where user is typing to change a player's name
 function util.typingName(key)
-    local p, controltext, byteoffset, text
+    local p, controltext, byteoffset, text, cputext
 
     p = P_T[PLAYER_TYPING]
     
@@ -446,12 +446,38 @@ function util.typingName(key)
         else
             controltext = p.control
         end
-        PB_T["P"..p.number.."pb"].text =  p.name .. " (" .. controltext .. ")"
+        if p.cpu then
+            cputext = "CPU"
+            controltext = "Level " .. p.level
+        else
+            cputext = "HUMAN"
+            controltext = p.control
+        end
+        if p.name == '' then
+            text =  "PLAYER " .. p.number .. " " .. cputext .. " (" .. controltext .. ")"
+        else
+            text =  p.name .. " (" .. controltext .. ")"
+        end
+        PB_T["P"..p.number.."pb"].text =  text
         
         --Clear created stuff
-        HUD_T["typingbox"] = nil
         PLAYER_TYPING = nil
         love.keyboard.setKeyRepeat(false) --Remove holding down keys
+        
+        --Filter fade-out effect
+        FX.smoothAlpha(F_T["textentry"].color, 0, .5, 'linear')
+        Game_Timer.after(.5, function() F_T["textentry"] = nil end) --Removes filter
+        --Text-entry image fade-out effect
+        FX.smoothAlpha(HUD_T["typingbox"].b_color, 0, .5, 'linear')
+        Game_Timer.after(.5, function() HUD_T["typingbox"] = nil end) --Removes typingbox
+        --Text-entry text 1 fade-out effect
+        FX.smoothAlpha(TB_T["textentry1"].t_color, 0, .5, 'linear')
+        Game_Timer.after(.5, function() TB_T["textentry1"] = nil end) --Removes text-entry text 1
+        --Text-entry text 2 fade-out effect
+        FX.smoothAlpha(TB_T["textentry2"].t_color, 0, .5, 'linear')
+        Game_Timer.after(.5, function() TB_T["textentry2"] = nil end) --Removes text-entry text 2
+        --Setup start text fade-in effect
+        FX.smoothAlpha(TB_T["start"].t_color, 255, .5, "linear")
 
         --Unlock key pressing
         PLAYER_IS_TYPING = false
