@@ -321,6 +321,7 @@ function util.clearAllTables(mode)
     if mode ~= "inGame" then
         if mode ~= "gameover" then
             util.clearTable(I_T)
+            util.clearTable(H_T)
         end
         util.clearTable(PART_T)
         util.clearTable(GLOW_T)

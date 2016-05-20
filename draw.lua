@@ -206,25 +206,27 @@ end
 function draw.game_setup()
     local color, font, transp, tb, text
 
-    --Creates countdown text
-    font = font_but_l
-    text = COUNTDOWN
-    color  = COLOR(255, 255, 255, 0)
-    transp = COLOR(0, 0, 0, 0) --Transparent background
-    tb = TB(0, 0, love.graphics.getWidth(), love.graphics.getHeight(), text, font, transp, color)
-    TB_T["countdown"] = tb
-    --Creates fade-in for countdown
-    Game_Timer.after((N_PLAYERS-1)*.6, 
-        function()
-            FX.smoothAlpha(TB_T["countdown"].t_color, 255, .8, "linear")
-        end
-    )
 
     SetupHUD_default("game")
 
     SetupHUD_game()
 
     if not GAME_BEGIN then
+        
+        --Creates countdown text
+        font = font_but_l
+        text = COUNTDOWN
+        color  = COLOR(255, 255, 255, 0)
+        transp = COLOR(0, 0, 0, 0) --Transparent background
+        tb = TB(0, 0, love.graphics.getWidth(), love.graphics.getHeight(), text, font, transp, color)
+        TB_T["countdown"] = tb
+        --Creates fade-in for countdown
+        H_T["Fade-in countdown"] = Game_Timer.after((N_PLAYERS-1)*.6, 
+            function()
+                FX.smoothAlpha(TB_T["countdown"].t_color, 255, .8, "linear")
+            end
+        )
+
         UD.setupPlayerIndicator()
         if not EFFECT_LOOP then
             FX.pulseLoop(I_T["map_border_i"], 1.01, 1.01, 3, true)

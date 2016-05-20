@@ -220,7 +220,7 @@ function mp.startCountdown()
     local cd = COUNTDOWN
     local t, rand
     
-    Game_Timer.during(MAX_COUNTDOWN, 
+    H_T["Countdown_tick"] = Game_Timer.during(MAX_COUNTDOWN, 
         --Decreases countdown
         function(dt)
             
@@ -245,7 +245,7 @@ function mp.startCountdown()
 
             --Fades-out countdown and removes
             FX.smoothAlpha(TB_T["countdown"].t_color, 0, .6, "linear")
-            Game_Timer.after(.61, 
+            Game_Timer.after(.60, 
                 function()
                     TB_T["countdown"] = nil
                 end
