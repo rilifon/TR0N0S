@@ -503,6 +503,9 @@ function util.typingName(key)
     --------------
     --Adds new text if name isn't at its max
     elseif key and utf8.len(text) < MAX_NAME_SIZE then
+        
+        key = string.upper(key) --Capitalizes text
+
         text = text .. key
 
         --Updates text
