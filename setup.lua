@@ -228,6 +228,7 @@ function setup.config()
     font_but_m = love.graphics.newFont( "assets/vanadine_bold.ttf", 30) --Font for buttons, medium size
     font_reg_m = love.graphics.newFont( "assets/FUTUVA.ttf", 30) --Font for regular text, medium size
     font_reg_ms = love.graphics.newFont( "assets/FUTUVA.ttf", 23) --Font for regular text, medium size
+    font_reg_mss = love.graphics.newFont( "assets/FUTUVA.ttf", 20) --Font for regular text, medium size
     font_reg_s = love.graphics.newFont( "assets/FUTUVA.ttf", 16) --Font for regular text, small size
     love.graphics.setFont(font_reg_m)
 

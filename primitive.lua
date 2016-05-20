@@ -290,7 +290,7 @@ function drawButtonImg(but, mode, no_fix)
     local m, nf
 
     m = mode or "normal"
-    nf = no_fix or true 
+    nf = no_fix or false
 
     if nf then
         fix = 0 --Don't fix font position

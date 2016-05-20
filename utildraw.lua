@@ -14,8 +14,8 @@ local name_change_func  = require "buttons.change_name"
 
 --Draw players indicator
 function ud.setupPlayerIndicator()
-    local label, txt, x, y, color, sx, sy
-    local font = font_reg_s
+    local label, txt, x, y, color, sx, sy, text
+    local font = font_reg_mss
     local transp
 
     transp = COLOR(0,0,0,0) --Transparent color
@@ -33,35 +33,37 @@ function ud.setupPlayerIndicator()
             color = COLOR(97, 215, 255)
         end
 
-        label = "player"..p.number.."txt"
-        x = (p.x-1)*TILESIZE + BORDER
-        y = (p.y-5)*TILESIZE + BORDER
-        txt = TXT(x, y, "P" .. p.number, font, color)
+        label = "player"..p.number.."indicatortxt"
+        text = "P" .. p.number
+        x = BORDER + (p.x-.5)*TILESIZE - font:getWidth(text)/2
+        y = BORDER + (p.y-1)*TILESIZE - font:getHeight(text)*7/3
+        txt = TXT(x, y, text, font, color)
         TXT_T[label] = txt
 
         --Creates players control/CPU text
-        if  p.control == "WASD" then
-            label = "WASD"
-            x = (p.x-2)*TILESIZE + 1 + BORDER
-            y = (p.y-3)*TILESIZE + BORDER
-            txt = TXT(x, y, "WASD", font, color)
-        elseif p.control == "ARROWS" then
-            label = "ARROWS"
-            x = (p.x-2)*TILESIZE - 7 + BORDER
-            y = (p.y-3)*TILESIZE + BORDER
-            txt = TXT(x, y, "ARROWS", font, color)
+        if p.name == '' then
+            if  p.control == "WASD" then
+                text = "WASD"
+            elseif p.control == "ARROWS" then
+                text = "ARROWS"
+            else
+                text = "CPU"
+            end
         else
-            label = "CPU"..i
-            x = (p.x-1)*TILESIZE - 4 + BORDER
-            y = (p.y-3)*TILESIZE + BORDER
-            txt = TXT(x, y, "CPU", font, color)
+            text = p.name
         end
+        label = p.number .. "NameText"
+        text = string.upper(text) --Capitalizes the text
+        x = BORDER + (p.x-.5)*TILESIZE - font:getWidth(text)/2
+        y = BORDER + (p.y-1)*TILESIZE - font:getHeight(text)*4/3
+        txt = TXT(x, y, text, font, color)
         TXT_T[label] = txt
         
         --Pulse effect
-        if p.control == "WASD" or p.control == "ARROWS" then
+        if not p.cpu then
+            label = p.number .. "NameText"
             FX.pulse(TXT_T[label], sx, sy, MAX_COUNTDOWN)
-            label = "player"..p.number.."txt"
+            label = "player"..p.number.."indicatortxt"
             FX.pulse(TXT_T[label], sx, sy, MAX_COUNTDOWN)
         end
 
@@ -73,14 +75,8 @@ end
 function ud.removePlayerIndicator()
 
     for i, p in ipairs(P_T) do
-        TXT_T["player"..p.number.."txt"] = nil
-        if  p.control == "WASD" then
-            TXT_T["WASD"] = nil
-        elseif p.control == "ARROWS" then
-            TXT_T["ARROWS"] = nil
-        else
-            TXT_T["CPU"..i] = nil
-        end
+        TXT_T[p.number .. "NameText"] = nil
+        TXT_T["player"..p.number.."indicatortxt"] = nil
     end
 
 end
@@ -123,12 +119,12 @@ function ud.createPlayerButton(p)
 
 
     --PLAYER BUTTON
-     if p.cpu then
-            cputext = "CPU"
-            controltext = "Level " .. p.level
-        else
-            cputext = "HUMAN"
-            controltext = p.control
+    if p.cpu then
+        cputext = "CPU"
+        controltext = "Level " .. p.level
+    else
+        cputext = "HUMAN"
+        controltext = p.control
     end
 
     --Counting the perceptive luminance - human eye favors green color... 
