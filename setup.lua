@@ -64,6 +64,7 @@ function setup.config()
     GOAL = 3            --Score goal that will be set in the match
     MAX_PLAYERS = 8     --Max number of players in a game
     N_PLAYERS = 2       --Number of players playing
+    WINNER = 0          --Number of the winning player (0 if its no one)
     
     --CONTROL VARS
 
@@ -286,7 +287,7 @@ function setup.game()
 
         GAME_BEGIN = false
         STEP = 0
-        winner = 0
+        WINNER = 0
         
         Map.reset()
         

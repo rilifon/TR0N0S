@@ -253,14 +253,15 @@ end
 
 --Count how many players are alive and declare a winner
 function util.countPlayers()
+    local cont
     
     cont = 0
-    winner = 0
+    WINNER = 0
 
     for i, p in ipairs(P_T) do
         if p.dead == false then
             cont = cont+1
-            winner = p.number
+            WINNER = p.number
         end
     end
 
@@ -271,8 +272,8 @@ end
 --Handles winner of every game, and checks if match is over
 function util.checkWinner()
     
-    if winner ~= 0 then
-        p = P_T[winner]
+    if WINNER ~= 0 then
+        p = P_T[WINNER]
         --Increses player score
         p.score = p.score + 1
 

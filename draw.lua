@@ -267,25 +267,32 @@ function draw.gameover_setup()
     local font
     local color, text, x, y, b_color, t_color, filter_color, transp
     local continue_text --text to continue match or go back to setup
-    local p, tb, filter, winnertext, cont_tb
-    
+    local p, tb, filter, winnertext, cont_tb, winner_name
+
     SetupHUD_default("gameover")
 
     SetupHUD_game()
     
     continue_text = "Press ENTER to continue"
 
+     winner_name = P_T[WINNER].name
+     winner_name = string.upper(winner_name)
+
     --End of match
     if MATCH_BEGIN == false then
         filter_color = COLOR(12, 69, 203, 90)
-        text = "------THE ULTIMATE CHAMPION IS PLAYER " .. winner .. "------"
+        if P_T[WINNER].name == "" then
+            text = "------THE ULTIMATE CHAMPION IS PLAYER " .. WINNER .. "------"
+        else
+            text = "------THE ULTIMATE CHAMPION IS " .. winner_name .. "------"
+        end
         continue_text = "Press ENTER to go back to setup"
 
         --Creates a textbox for the champion, right next to the player
         font = font_reg_s
         b_color = COLOR(255, 255, 255, 20) --Box color
         t_color = COLOR(255, 255, 255)     --Text color 
-        p = P_T[winner]
+        p = P_T[WINNER]
         x = (p.x-2)*TILESIZE + BORDER
         y = (p.y-2)*TILESIZE + BORDER
 
@@ -300,13 +307,17 @@ function draw.gameover_setup()
     --Case of a single winner
     else
         filter_color = COLOR(12, 69, 203, 90)
-        text = "------WINNER IS PLAYER " .. winner .. "------"
+        if P_T[WINNER].name == "" then
+            text = "------WINNER IS PLAYER " .. WINNER .. "------"
+        else
+            text = "------WINNER IS " .. winner_name .. "------"
+        end
 
         --Creates a textbox for the winner, right next to the player
         font = font_reg_s
         b_color = COLOR(0, 0, 0, 20) --Box color
         t_color = COLOR(255, 255, 255)     --Text color 
-        p = P_T[winner]
+        p = P_T[WINNER]
         x = (p.x-2)*TILESIZE + BORDER
         y = (p.y-2)*TILESIZE + BORDER
 
