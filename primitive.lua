@@ -37,7 +37,6 @@ function pr.drawAll(mode)
     
     DrawB()       --Draws all default buttons
 
-
     DrawI()       --Draws all default images with text
 
     DrawPBOX()    --Drawl all default player boxes
@@ -49,7 +48,6 @@ function pr.drawAll(mode)
     DrawTXT()     --Draws all default texts
 
     DrawTB()      --Draws all default textboxes
-
 
     DrawHUD()     --Draws HUD stuff
     
@@ -99,21 +97,36 @@ end
 
 --Draws all default buttons with images
 function DrawHUD()
-    local m
+    local m, nf
+
+    nf = false
 
     for i, v in pairs(HUD_T) do
+        
         m = "normal"
+        --Turn pause button dark if game hasn't started or has ended
         if i == "pause_hud" and
           (not GAME_BEGIN or Gamestate.current() == GS_GAMEOVER)
         then
             m = "dark"
+        --Turn "back" button dark if game isn't paused nor on gameover
         elseif i == "back_hud" and
-                Gamestate.current() ~= GS_PAUSE and
-                Gamestate.current() ~= GS_GAMEOVER  
+               Gamestate.current() ~= GS_PAUSE and
+               Gamestate.current() ~= GS_GAMEOVER  
         then
             m = "dark"
+        --For the typing box, don't fix the font
+        elseif i == "typingbox" then
+            nf = false
         end
-        drawButtonImg(v, m)
+
+        --If player is typing, turn all buttons (except typing box) black
+        if PLAYER_IS_TYPING and i ~= "typingbox" then
+            m = "dark"
+        end
+
+        --Draw the button
+        drawButtonImg(v, m, nf)
     end
 
 end
@@ -272,13 +285,18 @@ function drawGlowButton(button)
 end
 
 --Draws a given button with image
-function drawButtonImg(but, mode)
+function drawButtonImg(but, mode, no_fix)
     local fwidth, fheight, tx, ty, font, fix
-    local m
+    local m, nf
 
     m = mode or "normal"
+    nf = no_fix or true 
 
-    fix = 5 --Fix font position on images
+    if nf then
+        fix = 0 --Don't fix font position
+    else
+        fix = 5 --Fix font position on images
+    end
 
     --Draws image
     if m == "normal" then

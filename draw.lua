@@ -9,9 +9,6 @@ local Primitive = require "primitive"
 
 local draw = {}
 
-local FONT_FIX_X = 10
-local FONT_FIX_Y = 8
-
 --Button functions
 local n_player_up_func   = require "buttons.n_player_up"
 local n_player_down_func = require "buttons.n_player_down"

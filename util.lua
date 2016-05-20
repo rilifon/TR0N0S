@@ -429,7 +429,7 @@ function util.typingName(key)
 
     p = P_T[PLAYER_TYPING]
     
-    text = TB_T["typingbox"].text
+    text = HUD_T["typingbox"].text
 
     --------------
     --SPECIAL KEYS
@@ -449,7 +449,7 @@ function util.typingName(key)
         PB_T["P"..p.number.."pb"].text =  p.name .. " (" .. controltext .. ")"
         
         --Clear created stuff
-        TB_T["typingbox"] = nil
+        HUD_T["typingbox"] = nil
         PLAYER_TYPING = nil
         love.keyboard.setKeyRepeat(false) --Remove holding down keys
 
@@ -468,7 +468,7 @@ function util.typingName(key)
         end
 
         --Updates text
-        TB_T["typingbox"].text = text
+        HUD_T["typingbox"].text = text
 
     --------------
     --REGULAR TEXT
@@ -478,7 +478,7 @@ function util.typingName(key)
         text = text .. key
 
         --Updates text
-        TB_T["typingbox"].text = text
+        HUD_T["typingbox"].text = text
 
     end
 

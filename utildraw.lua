@@ -16,6 +16,9 @@ local name_change_func  = require "buttons.change_name"
 function ud.setupPlayerIndicator()
     local label, txt, x, y, color, sx, sy
     local font = font_reg_s
+    local transp
+
+    transp = COLOR(0,0,0,0) --Transparent color
 
     sx = 1.5
     sy = 1.5
@@ -24,7 +27,7 @@ function ud.setupPlayerIndicator()
         --Creates player indicator text
 
         --Choose color
-        if p.control == "WASD" or p.control == "ARROWS" then
+        if not p.cpu then
             color = COLOR(250, 255, 97)
         else
             color = COLOR(97, 215, 255)

@@ -35,6 +35,7 @@ function setup.config()
     IMG_COM        = love.graphics.newImage("assets/default_command_img.png")
     IMG_COLOR      = love.graphics.newImage("assets/button_color_change.png")
     IMG_TEXT       = love.graphics.newImage("assets/button_text_change.png")
+    IMG_TEXT_ENTRY = love.graphics.newImage("assets/button_text_entry.png")
     --Background
     IMG_BG = love.graphics.newImage("assets/background.png")
     BG_X = -954 --Background x position
@@ -50,7 +51,7 @@ function setup.config()
     HEAD  = 9 --Value that represents a player head in the game map
     
     --TYPING AND NAMING VARS
-    MAX_NAME_SIZE = 10 --Max number of chars a player name can have
+    MAX_NAME_SIZE = 12 --Max number of chars a player name can have
     PLAYER_IS_TYPING = false --Represents if a player is in a state of typing
     PLAYER_TYPING = nil --Player that is having his name changed
     BUTTON_LOCK   = false --If true, buttons won't work

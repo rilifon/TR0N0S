@@ -1,20 +1,22 @@
 
 --Function that enables player 'n' to change his name
 function changeName(n)
-    local tb, x, y, w, h, text, font, b_color, t_color
+    local b, x, y, w, h, sx, sy, text, font, color, img
     
     --Creates a textbox displaying player new name
-    x = love.graphics.getWidth()/2 - 30
-    y = love.graphics.getHeight()/2 - 30
-    w = 200
-    h = 30
+    img = IMG_TEXT_ENTRY
+    w = img:getWidth()
+    h = img:getHeight()
+    x = love.graphics.getWidth()/2 - w/2
+    y = love.graphics.getHeight()/2 - h/2
+    sx = 1
+    sy = 1
     text = ""
     font = font_but_m
-    b_color = COLOR(255,255,255,255)
-    t_color = COLOR(0,0,0,255)
-    tb = TB(x, y, w, h, text, font, b_color, t_color)
+    color = COLOR(0,0,0,255)
+    b = But_Img(img, x, y, w, h, sx, sy, text, font, color)
     
-    TB_T["typingbox"] = tb
+    HUD_T["typingbox"] = b
 
     --Enables name change for player 'n'
     PLAYER_TYPING = n
