@@ -276,9 +276,11 @@ function draw.gameover_setup()
     SetupHUD_game()
     
     continue_text = "Press ENTER to continue"
-
-     winner_name = P_T[WINNER].name
-     winner_name = string.upper(winner_name)
+    
+    if WINNER ~= 0 then
+        winner_name = P_T[WINNER].name
+        winner_name = string.upper(winner_name)
+    end
 
     --End of match
     if MATCH_BEGIN == false then
@@ -302,7 +304,7 @@ function draw.gameover_setup()
         TB_T["CHAMPION"] = tb
 
     --Case of a draw
-    elseif winner == 0 then
+    elseif WINNER == 0 then
         filter_color = COLOR(255, 0, 0, 90)
         text = "DRAW"
     
