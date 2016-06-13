@@ -107,7 +107,7 @@ function draw.setup_setup()
     color_t = COLOR(0, 0, 0)
 
     --N_PLAYERS IMAGE
-    img = IMG_DEFAULT
+    img = IMG_SETUP_NP
     font = font_but_ml
     x  = -5
     y  = 30
@@ -133,12 +133,12 @@ function draw.setup_setup()
     I_T["n_players_value"] = score
 
     --GOAL TEXTBOX
-    img = IMG_DEFAULT
+    img = IMG_SETUP_GOAL
     font = font_but_ml
     x = 670
     y = 30
-    sx = .4
-    sy = .4
+    sx = 1
+    sy = .8
     w = img:getWidth()
     h = img:getHeight()
     goal_i = IMG(img, x, y, w, h, sx, sy, "GOAL", font, color_t)
@@ -202,6 +202,7 @@ function draw.setup_setup()
     -----------------------------
 
     FX.pulseLoop(I_T["goal_value"], .65, .65, 1.5, true)
+    FX.pulseLoop(I_T["goal_i"], 1.1, .9, 1.5, true)
     FX.pulseLoop(I_T["n_players_value"], .65, .65, 1.5, true)
 
 end

@@ -556,7 +556,8 @@ function util.isOnButton(dt)
 
     --Iterate on HUD table
     for i,b in pairs(HUD_T) do
-        if  b.x < x
+        if  i ~= "typingbox" and
+            b.x < x
             and
             x < b.x + b.w*b.sx
             and
@@ -570,7 +571,7 @@ function util.isOnButton(dt)
             else
                 B_GLOW_T[i].eps = math.max(B_GLOW_T[i].eps - dt*t, 0) 
             end
-        else
+        elseif i ~= "typingbox" then
             B_GLOW_T[i].eps = math.max(B_GLOW_T[i].eps - dt*t, 0) 
         end
     end
