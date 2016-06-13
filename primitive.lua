@@ -302,7 +302,7 @@ function drawButtonImg(but, mode, no_fix)
     if m == "normal" then
         love.graphics.setColor(but.b_color.r, but.b_color.g, but.b_color.b, but.b_color.a)
     else
-        love.graphics.setColor(100,100,100)
+        love.graphics.setColor(100,100,100, but.b_color.a)
     end
     love.graphics.draw(but.img, but.x, but.y, 0, but.sx, but.sy)
     

@@ -56,6 +56,7 @@ function changeName(n)
     --Enables name change for player 'n'
     PLAYER_TYPING = n
     PLAYER_IS_TYPING = true
+    BUTTON_LOCK = true
 
     -- Enable key repeat so keys can be hold for multiple keypressed events
     love.keyboard.setKeyRepeat(true)

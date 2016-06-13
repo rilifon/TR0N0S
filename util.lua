@@ -471,6 +471,7 @@ function util.typingName(key)
         Game_Timer.after(.5, function() F_T["textentry"] = nil end) --Removes filter
         --Text-entry image fade-out effect
         FX.smoothAlpha(HUD_T["typingbox"].b_color, 0, .5, 'linear')
+        FX.smoothAlpha(HUD_T["typingbox"].t_color, 0, .5, 'linear')
         Game_Timer.after(.5, function() HUD_T["typingbox"] = nil end) --Removes typingbox
         --Text-entry text 1 fade-out effect
         FX.smoothAlpha(TB_T["textentry1"].t_color, 0, .5, 'linear')
@@ -481,8 +482,9 @@ function util.typingName(key)
         --Setup start text fade-in effect
         FX.smoothAlpha(TB_T["start"].t_color, 255, .5, "linear")
 
-        --Unlock key pressing
+        --Unlock key pressing and buttons
         PLAYER_IS_TYPING = false
+        BUTTON_LOCK = false
     
     --Deletes last text
     elseif key == 'backspace' then
