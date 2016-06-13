@@ -59,6 +59,7 @@ function draw.setup_setup()
     x = love.graphics.getWidth()/2 --Get half the screen
     n_player_up = But_Img(img, x, y, w, h, sx, sy, "+", font, color_t, n_player_up_func)
     BI_T["n_player_up"] = n_player_up
+    B_GLOW_T["n_player_up"] = BOX(x + w*(.5 - 1/(2*IWR)) , y + h*(.5 - 1/(2*IHR)), w/IWR, h/IHR, GREEN_COLOR)
 
     --Down button
     color_b  = COLOR(233, 10, 0)
@@ -70,6 +71,7 @@ function draw.setup_setup()
     x = x - w --Get correct position
     n_player_down = But_Img(img, x, y, w, h, sx, sy, "-", font, color_t, n_player_down_func)
     BI_T["n_player_down"] = n_player_down
+    B_GLOW_T["n_player_down"] = BOX(x + w*(.5 - 1/(2*IWR)) , y + h*(.5 - 1/(2*IHR)), w/IWR, h/IHR, RED_COLOR)
 
     --GOAL BUTTON
     x = 580
@@ -84,6 +86,7 @@ function draw.setup_setup()
     --Up button
     goal_up = But_Img(img, x, y, w, h, sx, sy, "+", font, color_t, goal_up_func)
     BI_T["goal_up"] =  goal_up
+    B_GLOW_T["goal_up"] = BOX(x + w*(.5 - 1/(2*IWR)) , y + h*(.5 - 1/(2*IHR)), w/IWR, h/IHR, GREEN_COLOR)
 
     --Down button
     img = IMG_BUT_MINUS_INV
@@ -94,6 +97,7 @@ function draw.setup_setup()
     y = y + h - 20
     goal_down = But_Img(img, x, y, w, h, sx, sy, "-", font, color_t, goal_down_func)
     BI_T["goal_down"] = goal_down
+    B_GLOW_T["goal_down"] = BOX(x + w*(.5 - 1/(2*IWR)) , y + h*(.5 - 1/(2*IHR)), w/IWR, h/IHR, RED_COLOR)
 
     --------------------------------
     --Creates setup images with text
@@ -392,7 +396,9 @@ function SetupHUD_default(mode)
     local text, txt, x, y, DEBUG_TEXT
     local o, img, w, h, sx, sy
     local font
-    local color
+    local color, g_c
+    
+    g_c = PURPLE_COLOR
     
     -------------
     --HUD BUTTONS
@@ -414,6 +420,8 @@ function SetupHUD_default(mode)
         end
     )
     HUD_T["quit_hud"] = o
+    B_GLOW_T["quit_hud"] = BOX(x + w*sx*(.5 - 1/(2*IWR)) , y + h*sy*(.5 - 1/(2*IHR)), w*sx/IWR, h*sy/IHR, g_c)
+
 
     if mode == "setup" then
         --Nothing for now
@@ -435,6 +443,7 @@ function SetupHUD_default(mode)
             end
         )
         HUD_T["back_hud"] = o
+        B_GLOW_T["back_hud"] = BOX(x + w*sx*(.5 - 1/(2*IWR)) , y + h*sy*(.5 - 1/(2*IHR)), w*sx/IWR, h*sy/IHR, g_c)
          
         --"pause" button
         x = love.graphics.getWidth() - w*sx
@@ -444,6 +453,7 @@ function SetupHUD_default(mode)
             end
         )
         HUD_T["pause_hud"] = o
+        B_GLOW_T["pause_hud"] = BOX(x + w*sx*(.5 - 1/(2*IWR)) , y + h*sy*(.5 - 1/(2*IHR)), w*sx/IWR, h*sy/IHR, g_c)
 
     end
 

@@ -17,7 +17,8 @@ BOX = Class{
         self.color.b = color.b
         self.color.a = color.a or 255
 
-        self.r = 0
+        self.r = 0 -- Rotation
+        self.eps = 0 --Size of glow effect
     end
 }
 

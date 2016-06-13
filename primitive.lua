@@ -13,6 +13,8 @@ function pr.drawAll(mode)
 
     DrawBG()          --Draws the program background
 
+    DrawBGlow()       --Draws the program background
+
     CAM:attach() --Start tracking camera
     
     if mode == "inGame" then
@@ -63,6 +65,21 @@ function DrawBG()
     love.graphics.setColor(MAP_COLOR.r, MAP_COLOR.g, MAP_COLOR.b, MAP_COLOR.a)
     love.graphics.draw(IMG_BG, BG_X, -200)
 
+    love.graphics.setShader()
+    SHADER = nil
+
+end
+
+--Draws all default buttons glow effect when mouse is over
+function DrawBGlow()
+    
+    --Draws the glow effect
+    love.graphics.setShader(Glow_Shader)
+    SHADER = "Glow"
+    for i, v in pairs(B_GLOW_T) do
+        drawGlowButtonEffect(v)
+    end
+    --Draws the glow effect
     love.graphics.setShader()
     SHADER = nil
 
@@ -411,6 +428,16 @@ end
 --Draws a given box with glow
 function drawGlowBox(box)
     local eps = EPS_2
+
+    --Draws box
+    love.graphics.setColor(box.color.r, box.color.g, box.color.b, box.color.a)
+    love.graphics.draw(PIXEL, box.x-eps, box.y-eps, 0, box.w+2*eps, box.h+2*eps)
+
+end
+
+--Draws a given box with glow
+function drawGlowButtonEffect(box)
+    local eps = box.eps
 
     --Draws box
     love.graphics.setColor(box.color.r, box.color.g, box.color.b, box.color.a)

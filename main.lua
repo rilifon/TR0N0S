@@ -40,6 +40,10 @@ function love.load()
 
 end
 
+-----------------
+--MOUSE FUNCTIONS
+-----------------
+
 function love.mousepressed(x, y, button, istouch)
     
     if button == 1 then  --Left mouse button
@@ -308,6 +312,7 @@ end
 --------------------
 
 function love.update(dt)
+    Util.isOnButton(dt)
 end
 
 function love.draw()

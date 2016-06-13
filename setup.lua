@@ -112,11 +112,17 @@ function setup.config()
 
     --GLOW FOR SETUP EFFECT
 
-    EPS_2      = 45      --Range of players glow effect
-    GROWING_2  = true  --If eps will be growing or not 
+    EPS_2      = 45     --Range of players glow effect
+    GROWING_2  = true   --If eps will be growing or not 
     MAX_EPS_2  = 70     --Max value for eps
     MIN_EPS_2  = 30     --Min value for eps
 
+    --GLOW FOR MOUSE OVER EFFECT
+    IWR = 2 --Inicial width ratio
+    IHR = 2 --Inicial height ratio
+    RED_COLOR = COLOR(250, 7, 60)
+    GREEN_COLOR = COLOR(7, 250, 7)
+    PURPLE_COLOR = COLOR(117, 7, 250)
         
     --TIMERS
 
@@ -174,20 +180,21 @@ function setup.config()
 
     --DRAWING TABLES
 
-    TB_T   = {}  --Default TextBox table
-    B_T    = {}  --Default Button table
-    BI_T   = {}  --Default Button with Images table
-    I_T    = {}  --Images table
-    TXT_T  = {}  --Default Text table
-    F_T    = {}  --Filter table
-    PB_T   = {}  --Players Button table
-    PART_T = {}  --Particles table
-    FX_T   = {}  --Effects Table
-    BOX_T  = {}  --Box Table
-    HD_T   = {}  --Map Table (contain all head tiles)
-    GLOW_T = {}  --Map Table (contain all glow tiles)
-    HUD_T  = {}  --HUD Table
-    PBOX_T = {}  --Players Box Table
+    TB_T     = {}  --Default TextBox table
+    B_T      = {}  --Default Button table
+    BI_T     = {}  --Default Button with Images table
+    I_T      = {}  --Images table
+    TXT_T    = {}  --Default Text table
+    F_T      = {}  --Filter table
+    PB_T     = {}  --Players Button table
+    PART_T   = {}  --Particles table
+    FX_T     = {}  --Effects table
+    BOX_T    = {}  --Box table
+    HD_T     = {}  --Map table (contain all head tiles)
+    GLOW_T   = {}  --Map table (contain all glow tiles)
+    HUD_T    = {}  --HUD table
+    PBOX_T   = {}  --Players Box table
+    B_GLOW_T = {}  --Button "mouseover glow" table
      
     --COLOR TABLES
 

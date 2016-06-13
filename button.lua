@@ -43,7 +43,6 @@ function button.checkCollision(x,y)
 	local but = nil
 	local p_but = nil
 
-	--Disables buttons if player is typing
 	if BUTTON_LOCK then return end --If buttons are locked, does nothing
 
 	--Iterate on default buttons table

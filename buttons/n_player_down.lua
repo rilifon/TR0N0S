@@ -44,7 +44,10 @@ function n_player_down()
         
         --Adjust positions of buttons
         FX.smoothMove(n_player_up, n_player_up.x, n_player_up.y - pbh, .3, 'in-out-sine')
+        FX.smoothMove(B_GLOW_T["n_player_up"], B_GLOW_T["n_player_up"].x, B_GLOW_T["n_player_up"].y - pbh, .3, 'in-out-sine')
         FX.smoothMove(n_player_down, n_player_down.x, n_player_down.y - pbh, .3, 'in-out-sine')
+        FX.smoothMove(B_GLOW_T["n_player_down"], B_GLOW_T["n_player_down"].x, B_GLOW_T["n_player_down"].y - pbh, .3, 'in-out-sine')
+
         
         bot = I_T["bot_pb_i"]
 

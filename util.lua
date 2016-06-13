@@ -304,6 +304,8 @@ function util.clearAllTables(mode)
     
     util.clearTable(TB_T)
 
+    util.clearTable(B_GLOW_T)
+
     util.clearTable(B_T)
 
     util.clearTable(BI_T)
@@ -516,6 +518,65 @@ function util.typingName(key)
     end
 
 end
+
+---------------
+--BUTTON EFFECT
+---------------
+
+function util.isOnButton(dt)
+    local x, y, t, r
+
+    t = 200
+
+    x, y = love.mouse.getPosition()
+    index = nil
+
+    if BUTTON_LOCK then return end --If buttons are locked, does nothing
+
+    --Iterate on default "buttons with image" table
+    for i,b in pairs(BI_T) do
+        if  b.x < x
+            and
+            x < b.x + b.w*b.sx
+            and
+            b.y < y
+            and
+            y < b.y + b.h*b.sy
+        then
+            --Click is within image "box". Now checking by pixel position
+            if checkPixelCollision(b.img, (x-b.x), (y-b.y)) then
+                B_GLOW_T[i].eps = math.min(B_GLOW_T[i].eps + dt*t, (b.w+b.h)/4) 
+            else
+                B_GLOW_T[i].eps = math.max(B_GLOW_T[i].eps - dt*t, 0) 
+            end
+        else
+            B_GLOW_T[i].eps = math.max(B_GLOW_T[i].eps - dt*t, 0) 
+        end
+    end
+
+    --Iterate on HUD table
+    for i,b in pairs(HUD_T) do
+        if  b.x < x
+            and
+            x < b.x + b.w*b.sx
+            and
+            b.y < y
+            and
+            y < b.y + b.h*b.sy
+        then
+            --Click is within image "box". Now checking by pixel position
+            if checkPixelCollision(b.img, (x-b.x), (y-b.y)) then
+                B_GLOW_T[i].eps = math.min(B_GLOW_T[i].eps + dt*t, (b.h*b.sy)/4) 
+            else
+                B_GLOW_T[i].eps = math.max(B_GLOW_T[i].eps - dt*t, 0) 
+            end
+        else
+            B_GLOW_T[i].eps = math.max(B_GLOW_T[i].eps - dt*t, 0) 
+        end
+    end
+
+end
+
 --------------------
 --ZOEIRAZOEIRAZOEIRA 
 --------------------
