@@ -75,7 +75,7 @@ function draw.setup_setup()
 
     --GOAL BUTTON
     x = 580
-    y = 25
+    y = 45
     font = font_but_l
     color_b   = COLOR(233, 131, 0)  --Color of button background
     img = IMG_BUT_PLUS
@@ -109,10 +109,10 @@ function draw.setup_setup()
     --N_PLAYERS IMAGE
     img = IMG_SETUP_NP
     font = font_but_ml
-    x  = -5
+    x  = -60
     y  = 30
-    sx = 1.2
-    sy = .4
+    sx = 3.8
+    sy = .9
     w = img:getWidth()
     h = img:getHeight()
     n_player_i = IMG(img, x, y, w, h, sx, sy, "NUMBER OF PLAYERS", font, color_t)
@@ -123,7 +123,7 @@ function draw.setup_setup()
     font = font_reg_m
     sy = .6
     y = y + 120
-    x = 2*love.graphics.getWidth()/8
+    x = 2.08*love.graphics.getWidth()/8
     img = IMG_VAR
     w = img:getWidth()
     h = img:getHeight()
@@ -135,8 +135,8 @@ function draw.setup_setup()
     --GOAL TEXTBOX
     img = IMG_SETUP_GOAL
     font = font_but_ml
-    x = 670
-    y = 30
+    x = 660
+    y = 40
     sx = 1
     sy = .8
     w = img:getWidth()
@@ -148,7 +148,7 @@ function draw.setup_setup()
     sx = .6
     font = font_reg_m
     sy = .6
-    y = y + 120
+    y = y + 110
     x = 4*love.graphics.getWidth()/6 + 100
     img = IMG_VAR
     w = img:getWidth()
@@ -202,8 +202,9 @@ function draw.setup_setup()
     -----------------------------
 
     FX.pulseLoop(I_T["goal_value"], .65, .65, 1.5, true)
-    FX.pulseLoop(I_T["goal_i"], 1.1, .9, 1.5, true)
+    FX.pulseLoop(I_T["goal_i"], 1.03, .83, 1.5, true)
     FX.pulseLoop(I_T["n_players_value"], .65, .65, 1.5, true)
+    FX.pulseLoop(I_T["n_player_i"], 3.85, .95, 1.5, true)
 
 end
 
