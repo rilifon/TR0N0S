@@ -14,13 +14,13 @@ function fx.glowCircle(x, y, r, c)
 end
 
 --Creates a pulse effect on object o
-function fx.pulse(o, sx, sy, d, m)
+function fx.pulse(o, sx, sy, d, m, sxi_, syi_)
     local duration = d or .2 --Duration of effect
     local move = m or true --If it should also centralize while pulsing
     local sxi, syi
 
-    sxi = o.sx
-    syi = o.sy
+    sxi = sxi_ or o.sx
+    syi = syi_ or o.sy
 
     fx.smoothScale(o, sx, sy, duration/2, 'linear')
     

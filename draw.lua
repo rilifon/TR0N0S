@@ -106,32 +106,6 @@ function draw.setup_setup()
     color_b = COLOR(233, 131, 0)
     color_t = COLOR(0, 0, 0)
 
-    --N_PLAYERS IMAGE
-    img = IMG_SETUP_NP
-    font = font_but_ml
-    x  = -60
-    y  = 30
-    sx = 3.8
-    sy = .9
-    w = img:getWidth()
-    h = img:getHeight()
-    n_player_i = IMG(img, x, y, w, h, sx, sy, "NUMBER OF PLAYERS", font, color_t)
-    I_T["n_player_i"] = n_player_i
-
-    --N_PLAYERS VALUE
-    sx = .6
-    font = font_reg_m
-    sy = .6
-    y = y + 120
-    x = 2.08*love.graphics.getWidth()/8
-    img = IMG_VAR
-    w = img:getWidth()
-    h = img:getHeight()
-    color = COLOR(0,0,0)
-    text = N_PLAYERS
-    score = IMG(img, x, y, w, h, sx, sy, text, font, color)
-    I_T["n_players_value"] = score
-
     --GOAL TEXTBOX
     img = IMG_SETUP_GOAL
     font = font_but_ml
@@ -191,7 +165,7 @@ function draw.setup_setup()
 
     font = font_reg_m
     text = "Press ENTER to start match"
-    y = love.graphics.getHeight() - font:getHeight(text) - 5
+    y = love.graphics.getHeight() - font:getHeight(text) - 40
     color = COLOR(255, 255, 255)
     transp = COLOR(0, 0, 0, 0)
     tb = TB(0, y, love.graphics.getWidth(), font:getHeight(text), text, font, transp,color)
@@ -201,10 +175,8 @@ function draw.setup_setup()
     --Creates effects on images
     -----------------------------
 
-    FX.pulseLoop(I_T["goal_value"], .65, .65, 1.5, true)
-    FX.pulseLoop(I_T["goal_i"], 1.03, .83, 1.5, true)
-    FX.pulseLoop(I_T["n_players_value"], .65, .65, 1.5, true)
-    FX.pulseLoop(I_T["n_player_i"], 3.85, .95, 1.5, true)
+    FX.pulseLoop(I_T["goal_value"], .65, .65, 1.5, true, I_T["goal_value"].sx, I_T["goal_value"].sy)
+    FX.pulseLoop(I_T["goal_i"], 1.03, .83, 1.5, true, I_T["goal_i"].sx, I_T["goal_i"].sy)
 
 end
 

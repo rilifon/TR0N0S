@@ -278,12 +278,6 @@ function ud.removePlayerButton(p)
     t_img = I_T["P"..p.number.."textimg"]
     
     --Fades out
-    pb.b_color.a = 255
-    pb.t_color.a = 255
-    c_but.b_color.a  = 255
-    c_img.b_color.a  = 255
-    t_but.b_color.a  = 255
-    t_img.b_color.a  = 255
     FX.smoothAlpha(pb.b_color, 0, duration, 'linear')
     FX.smoothAlpha(pb.t_color, 0, duration, 'linear')
     FX.smoothAlpha(c_but.b_color, 0, duration, 'linear')

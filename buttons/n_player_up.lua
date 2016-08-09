@@ -23,13 +23,10 @@ function n_player_up()
        
         --Increases players
         N_PLAYERS = N_PLAYERS + 1
-        I_T["n_players_value"].text = N_PLAYERS
 
         --Particles
         exp_color = COLOR(65,168,17)
         FX.particle_explosion(x+w/2, y+h/2 + 4*pbh/5, exp_color, duration, max_part, speed, decaying)--Button explosion
-        exp_color = COLOR(205,144,212)
-        FX.particle_explosion(I_T["n_players_value"].x + 60, 200, exp_color, duration, 20, speed, .98) --Value
 
         --Shrink effect
         if not N_PLAYER_UP_FLAG then

@@ -26,7 +26,6 @@ function setup.config()
     IMG_BUT_MINUS_INV = love.graphics.newImage("assets/button_minus_inv.png")
     --Regular images
     IMG_SETUP_GOAL = love.graphics.newImage("assets/setup_text_img.png")
-    IMG_SETUP_NP   = love.graphics.newImage("assets/setup_text_img.png")
     IMG_BORDER_TOP = love.graphics.newImage("assets/border_top.png")
     IMG_BORDER_BOT = love.graphics.newImage("assets/border_bot.png")
     IMG_BORDER_MAP = love.graphics.newImage("assets/map_border.png")
